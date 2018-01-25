@@ -1,36 +1,22 @@
 /* ************************************************************************
-
    Copyright: 2018
-
    License: MIT license
-
-   Authors:
-
+   Authors: @odeimaiz
 ************************************************************************ */
 
 /**
  * This is the main application class of "app"
- *
  * @asset(app/*)
  */
 qx.Class.define("app.Application",
 {
   extend : qx.application.Standalone,
 
-
-
-  /*
-  *****************************************************************************
-     MEMBERS
-  *****************************************************************************
-  */
-
   members :
   {
     /**
      * This method contains the initial application code and gets called
      * during startup of the application
-     *
      * @lint ignoreDeprecated(alert)
      */
     main : function()
@@ -47,26 +33,13 @@ qx.Class.define("app.Application",
         qx.log.appender.Console;
       }
 
-      /*
-      -------------------------------------------------------------------------
-        Below is your actual application code...
-      -------------------------------------------------------------------------
-      */
-
-      // Create a button
-      var button1 = new qx.ui.form.Button("Click me", "app/test.png");
-
       // Document is the application root
       var doc = this.getRoot();
 
-      // Add button to document at fixed coordinates
-      doc.add(button1, {left: 100, top: 50});
-
-      // Add an event listener
-      button1.addListener("execute", function() {
-        /* eslint no-alert: "off" */
-        alert("Hallo World!");
-      });
+      this._tableView = new app.ui.TableView();
+      this._chartView = new app.ui.ChartView();
+      doc.add(this._tableView, {left: 0, top: 0, width: "100%"});
+      doc.add(this._chartView, {left: 0, top: 450, width: "100%"});
     }
   }
 });
