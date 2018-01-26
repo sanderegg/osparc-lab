@@ -32,7 +32,9 @@ qx.Class.define("app.ui.TableView",
     });
     this.add(label);
 
-    this._table = this._createTable(nCols);
+    this._createTable(nCols);
+    var bar = this._createControls();
+    this.add(bar, {flex: 1});
     this.add(this._table, {flex: 1});
   },
 
@@ -50,27 +52,60 @@ qx.Class.define("app.ui.TableView",
     _rowData: [],
     _colData: [],
 
+    _createControls : function()
+    {
+      var bar = new qx.ui.toolbar.ToolBar();
+      var part = new qx.ui.toolbar.Part();
+      bar.add(part);
+
+      var button1 = new qx.ui.toolbar.Button("Value 1: Show > 50");
+      part.add(button1);
+      button1.addListener("execute", function(e)
+      {
+        this._tableModel.addNumericFilter(">", 50, "Value 1");
+        this._tableModel.applyFilters();
+        this._table.setAdditionalStatusBarText(", additional Status. Showing Value 1: > 50.");
+      }.bind(this));
+
+      var button2 = new qx.ui.toolbar.Button("Value 2: Show 25 - 75");
+      part.add(button2);
+      button2.addListener("execute", function(e)
+      {
+        this._tableModel.addBetweenFilter("between", 25, 75, "Value 2");
+        this._tableModel.applyFilters();
+        this._table.setAdditionalStatusBarText(", additional Status. Showing Value 2: 25 - 75.");
+      }.bind(this));
+
+      var button3 = new qx.ui.toolbar.Button("Show all");
+      part.add(button3);
+      button3.addListener("execute", function(e)
+      {
+        this._tableModel.resetHiddenRows();
+        this._table.setAdditionalStatusBarText("");
+      }.bind(this));
+
+      return bar;
+    },
+
     _createTable : function(nCols)
     {
-      var tableModel = this._tableModel = new qx.ui.table.model.Simple();
+      this._tableModel = new qx.ui.table.model.Filtered();
       var emptyCols = [];
       for (var col = 0; col < nCols; col++) {
-        emptyCols.push("Default " + col);
+        emptyCols.push("Value " + col);
       }
       // Looks like this must be set at the begging
-      tableModel.setColumns(emptyCols);
+      this._tableModel.setColumns(emptyCols);
 
       // table
-      var table = new qx.ui.table.Table(tableModel);
-      table.set({
+      this._table = new qx.ui.table.Table(this._tableModel);
+      this._table.set({
         width: this.getWidth(),
         height: this.getHeight(),
         decorator : null
       });
 
-      table.getSelectionModel().setSelectionMode(qx.ui.table.selection.Model.MULTIPLE_INTERVAL_SELECTION);
-
-      return table;
+      this._table.getSelectionModel().setSelectionMode(qx.ui.table.selection.Model.MULTIPLE_INTERVAL_SELECTION);
     },
 
     setData : function(colData, rowData)
@@ -87,16 +122,7 @@ qx.Class.define("app.ui.TableView",
     _setRowData : function(rowData)
     {
       this._tableModel.setData(rowData);
-    },
-
-    _readTableData : function()
-    {
-      var myArray = [];
-      myArray.push([1,6,3]);
-      myArray.push([2,8,2]);
-      myArray.push([3,4,6]);
-      return myArray;
-    },
+    }
   },
 
   destruct : function() {
