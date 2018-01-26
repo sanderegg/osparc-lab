@@ -43,7 +43,7 @@ qx.Class.define("app.ui.TableView",
   },
 
   events : {
-
+    "filteredDataChanged": "qx.event.type.Event",
   },
 
   members: {
@@ -51,6 +51,11 @@ qx.Class.define("app.ui.TableView",
     _tableModel: null,
     _rowData: [],
     _colData: [],
+
+    getFilteredData : function()
+    {
+      return this._tableModel.getData();
+    },
 
     _createControls : function()
     {
@@ -62,25 +67,28 @@ qx.Class.define("app.ui.TableView",
       part.add(button1);
       button1.addListener("execute", function(e)
       {
-        this._tableModel.addNumericFilter(">", 50, "Value 1");
+        this._tableModel.addNumericFilter("<", 50, "Value 1");
         this._tableModel.applyFilters();
+        this.fireDataEvent("filteredDataChanged");
         this._table.setAdditionalStatusBarText(", additional Status. Showing Value 1: > 50.");
-      }.bind(this));
+      }, this);
 
       var button2 = new qx.ui.toolbar.Button("Value 2: Show 25 - 75");
       part.add(button2);
       button2.addListener("execute", function(e)
       {
-        this._tableModel.addBetweenFilter("between", 25, 75, "Value 2");
+        this._tableModel.addBetweenFilter("!between", 25, 75, "Value 2");
         this._tableModel.applyFilters();
+        this.fireDataEvent("filteredDataChanged");
         this._table.setAdditionalStatusBarText(", additional Status. Showing Value 2: 25 - 75.");
-      }.bind(this));
+      }, this);
 
       var button3 = new qx.ui.toolbar.Button("Show all");
       part.add(button3);
       button3.addListener("execute", function(e)
       {
         this._tableModel.resetHiddenRows();
+        this.fireDataEvent("filteredDataChanged");
         this._table.setAdditionalStatusBarText("");
       }.bind(this));
 

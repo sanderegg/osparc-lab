@@ -56,6 +56,11 @@ qx.Class.define("app.Application",
       this._tableView = new app.ui.TableView(almostAllWidth, halfHeight - 10, nCols);
       this._chartView = new app.ui.ChartView(almostAllWidth, halfHeight - 10);
 
+      this._tableView.addListener("filteredDataChanged", function(e) {
+        var colData = this._createRandomCols(nCols);
+        this._chartView.setData(colData, this._tableView.getFilteredData());
+      }, this);
+
       doc.add(btn, {top: 0});
       doc.add(this._tableView, {top: 30});
       doc.add(this._chartView, {top: halfHeight + 10});
