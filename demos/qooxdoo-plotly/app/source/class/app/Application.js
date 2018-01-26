@@ -46,14 +46,41 @@ qx.Class.define("app.Application",
       var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
       var halfWidth = parseInt(docWidth / 2);
       var halfHeight = parseInt(docHeight / 2);
-      console.log(halfWidth);
-      console.log(halfHeight);
-      console.log(doc);
 
-      this._tableView = new app.ui.TableView(halfWidth, halfHeight);
+      var nCols = 3;
+      var nRows = 50;
+      var colData = this._createRandomCols(nCols);
+      var rowData = this._createRandomRows(nCols, nRows);
+
+      this._tableView = new app.ui.TableView(halfWidth, halfHeight, nCols);
+      this._tableView.setColData(colData);
+      this._tableView.setRowData(rowData);
       this._chartView = new app.ui.ChartView(halfWidth, halfHeight);
+
       doc.add(this._tableView, {top: 0});
       doc.add(this._chartView, {top: halfHeight});
-    }
+    },
+
+    _createRandomCols : function(colCount)
+    {
+      var myCols = ["Time"];
+      for (var col = 1; col < colCount; col++) {
+        myCols.push("Value " + col);
+      }
+      return myCols;
+    },
+
+    _createRandomRows : function(colCount, rowCount)
+    {
+      var rowsData = [];
+      for (var row = 0; row < rowCount; row++) {
+        var rowData = [row+1];
+        for (var col = 1; col < colCount; col++) {
+          rowData.push(Math.random() * 100);
+        }
+        rowsData.push(rowData);
+      }
+      return rowsData;
+    },
   }
 });

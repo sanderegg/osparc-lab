@@ -7,7 +7,7 @@ qx.Class.define("app.ui.TableView",
 {
   extend: qx.ui.container.Composite,
 
-  construct : function(width, height)
+  construct : function(width, height, nCols)
   {
     this.base(arguments);
     this.set({
@@ -32,7 +32,7 @@ qx.Class.define("app.ui.TableView",
     });
     this.add(label);
 
-    this._table = this._createTable();
+    this._table = this._createTable(nCols);
     this.add(this._table, {flex: 1});
   },
 
@@ -46,20 +46,19 @@ qx.Class.define("app.ui.TableView",
 
   members: {
     _table: null,
+    _tableModel: null,
+    _rowData: [],
+    _colData: [],
 
-    getCaption : function() {
-      return "Table";
-    },
-
-    _createTable : function()
+    _createTable : function(nCols)
     {
-      // table model
-      var tableModel = new qx.ui.table.model.Simple();
-      tableModel.setColumns(["Time", "Value 1", "Value 2"]);
-      //var dataFromJson = this._readTableData();
-      //tableModel.setData(dataFromJson);
-      var rowData = this._createRandomRows(3, 50);
-      tableModel.setData(rowData);
+      var tableModel = this._tableModel = new qx.ui.table.model.Simple();
+      var emptyCols = [];
+      for (var col = 0; col < nCols; col++) {
+        emptyCols.push("Default " + col);
+      }
+      // Looks like this must be set at the begging
+      tableModel.setColumns(emptyCols);
 
       // table
       var table = new qx.ui.table.Table(tableModel);
@@ -74,9 +73,14 @@ qx.Class.define("app.ui.TableView",
       return table;
     },
 
-    CallbackParamName : function()
+    setColData : function(colData)
     {
-      console.log("Hallo");
+      this._tableModel.setColumns(colData);
+    },
+
+    setRowData : function(rowData)
+    {
+      this._tableModel.setData(rowData);
     },
 
     _readTableData : function()
@@ -86,20 +90,6 @@ qx.Class.define("app.ui.TableView",
       myArray.push([2,8,2]);
       myArray.push([3,4,6]);
       return myArray;
-    },
-
-    _createRandomRows : function(colCount, rowCount)
-    {
-      var rowsData = [];
-      for (var row = 0; row < rowCount; row++) {
-        var rowData = [];
-        rowData.push(row+1);
-        for (var col = 1; col < colCount; col++) {
-          rowData.push(Math.random() * 100);
-        }
-        rowsData.push(rowData);
-      }
-      return rowsData;
     },
   },
 
