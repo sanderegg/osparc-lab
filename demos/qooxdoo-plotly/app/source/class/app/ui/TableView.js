@@ -7,9 +7,13 @@ qx.Class.define("app.ui.TableView",
 {
   extend: qx.ui.container.Composite,
 
-  construct : function()
+  construct : function(width, height)
   {
     this.base(arguments);
+    this.set({
+      width: width,
+      height: height
+    });
 
     var box = new qx.ui.layout.VBox();
     box.set({
@@ -60,8 +64,8 @@ qx.Class.define("app.ui.TableView",
       // table
       var table = new qx.ui.table.Table(tableModel);
       table.set({
-        width: 800,
-        height: 400,
+        width: this.getWidth(),
+        height: this.getHeight(),
         decorator : null
       });
 

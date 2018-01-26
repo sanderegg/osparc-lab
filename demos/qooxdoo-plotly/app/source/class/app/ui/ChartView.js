@@ -6,9 +6,13 @@
 {
   extend: qx.ui.container.Composite,
 
-  construct : function()
+  construct : function(width, height)
   {
     this.base(arguments);
+    this.set({
+      width: width,
+      height: height
+    });
 
     this.setLibReady(false);
 
@@ -20,9 +24,7 @@
     });
 
     this.set({
-      layout: box,
-      width: 601,
-      height: 501
+      layout: box
     });
 
     var label = new qx.ui.basic.Label("Chart view").set({
@@ -68,8 +70,8 @@
 
       var layout = {
         title:'Line and Scatter Plot',
-        width: 599,
-        height: 499
+        width: this.getWidth(),
+        height: this.getHeight()
       };
 
       Plotly.newPlot('plotlyDiv', data, layout);

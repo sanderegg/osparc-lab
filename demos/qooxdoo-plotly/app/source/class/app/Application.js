@@ -33,13 +33,27 @@ qx.Class.define("app.Application",
         qx.log.appender.Console;
       }
 
+      /*
+      ------ Application ------
+      */
+
       // Document is the application root
       var doc = this.getRoot();
 
-      this._tableView = new app.ui.TableView();
-      this._chartView = new app.ui.ChartView();
-      doc.add(this._tableView, {left: 0, top: 0, width: "100%"});
-      doc.add(this._chartView, {left: 0, top: 450, width: "100%"});
+      var body = document.body;
+      var html = document.documentElement;
+      var docWidth = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
+      var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+      var halfWidth = parseInt(docWidth / 2);
+      var halfHeight = parseInt(docHeight / 2);
+      console.log(halfWidth);
+      console.log(halfHeight);
+      console.log(doc);
+
+      this._tableView = new app.ui.TableView(halfWidth, halfHeight);
+      this._chartView = new app.ui.ChartView(halfWidth, halfHeight);
+      doc.add(this._tableView, {top: 0});
+      doc.add(this._chartView, {top: halfHeight});
     }
   }
 });
