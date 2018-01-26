@@ -43,39 +43,47 @@ qx.Class.define("app.Application",
       var body = document.body;
       var html = document.documentElement;
       var docWidth = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
-      var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-      var halfWidth = parseInt(docWidth / 2);
+      var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight ) - 30;
+      var almostAllWidth = parseInt(docWidth / 1.3);
       var halfHeight = parseInt(docHeight / 2);
 
       var nCols = 3;
       var nRows = 50;
-      var colData = this._createRandomCols(nCols);
-      var rowData = this._createRandomRows(nCols, nRows);
 
-      this._tableView = new app.ui.TableView(halfWidth, halfHeight, nCols);
-      this._tableView.setColData(colData);
-      this._tableView.setRowData(rowData);
-      this._chartView = new app.ui.ChartView(halfWidth, halfHeight);
+      var btn = new qx.ui.form.Button("New Data");
+      btn.addListener("execute", this._createRandomData.bind(this, nCols, nRows));
 
-      doc.add(this._tableView, {top: 0});
-      doc.add(this._chartView, {top: halfHeight});
+      this._tableView = new app.ui.TableView(almostAllWidth, halfHeight - 10, nCols);
+      this._chartView = new app.ui.ChartView(almostAllWidth, halfHeight - 10);
+
+      doc.add(btn, {top: 0});
+      doc.add(this._tableView, {top: 30});
+      doc.add(this._chartView, {top: halfHeight + 10});
     },
 
-    _createRandomCols : function(colCount)
+    _createRandomData : function(nCols, nRows)
+    {
+      var colData = this._createRandomCols(nCols);
+      var rowData = this._createRandomRows(nCols, nRows);
+      this._tableView.setData(colData, rowData);
+      this._chartView.setData(colData, rowData);
+    },
+
+    _createRandomCols : function(nCols)
     {
       var myCols = ["Time"];
-      for (var col = 1; col < colCount; col++) {
+      for (var col = 1; col < nCols; col++) {
         myCols.push("Value " + col);
       }
       return myCols;
     },
 
-    _createRandomRows : function(colCount, rowCount)
+    _createRandomRows : function(nCols, nRows)
     {
       var rowsData = [];
-      for (var row = 0; row < rowCount; row++) {
+      for (var row = 0; row < nRows; row++) {
         var rowData = [row+1];
-        for (var col = 1; col < colCount; col++) {
+        for (var col = 1; col < nCols; col++) {
           rowData.push(Math.random() * 100);
         }
         rowsData.push(rowData);

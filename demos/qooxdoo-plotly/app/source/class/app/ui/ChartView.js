@@ -1,6 +1,6 @@
 /**
- * @asset(resource/plotly/*)
- * @ignore(plotly)
+ * @asset(plotly/*)
+ * @ignore(Plotly)
  */
  qx.Class.define("app.ui.ChartView",
 {
@@ -56,25 +56,15 @@
       console.log(plotly_path + " loaded");
       this.setLibReady(true);
 
-      var trace1 = {
-        x: [1, 2, 3, 4],
-        y: [10, 15, 13, 17],
-        type: 'scatter'
-      };
-      var trace2 = {
-        x: [1, 2, 3, 4],
-        y: [16, 5, 11, 9],
-        type: 'scatter'
-      };
-      var data = [trace1, trace2];
-
-      var layout = {
+      this._layout = {
         title:'Line and Scatter Plot',
         width: this.getWidth(),
         height: this.getHeight()
       };
 
-      Plotly.newPlot('plotlyDiv', data, layout);
+      this._data = [];
+      Plotly.newPlot('plotlyDiv', this._data, this._layout);
+      this._Plotly = Plotly;
     }, this);
 
     dynLoader.addListener('failed', function(e) {
@@ -91,5 +81,44 @@
 
   members: {
     _plot: null,
+    _layout: null,
+    _data: null,
+
+    setData : function(colData, rowData)
+    {
+      /*
+      var trace = {
+        x: [1, 2, 3, 4],
+        y: [10, 15, 13, 17],
+        type: 'scatter'
+        name: 'myName'
+      };
+      this._data = [trace];
+      */
+
+      this._data = []
+      this._layout['xaxis']['title'] = colData[0];
+      for (var i = 1; i < colData.length; i++) {
+        var newTrace = {
+          x: [],
+          y: [],
+          type: 'scatter',
+          name: colData[i]
+        };
+        this._data.push(newTrace);
+      }
+
+      for (var i = 0; i < rowData.length; i++) {
+        for (var j = 1; j < rowData[i].length; j++) {
+          this._data[j-1]['x'].push(rowData[i][0]);
+          this._data[j-1]['y'].push(rowData[i][j]);
+        }
+      }
+
+      if (this._Plotly) {
+        //this._Plotly.redraw('plotlyDiv');
+        this._Plotly.newPlot('plotlyDiv', this._data, this._layout);
+      }
+    }
   }
 });

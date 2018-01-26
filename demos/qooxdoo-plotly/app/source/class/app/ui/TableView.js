@@ -73,12 +73,18 @@ qx.Class.define("app.ui.TableView",
       return table;
     },
 
-    setColData : function(colData)
+    setData : function(colData, rowData)
+    {
+      this._setColData(colData);
+      this._setRowData(rowData);
+    },
+
+    _setColData : function(colData)
     {
       this._tableModel.setColumns(colData);
     },
 
-    setRowData : function(rowData)
+    _setRowData : function(rowData)
     {
       this._tableModel.setData(rowData);
     },
