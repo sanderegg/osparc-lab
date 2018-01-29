@@ -1,0 +1,24 @@
+{
+  "name": "frontend-vtk",
+  "version": "0.1.0",
+  "description": "demoapp",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "build:release": "webpack -p",
+    "start": "webpack-dev-server --content-base ./dist",
+    "commit": "git cz",
+    "semantic-release": "semantic-release"
+  },
+  "keywords": [
+    "vtk"
+  ],
+  "author": "Sylvain Anderegg",
+  "license": "ISC",
+  "dependencies": {
+    "vtk.js": "^5.15.8"
+  },
+  "devDependencies": {
+    "kw-web-suite": "^5.0.1"
+  }
+}
