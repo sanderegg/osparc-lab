@@ -1,5 +1,5 @@
 /**
- * @asset(plotly/*)
+ * @asset(resource/plotly/*)
  * @ignore(Plotly)
  */
  qx.Class.define("app.ui.ChartView",
@@ -59,7 +59,7 @@
       this._layout = {
         title:'Line and Scatter Plot',
         width: this.getWidth(),
-        height: this.getHeight()
+        height: this.getHeight() * 0.9
       };
 
       this._data = [];
