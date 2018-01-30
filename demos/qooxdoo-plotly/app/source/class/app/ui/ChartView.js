@@ -39,13 +39,6 @@
     this.add(this._plot, {flex: 1});
 
 
-    // in debug mode load the uncompressed unobfuscated scripts
-    // three.js files are in resource/three/three(.min).js
-    var min = '.min';
-    if (qx.core.Environment.get("qx.debug")) {
-      min = '';
-    }
-
     // initialize the script loading
     var plotly_path = "resource/plotly/plotly-latest.min.js";
     var dynLoader = new qx.util.DynamicScriptLoader([

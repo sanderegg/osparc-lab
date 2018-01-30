@@ -44,17 +44,18 @@ qx.Class.define("app.Application",
       var html = document.documentElement;
       var docWidth = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
       var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight ) - 30;
-      var almostAllWidth = parseInt(docWidth / 1.3);
+      var halfWidth = parseInt(docWidth / 2);
       var halfHeight = parseInt(docHeight / 2);
 
-      var nCols = 3;
+      var nCols = 4;
       var nRows = 50;
 
       var btn = new qx.ui.form.Button("New Data");
       btn.addListener("execute", this._createRandomData.bind(this, nCols, nRows));
 
-      this._tableView = new app.ui.TableView(almostAllWidth, halfHeight - 10, nCols);
-      this._chartView = new app.ui.ChartView(almostAllWidth, halfHeight - 10);
+      this._tableView = new app.ui.TableView(halfWidth, halfHeight - 5, nCols);
+      this._chartView = new app.ui.ChartView(halfWidth, halfHeight - 5);
+      this._threeDView = new app.ui.ThreeDView(halfWidth, docHeight - 5);
 
       this._tableView.addListener("filteredDataChanged", function(e) {
         var colData = this._createRandomCols(nCols);
@@ -63,7 +64,8 @@ qx.Class.define("app.Application",
 
       doc.add(btn, {top: 0});
       doc.add(this._tableView, {top: 30});
-      doc.add(this._chartView, {top: halfHeight + 10});
+      doc.add(this._chartView, {top: halfHeight + 20});
+      doc.add(this._threeDView, {left: halfWidth});
     },
 
     _createRandomData : function(nCols, nRows)
@@ -72,6 +74,7 @@ qx.Class.define("app.Application",
       var rowData = this._createRandomRows(nCols, nRows);
       this._tableView.setData(colData, rowData);
       this._chartView.setData(colData, rowData);
+      this._threeDView.setData(colData, rowData);
     },
 
     _createRandomCols : function(nCols)
