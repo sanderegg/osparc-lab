@@ -99,10 +99,9 @@
 
         var that = this;
         var modelsToLoad = ["resource/models/bunny.vtk"];
-        //modelsToLoad.push("resource/models/SomethingElse.vtp");
+        modelsToLoad.push("resource/models/head.vtp");
+        //modelsToLoad.push("resource/models/Head_Real.vtp");
         //modelsToLoad.push("resource/models/head.vtk");
-        //modelsToLoad.push("resource/models/head.vtp");
-        modelsToLoad.push("resource/models/Head_Real.vtp");
         //modelsToLoad.push("resource/models/Head_ASCII.vtk");
         //modelsToLoad.push("resource/models/HeadXMLFormat.vtr");
         //modelsToLoad.push("resource/models/HeadXMLFormat_bin.vtp");
