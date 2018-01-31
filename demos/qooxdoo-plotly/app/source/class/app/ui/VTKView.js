@@ -52,7 +52,7 @@
 
         var vtkContainer = document.getElementById('vtkViewer');
         var fullScreenRenderer = vtk.Rendering.Misc.vtkFullScreenRenderWindow.newInstance({
-          background: [0.3, 0.3, 0.3],
+          background: [0.93, 0.93, 0.93],
           rootContainer: vtkContainer,
           containerStyle: { height: '100%', width: '100%' }
         });
