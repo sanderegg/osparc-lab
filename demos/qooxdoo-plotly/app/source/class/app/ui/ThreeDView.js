@@ -27,7 +27,7 @@
       layout: box
     });
 
-    var label = new qx.ui.basic.Label("3D view").set({
+    var label = new qx.ui.basic.Label("3D view (three.js)").set({
       font: new qx.bom.Font(20, ["Verdana", "sans-serif"]),
       textColor: 'black'
     });
@@ -37,9 +37,11 @@
     // initialize the script loading
     var three_path = "resource/three/three.min.js";
     var orbit_path = "resource/three/OrbitControls.js";
+    var vtk_loader_path = "resource/three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
       three_path,
-      orbit_path
+      orbit_path,
+      vtk_loader_path
     ]);
 
     dynLoader.addListenerOnce('ready', function(e) {
@@ -47,10 +49,10 @@
       this.setLibReady(true);
 
       this._scene = new THREE.Scene();
-      this._scene.background = new THREE.Color('white');
+      this._scene.background = new THREE.Color(0xEEEEEE);
 
       this._camera = new THREE.PerspectiveCamera();
-      this._camera.position.z = 200;
+      this._camera.position.z = 20;
       this._scene.add(this._camera);
 
       var pointLight = new THREE.PointLight(0xBBBBBB);
@@ -94,6 +96,31 @@
         */
 
         this._addSphere(1, 0, 0, 0);
+
+        var that = this;
+        var modelsToLoad = ["resource/models/bunny.vtk"];
+        //modelsToLoad.push("resource/models/SomethingElse.vtp");
+        //modelsToLoad.push("resource/models/head.vtk");
+        //modelsToLoad.push("resource/models/head.vtp");
+        modelsToLoad.push("resource/models/Head_Real.vtp");
+        //modelsToLoad.push("resource/models/Head_ASCII.vtk");
+        //modelsToLoad.push("resource/models/HeadXMLFormat.vtr");
+        //modelsToLoad.push("resource/models/HeadXMLFormat_bin.vtp");
+        for (var i = 0; i < modelsToLoad.length; i++) {
+          var loader = new THREE.VTKLoader();
+          loader.load( modelsToLoad[i], function ( geometry ) {
+            geometry.center();
+            geometry.computeVertexNormals();
+
+            var material = new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
+            var mesh = new THREE.Mesh( geometry, material );
+            //mesh.position.set( - 0.075, 0.005, 0 );
+            mesh.scale.multiplyScalar( 8 );
+            that._scene.add(mesh);
+            that._meshes.push(mesh);
+            that._render();
+          }, that);
+        }
 
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
 
