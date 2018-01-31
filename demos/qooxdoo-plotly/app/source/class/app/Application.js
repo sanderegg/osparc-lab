@@ -55,7 +55,8 @@ qx.Class.define("app.Application",
 
       this._tableView = new app.ui.TableView(halfWidth, halfHeight - 5, nCols);
       this._chartView = new app.ui.ChartView(halfWidth, halfHeight - 5);
-      this._threeDView = new app.ui.ThreeDView(halfWidth, docHeight - 5);
+      this._threeDView = new app.ui.ThreeDView(halfWidth, halfHeight - 5);
+      this._vtkView = new app.ui.VTKView(halfWidth, halfHeight - 5);
 
       this._tableView.addListener("filteredDataChanged", function(e) {
         var colData = this._createRandomCols(nCols);
@@ -65,7 +66,8 @@ qx.Class.define("app.Application",
       doc.add(btn, {top: 0});
       doc.add(this._tableView, {top: 30});
       doc.add(this._chartView, {top: halfHeight + 20});
-      doc.add(this._threeDView, {left: halfWidth});
+      doc.add(this._threeDView, {top: 0, left: halfWidth});
+      doc.add(this._vtkView, {top: halfHeight, left: halfWidth});
     },
 
     _createRandomData : function(nCols, nRows)
