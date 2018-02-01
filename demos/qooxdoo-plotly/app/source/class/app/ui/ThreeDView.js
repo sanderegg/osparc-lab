@@ -86,40 +86,7 @@
         this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
         this._orbitControls.update();
 
-        /*
-        var sphere = new THREE.SphereGeometry(100);
-        sphere.translate(100, 100, 100);
-        var object = new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( 0xff0000 ) );
-        var box = new THREE.BoxHelper( object, 0xffff00 );
-        this._scene.add( box );
-        this._scene.add( object );
-        */
-
-        this._addSphere(1, 0, 0, 0);
-
-        var that = this;
-        var modelsToLoad = ["resource/models/bunny.vtk"];
-        modelsToLoad.push("resource/models/head.vtp");
-        //modelsToLoad.push("resource/models/Head_Real.vtp");
-        //modelsToLoad.push("resource/models/head.vtk");
-        //modelsToLoad.push("resource/models/Head_ASCII.vtk");
-        //modelsToLoad.push("resource/models/HeadXMLFormat.vtr");
-        //modelsToLoad.push("resource/models/HeadXMLFormat_bin.vtp");
-        for (var i = 0; i < modelsToLoad.length; i++) {
-          var loader = new THREE.VTKLoader();
-          loader.load( modelsToLoad[i], function ( geometry ) {
-            geometry.center();
-            geometry.computeVertexNormals();
-
-            var material = new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
-            var mesh = new THREE.Mesh( geometry, material );
-            //mesh.position.set( - 0.075, 0.005, 0 );
-            mesh.scale.multiplyScalar( 8 );
-            that._scene.add(mesh);
-            that._meshes.push(mesh);
-            that._render();
-          }, that);
-        }
+        this.LoadDefault();
 
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
 
@@ -162,13 +129,42 @@
 
     setData : function(colData, rowData)
     {
-      this._clearScene();
+      this.ClearScene();
       for (var i = 0; i < rowData.length; i++) {
         this._addSphere(1, rowData[i][0], rowData[i][1], rowData[i][2]);
       }
     },
 
-    _clearScene : function()
+    LoadDefault : function()
+    {
+      this._addSphere(1, 0, 0, 0);
+
+      var that = this;
+      var modelsToLoad = ["resource/models/bunny.vtk"];
+      modelsToLoad.push("resource/models/head.vtp");
+      //modelsToLoad.push("resource/models/Head_Real.vtp");
+      //modelsToLoad.push("resource/models/head.vtk");
+      //modelsToLoad.push("resource/models/Head_ASCII.vtk");
+      //modelsToLoad.push("resource/models/HeadXMLFormat.vtr");
+      //modelsToLoad.push("resource/models/HeadXMLFormat_bin.vtp");
+      for (var i = 0; i < modelsToLoad.length; i++) {
+        var loader = new THREE.VTKLoader();
+        loader.load( modelsToLoad[i], function ( geometry ) {
+          geometry.center();
+          geometry.computeVertexNormals();
+
+          var material = new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
+          var mesh = new THREE.Mesh( geometry, material );
+          //mesh.position.set( - 0.075, 0.005, 0 );
+          mesh.scale.multiplyScalar( 8 );
+          that._scene.add(mesh);
+          that._meshes.push(mesh);
+          that._render();
+        }, that);
+      }
+    },
+
+    ClearScene : function()
     {
       var i = this._meshes.length;
       while(i--) {
