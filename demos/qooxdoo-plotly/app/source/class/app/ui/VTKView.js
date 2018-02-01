@@ -51,24 +51,18 @@
       this._VTKViewer.addListenerOnce('appear', function() {
 
         var vtkContainer = document.getElementById('vtkViewer');
-        var fullScreenRenderer = vtk.Rendering.Misc.vtkFullScreenRenderWindow.newInstance({
+        this._fullScreenRenderer = vtk.Rendering.Misc.vtkFullScreenRenderWindow.newInstance({
           background: [0.93, 0.93, 0.93],
           rootContainer: vtkContainer,
           containerStyle: { height: '100%', width: '100%' }
         });
-        var actor              = vtk.Rendering.Core.vtkActor.newInstance();
-        var mapper             = vtk.Rendering.Core.vtkMapper.newInstance();
-        var cone               = vtk.Filters.Sources.vtkConeSource.newInstance();
 
-        actor.setMapper(mapper);
-        mapper.setInputConnection(cone.getOutputPort());
+        this._renderer = this._fullScreenRenderer.getRenderer();
 
-        var renderer = fullScreenRenderer.getRenderer();
-        renderer.addActor(actor);
-        renderer.resetCamera();
+        this._renderWindow = this._fullScreenRenderer.getRenderWindow();
+        this._renderWindow.render();
 
-        var renderWindow = fullScreenRenderer.getRenderWindow();
-        renderWindow.render();
+        this.LoadDefault();
       }, this);
 
     }, this);
@@ -86,6 +80,36 @@
   },
 
   members: {
-    _VTKViewer: null
+    _VTKViewer: null,
+    _renderer: null,
+    _renderWindow: null,
+    _fullScreenRenderer: null,
+    _actors: [],
+
+    LoadDefault : function()
+    {
+      var actor = vtk.Rendering.Core.vtkActor.newInstance();
+      var mapper = vtk.Rendering.Core.vtkMapper.newInstance();
+      var cone = vtk.Filters.Sources.vtkConeSource.newInstance();
+
+      actor.setMapper(mapper);
+      mapper.setInputConnection(cone.getOutputPort());
+
+      this._actors.push(actor);
+
+      this._renderer.addActor(actor);
+      this._renderer.resetCamera();
+
+      this._renderWindow.render();
+    },
+
+    ClearScene : function()
+    {
+      var i = this._actors.length;
+      while(i--) {
+        this._renderer.removeActor(this._actors[i]);
+      }
+      this._renderWindow.render();
+    }
   }
 });
