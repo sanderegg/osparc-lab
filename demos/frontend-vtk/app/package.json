@@ -19,6 +19,9 @@
     "vtk.js": "^5.15.8"
   },
   "devDependencies": {
-    "kw-web-suite": "^5.0.1"
+    "image-webpack-loader": "^4.0.0",
+    "kw-web-suite": "^5.0.1",
+    "style-loaders": "^1.0.0",
+    "webpack-css-loaders": "^1.0.0"
   }
 }

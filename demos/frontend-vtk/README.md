@@ -22,3 +22,4 @@
 
 ## Dev notes
  - Followed wiki on [Using vtk.js as an ES6 dependency](https://kitware.github.io/vtk-js/docs/intro_vtk_as_es6_dependency.html)
+ - Followed example of [GeometryViewer](https://kitware.github.io/vtk-js/examples/GeometryViewer.html)

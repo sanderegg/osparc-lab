@@ -14,6 +14,7 @@ WORKDIR /home/node/app/
 # Copy all local (but the ones in .dockerignore) files into the image.
 COPY . .
 #install the necessary dependencies
+RUN apt-get update && apt-get install nasm
 RUN npm install
 # build the webpack server
 RUN npm run build
