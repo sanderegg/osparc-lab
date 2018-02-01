@@ -139,29 +139,29 @@
     {
       this._addSphere(1, 0, 0, 0);
 
-      var that = this;
-      var modelsToLoad = ["resource/models/bunny.vtk"];
-      modelsToLoad.push("resource/models/head.vtp");
-      //modelsToLoad.push("resource/models/Head_Real.vtp");
-      //modelsToLoad.push("resource/models/head.vtk");
-      //modelsToLoad.push("resource/models/Head_ASCII.vtk");
-      //modelsToLoad.push("resource/models/HeadXMLFormat.vtr");
-      //modelsToLoad.push("resource/models/HeadXMLFormat_bin.vtp");
-      for (var i = 0; i < modelsToLoad.length; i++) {
-        var loader = new THREE.VTKLoader();
-        loader.load( modelsToLoad[i], function ( geometry ) {
-          geometry.center();
-          geometry.computeVertexNormals();
+      this.LoadVtkModel("bunny.vtk");
+      this.LoadVtkModel("Head.vtp");
+    },
 
-          var material = new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
-          var mesh = new THREE.Mesh( geometry, material );
-          //mesh.position.set( - 0.075, 0.005, 0 );
-          mesh.scale.multiplyScalar( 8 );
-          that._scene.add(mesh);
-          that._meshes.push(mesh);
-          that._render();
-        }, that);
-      }
+    LoadVtkModel : function(modelPath)
+    {
+      var that = this;
+      var modelToLoad = "resource/models/" + modelPath;
+      console.log(modelPath);
+      console.log(modelToLoad);
+      var loader = new THREE.VTKLoader();
+      loader.load( modelToLoad, function ( geometry ) {
+        geometry.center();
+        geometry.computeVertexNormals();
+
+        var material = new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
+        var mesh = new THREE.Mesh( geometry, material );
+        //mesh.position.set( - 0.075, 0.005, 0 );
+        mesh.scale.multiplyScalar( 8 );
+        that._scene.add(mesh);
+        that._meshes.push(mesh);
+        that._render();
+      }, that);
     },
 
     ClearScene : function()
