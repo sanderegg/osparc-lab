@@ -55,6 +55,37 @@ qx.Class.define("app.Application",
 
       this._tableView = new app.ui.TableView(halfWidth, halfHeight - 5, nCols);
       this._chartView = new app.ui.ChartView(halfWidth, halfHeight - 5);
+
+
+      var enumOpts = [""];
+      enumOpts.push("Clear scene");
+      enumOpts.push("Default");
+      enumOpts.push("sphere.vtk");
+      enumOpts.push("bunny.vtk");
+      enumOpts.push("bunny2.vtk");
+      enumOpts.push("bunny_vol.vtk");
+      enumOpts.push("Head.vtp");
+      var model = new qx.data.Array();
+      for (var i = 0; i < enumOpts.length; i++) {
+        model.push(enumOpts[i]);
+      }
+
+      var selectBox = new qx.ui.form.VirtualSelectBox(model);
+      selectBox.getSelection().addListener("change", function(e) {
+        if (selectBox.getSelection().getItem(0) === "") {
+          console.log("Empty");
+        } else if (selectBox.getSelection().getItem(0) === "Clear scene") {
+          this._threeDView.ClearScene();
+          this._vtkView.ClearScene();
+        } else if (selectBox.getSelection().getItem(0) === "Default") {
+          this._threeDView.LoadDefault();
+          this._vtkView.LoadDefault();
+        } else {
+          this._threeDView.LoadVtkModel(selectBox.getSelection().getItem(0));
+          this._vtkView.LoadVtkModel(selectBox.getSelection().getItem(0));
+        }
+      }, this);
+
       this._threeDView = new app.ui.ThreeDView(halfWidth, halfHeight - 5);
       this._vtkView = new app.ui.VTKView(halfWidth, halfHeight - 5);
 
@@ -65,9 +96,11 @@ qx.Class.define("app.Application",
 
       doc.add(btn, {top: 0});
       doc.add(this._tableView, {top: 30});
-      doc.add(this._chartView, {top: halfHeight + 20});
-      doc.add(this._threeDView, {top: 0, left: halfWidth});
-      doc.add(this._vtkView, {top: halfHeight, left: halfWidth});
+      doc.add(this._chartView, {top: halfHeight + 30});
+
+      doc.add(selectBox, {top: 0, left: halfWidth});
+      doc.add(this._threeDView, {top: 30, left: halfWidth});
+      doc.add(this._vtkView, {top: halfHeight + 30, left: halfWidth});
     },
 
     _createRandomData : function(nCols, nRows)
@@ -76,7 +109,6 @@ qx.Class.define("app.Application",
       var rowData = this._createRandomRows(nCols, nRows);
       this._tableView.setData(colData, rowData);
       this._chartView.setData(colData, rowData);
-      this._threeDView.setData(colData, rowData);
     },
 
     _createRandomCols : function(nCols)

@@ -4,6 +4,7 @@
  */
  qx.Class.define("app.ui.VTKView",
 {
+  // Latest vtk.js: https://unpkg.com/vtk.js
   extend: qx.ui.container.Composite,
 
   construct : function(width, height)
@@ -101,6 +102,99 @@
       this._renderer.resetCamera();
 
       this._renderWindow.render();
+    },
+
+    LoadVtkModel : function(modelPath)
+    {
+      var modelToLoad = "resource/models/" + modelPath;
+      var extension = modelToLoad.slice(-3);
+
+      if (extension === "vtk") {
+        this._loadLegacyVTKModel(modelToLoad);
+      } else {
+        this._loadXMLVTKModel(modelToLoad);
+      }
+    },
+
+    _loadLegacyVTKModel : function(modelToLoad)
+    {
+      var that = this;
+      const reader = vtk.IO.Legacy.vtkPolyDataReader.newInstance();
+      reader.setUrl(modelToLoad).then(() => {
+        console.log(reader.getUrl());
+        const polydata = reader.getOutputData(0);
+        const mapper = vtk.Rendering.Core.vtkMapper.newInstance();
+        const actor = vtk.Rendering.Core.vtkActor.newInstance();
+
+        mapper.setInputData(polydata);
+        actor.setMapper(mapper);
+
+        that._actors.push(actor);
+        that._renderer.addActor(actor);
+
+        that._renderer.resetCamera();
+        that._renderWindow.render();
+      }, that);
+    },
+
+    _loadXMLVTKModel : function(modelToLoad)
+    {
+      var that = this;
+      const reader = vtk.IO.XML.vtkXMLPolyDataReader.newInstance();
+      reader.setUrl(modelToLoad).then(() => {
+        console.log(reader.getUrl());
+        const source = reader.getOutputData(0);
+
+        const lookupTable = vtk.Rendering.Core.vtkColorTransferFunction.newInstance();
+        const mapper = vtk.Rendering.Core.vtkMapper.newInstance({
+          interpolateScalarsBeforeMapping: false,
+          useLookupTableScalarRange: true,
+          lookupTable,
+          scalarVisibility: false,
+        });
+        const actor = vtk.Rendering.Core.vtkActor.newInstance();
+        //const scalars = source.getPointData().getScalars();
+        //const dataRange = [].concat(scalars ? scalars.getRange() : [0, 1]);
+
+        mapper.setInputData(source);
+
+        actor.setMapper(mapper);
+
+        that._actors.push(actor);
+        that._renderer.addActor(actor);
+
+        that._renderer.resetCamera();
+        that._renderWindow.render();
+      }, that);
+
+      /*
+      // VTK pipeline
+      const reader = vtk.IO.XML.vtkXMLPolyDataReader.newInstance();
+      console.log(reader);
+      reader.parseArrayBuffer(modelToLoad);
+
+      const source = reader.getOutputData(0);
+
+      const lookupTable = vtkColorTransferFunction.newInstance();
+      const mapper = vtkMapper.newInstance({
+        interpolateScalarsBeforeMapping: false,
+        useLookupTableScalarRange: true,
+        lookupTable,
+        scalarVisibility: false,
+      });
+      const actor = vtkActor.newInstance();
+      const scalars = source.getPointData().getScalars();
+      const dataRange = [].concat(scalars ? scalars.getRange() : [0, 1]);
+
+      mapper.setInputData(source);
+      actor.setMapper(mapper);
+
+      this._actors.push(actor);
+      this._renderer.addActor(actor);
+
+      this._renderer.resetCamera();
+      this._renderWindow.render();
+      */
     },
 
     ClearScene : function()
