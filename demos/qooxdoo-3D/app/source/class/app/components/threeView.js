@@ -33,10 +33,12 @@
     // initialize the script loading
     var three_path = "resource/three/three.min.js";
     var orbit_path = "resource/three/OrbitControls.js";
+    var transform_path = "resource/three/TransformControls.js";
     var vtk_loader_path = "resource/three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
       three_path,
       orbit_path,
+      transform_path,
       vtk_loader_path
     ]);
 
@@ -82,6 +84,11 @@
         this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
         this._orbitControls.update();
 
+        this._transformControls = new THREE.TransformControls(this._camera, this._renderer.domElement);
+        this._transformControls.addEventListener('change', this._updateTransformControls.bind(this));
+        this._transformControls.setMode("translate");
+        this._scene.add(this._transformControls);
+
         this.LoadDefault();
 
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
@@ -110,6 +117,7 @@
     _raycaster: null,
     _renderer: null,
     _orbitControls: null,
+    _transformControls: null,
     _mouse: null,
     _meshes: [],
     _intersected: null,
@@ -124,36 +132,34 @@
       this._render();
     },
 
-    LoadDefault : function()
+    _updateTransformControls : function()
     {
-      this._addSphere(1, 0, 0, 0);
-    },
-
-    ClearScene : function()
-    {
-      var i = this._meshes.length;
-      while(i--) {
-        this._scene.remove(this._meshes[i]);
-      }
+      this._transformControls.update();
       this._render();
     },
 
-    _addSphere : function(scale=1, transX=0, transY=0, transZ=0)
+    LoadDefault : function()
+    {
+      this.AddSphere(1, 0, 0, 0);
+    },
+
+    AddSphere : function(scale=1, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.SphereGeometry(scale, 32, 16);
       geometry.translate(transX, transY, transZ);
 
       // mesh
       var material = new THREE.MeshPhongMaterial({
-        color: 0xFF0000,
+        color: qx.util.ColorUtil.randomColor(),
         polygonOffset: true,
-        polygonOffsetFactor: 1, // positive value pushes polygon further away
+        polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
       });
       material.vertexColors = THREE.FaceColors;
 
       var mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Default mesh";
+      this._transformControls.attach(mesh);
 
       this._scene.add(mesh);
       this._meshes.push(mesh);
