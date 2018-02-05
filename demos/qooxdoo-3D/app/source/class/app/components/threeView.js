@@ -85,7 +85,7 @@
         this.LoadDefault();
 
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
-        
+
         this._render();
       }, this);
 
@@ -171,10 +171,8 @@
     },
 
     _onDocumentMouseDown : function( event ) {
-      console.log("on");
       event.preventDefault();
 
-      const baseColor = 0xFFFFFF;
       const highlightedColor = 0x000000;
 
       this._mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -185,15 +183,16 @@
       if (intersects.length > 0)
       {
         if(this._intersected != null) {
-          this._intersected.face.color.setHex(baseColor);
+          this._intersected.face.color.setHex(this._intersected.currentHex);
         }
         this._intersected = intersects[0];
+        this._intersected.currentHex = this._intersected.face.color.getHex();
         this._intersected.face.color.setHex(highlightedColor);
         this._intersected.object.geometry.__dirtyColors = true;
         this._intersected.object.geometry.colorsNeedUpdate = true;
       } else {
     		if (this._intersected) {
-    			this._intersected.face.color.setHex(baseColor);
+          this._intersected.face.color.setHex(this._intersected.currentHex);
           this._intersected.object.geometry.__dirtyColors = true;
     			this._intersected.object.geometry.colorsNeedUpdate = true;
     		}
