@@ -84,13 +84,6 @@
         this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
         this._orbitControls.update();
 
-        this._transformControls = new THREE.TransformControls(this._camera, this._renderer.domElement);
-        this._transformControls.addEventListener('change', this._updateTransformControls.bind(this));
-        this._transformControls.setMode("translate");
-        this._scene.add(this._transformControls);
-
-        this.LoadDefault();
-
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
 
         this._render();
@@ -117,7 +110,7 @@
     _raycaster: null,
     _renderer: null,
     _orbitControls: null,
-    _transformControls: null,
+    _transformControls: [],
     _mouse: null,
     _meshes: [],
     _intersected: null,
@@ -134,7 +127,9 @@
 
     _updateTransformControls : function()
     {
-      this._transformControls.update();
+      for (var i = 0; i < this._transformControls.length; i++) {
+        this._transformControls[i].update();
+      }
       this._render();
     },
 
@@ -159,7 +154,14 @@
 
       var mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Default mesh";
-      this._transformControls.attach(mesh);
+
+      var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
+      transformControl.addEventListener('change', this._updateTransformControls.bind(this));
+      transformControl.setMode("translate");
+      transformControl.attach(mesh);
+      this._transformControls.push(transformControl);
+
+      this._scene.add(transformControl);
 
       this._scene.add(mesh);
       this._meshes.push(mesh);
@@ -174,6 +176,8 @@
       mesh.add( wireframe );
 
       this._render();
+
+      return mesh;
     },
 
     _onDocumentMouseDown : function( event ) {
