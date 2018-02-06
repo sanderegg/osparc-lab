@@ -67,9 +67,11 @@
       this._scene.add(pointLight2);
 
       // grid
-      var size = 20;
-      var divisions = 20;
-      var gridHelper = new THREE.GridHelper( size, divisions );
+      const grid_size = 20;
+      const grid_divisions = 20;
+      const center_line = new THREE.Color(0x666666);
+      const grid_color = new THREE.Color(0x555555);
+      var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line, grid_color );
       this._scene.add(gridHelper);
 
       // axes
