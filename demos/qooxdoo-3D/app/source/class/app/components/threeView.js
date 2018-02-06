@@ -65,6 +65,11 @@
       pointLight2.position.z = -40;
       this._scene.add(pointLight2);
 
+      var size = 20;
+      var divisions = 20;
+      var gridHelper = new THREE.GridHelper( size, divisions );
+      this._scene.add(gridHelper);
+
       this._mouse = new THREE.Vector2();
       this._raycaster = new THREE.Raycaster();
 
