@@ -2,7 +2,7 @@ qx.Class.define("app.components.objectList",
 {
   extend: qx.ui.window.Window,
 
-  construct : function(left, top, width, height)
+  construct : function(width, height, backgroundColor, fontColor)
   {
     this.base(arguments, "Object List");
 
@@ -12,17 +12,21 @@ qx.Class.define("app.components.objectList",
       height: height,
       allowClose: false,
       allowMinimize: false,
-      //layout: new qx.ui.layout.Grow()
-      layout: new qx.ui.layout.VBox()
+      layout: new qx.ui.layout.VBox(),
+      backgroundColor: backgroundColor,
+      textColor: fontColor
     });
 
     var scroller = new qx.ui.container.Scroll();
     this.add(scroller);
     this.setHeight(height-30);
 
-
     // create and add the tree
     this._tree = new qx.ui.tree.Tree();
+    this._tree.set({
+      backgroundColor: backgroundColor,
+      textColor: fontColor
+    });
     this._tree.setSelectionMode("single");
     this._tree.setWidth(width);
     this._tree.setHeight(height);
@@ -32,14 +36,15 @@ qx.Class.define("app.components.objectList",
     this._tree.setRoot(root);
 
     var remove_button = new qx.ui.form.Button("Remove object");
-    remove_button.setWidth(100);
-    remove_button.setHeight(30);
+    remove_button.set({
+      width: 100,
+      height: 30,
+      textColor: 'black'
+    });
     remove_button.addListener("execute", this.RemoveObject.bind(this));
 
     scroller.add(this._tree);
     this.add(remove_button);
-
-    this.moveTo(left, top);
   },
 
   members: {

@@ -8,7 +8,7 @@
 {
   extend: qx.ui.container.Composite,
 
-  construct : function(width, height)
+  construct : function(width, height, backgroundColor)
   {
     this.base(arguments);
     this.set({
@@ -47,10 +47,11 @@
       this.setLibReady(true);
 
       this._scene = new THREE.Scene();
-      this._scene.background = new THREE.Color(0xEEEEEE);
+      this._scene.background = new THREE.Color(backgroundColor);
 
       this._camera = new THREE.PerspectiveCamera();
-      this._camera.position.z = 20;
+      this._camera.position.x = 18;
+      this._camera.position.z = 25;
       this._scene.add(this._camera);
 
       var pointLight = new THREE.PointLight(0xBBBBBB);

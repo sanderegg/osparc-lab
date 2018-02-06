@@ -63,31 +63,60 @@ qx.Class.define("app.Application",
       var docWidth = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
       var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
 
-      this._threeView = new app.components.threeView(docWidth, docHeight);
-      this._objectList = new app.components.objectList(10, 60, 300, 400);
+      this._initialStore = qx.data.marshal.Json.createModel(this._getInitialStore());
+
+      const menuBarHeight = 35;
+      const avaiBarHeight = 55;
+
+      this._threeView = new app.components.threeView(
+        docWidth, docHeight,
+        this._initialStore.get3DView().getBackground());
+
+      var toolBarcontainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(1)).set({
+        backgroundColor: "white",
+        allowGrowY: false
+      });
+
+      this._menuBar = new app.components.menuBar(
+        docWidth, menuBarHeight,
+        this._initialStore.getMenuBar().getBackground(), this._initialStore.getMenuBar().getFont());
+
+      this._availableServicesBar = new app.components.availableServices(
+        docWidth, avaiBarHeight,
+        this._initialStore.getToolBar().getBackground(), this._initialStore.getToolBar().getFont());
+
+      toolBarcontainer.add(this._menuBar);
+      toolBarcontainer.add(this._availableServicesBar);
+
+      this._objectList = new app.components.objectList(
+        250, 300,
+        this._initialStore.getSettingsView().getBackground(), this._initialStore.getSettingsView().getFont());
 
       doc.add(this._threeView);
-      doc.add(this._getMenuBar());
+      doc.add(toolBarcontainer);
+      this._objectList.moveTo(10, menuBarHeight + avaiBarHeight + 10);
       this._objectList.open();
     },
 
-    _getMenuBar : function(width, height)
-    {
-      var frame = new qx.ui.container.Composite(new qx.ui.layout.Grow);
-      frame.setDecorator("main");
-
-      var toolbar = new qx.ui.toolbar.ToolBar;
-      frame.add(toolbar);
-
-      var menuPart = new qx.ui.toolbar.Part;
-      toolbar.add(menuPart);
-
-      var sphere_btn = new qx.ui.toolbar.Button("Add Sphere");
-      sphere_btn.addListener("execute", this._addSphere.bind(this));
-
-      menuPart.add(sphere_btn);
-
-      return frame;
+    _getInitialStore : function() {
+      var myInitialStore = {
+        "MenuBar": {
+          "Background": "#535353", // 83, 83, 83
+          "Font": "#FFFFFF", // 255, 255, 255
+        },
+        "ToolBar": {
+          "Background": "#252526", // 37, 37, 38
+          "Font": "#FFFFFF", // 255, 255, 255
+        },
+        "SettingsView": {
+          "Background": "#252526", // 37, 37, 38
+          "Font": "#FFFFFF", // 255, 255, 255
+        },
+        "3DView": {
+          "Background": "#3F3F3F", // 63, 63, 63
+        },
+      };
+      return myInitialStore;
     },
 
     _addSphere : function()
