@@ -23,6 +23,11 @@ qx.Class.define("app.components.availableServices",
     this.add(bar);
   },
 
+  events : {
+    "newSphereRequested": "qx.event.type.Event",
+    "newBlockRequested": "qx.event.type.Event"
+  },
+
   members: {
     _menubar: null,
 
@@ -41,11 +46,23 @@ qx.Class.define("app.components.availableServices",
       toolbar.add(menuPart);
 
       var sphere_btn = new qx.ui.toolbar.Button("Add Sphere");
-      //sphere_btn.addListener("execute", this._addSphere.bind(this));
+      sphere_btn.addListener("execute", this._onAddSphereRequested.bind(this));
+
+      var block_btn = new qx.ui.toolbar.Button("Add Block");
+      block_btn.addListener("execute", this._onAddBlockRequested.bind(this));
 
       menuPart.add(sphere_btn);
+      menuPart.add(block_btn);
 
       return frame;
-    }
+    },
+
+    _onAddSphereRequested: function() {
+      this.fireDataEvent("newSphereRequested");
+    },
+
+    _onAddBlockRequested: function() {
+      this.fireDataEvent("newBlockRequested");
+    },
   }
 });

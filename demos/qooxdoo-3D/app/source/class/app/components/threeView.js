@@ -151,7 +151,7 @@
       this.AddSphere(1, 0, 0, 0);
     },
 
-    AddSphere : function(scale=1, transX=0, transY=0, transZ=0)
+    AddSphere : function(name="Sphere", scale=1, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.SphereGeometry(scale, 32, 16);
       geometry.translate(transX, transY, transZ);
@@ -166,7 +166,49 @@
       material.vertexColors = THREE.FaceColors;
 
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.name = "Default mesh";
+      mesh.name = "Sphere";
+
+      var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
+      transformControl.addEventListener('change', this._updateTransformControls.bind(this));
+      transformControl.setMode("translate");
+      transformControl.attach(mesh);
+      this._transformControls.push(transformControl);
+
+      this._scene.add(transformControl);
+
+      this._scene.add(mesh);
+      this._meshes.push(mesh);
+
+      // wireframe
+      var geo = new THREE.WireframeGeometry( mesh.geometry );
+      var mat = new THREE.LineBasicMaterial({
+        color: 0x000000,
+        linewidth: 1
+      });
+      var wireframe = new THREE.LineSegments( geo, mat );
+      mesh.add( wireframe );
+
+      this._render();
+
+      return mesh;
+    },
+
+    AddBlock : function(name="Block", scale=1, transX=0, transY=0, transZ=0)
+    {
+      var geometry = new THREE.BoxGeometry(scale, scale, scale, 4, 4, 4);
+      geometry.translate(transX, transY, transZ);
+
+      // mesh
+      var material = new THREE.MeshPhongMaterial({
+        color: qx.util.ColorUtil.randomColor(),
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1
+      });
+      material.vertexColors = THREE.FaceColors;
+
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.name = "Block";
 
       var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
       transformControl.addEventListener('change', this._updateTransformControls.bind(this));
