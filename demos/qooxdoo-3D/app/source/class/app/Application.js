@@ -88,6 +88,10 @@ qx.Class.define("app.Application",
 
 
       // signals
+      this._availableServicesBar.addListener("selectionModeChanged", function(e) {
+        this._threeView.SetSelectionMode(e.getData());
+      }, this);
+
       this._availableServicesBar.addListener("newSphereRequested", function(e) {
         this._addSphere(e.getData());
       }, this);
