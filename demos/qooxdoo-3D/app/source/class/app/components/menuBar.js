@@ -40,13 +40,8 @@ qx.Class.define("app.components.menuBar",
         backgroundColor: backgroundColor
       });
       frame.add(menubar);
-      /*
+
       var fileMenu = new qx.ui.menubar.Button("File", null, this.getFileMenu());
-      var editMenu = new qx.ui.menubar.Button("Edit", null, this.getEditMenu());
-      var viewMenu = new qx.ui.menubar.Button("View", null, this.getViewMenu());
-      var helpMenu = new qx.ui.menubar.Button("Help", null, this.getHelpMenu());
-      */
-      var fileMenu = new qx.ui.menubar.Button("File", null, null);
       var editMenu = new qx.ui.menubar.Button("Edit", null, null);
       var viewMenu = new qx.ui.menubar.Button("View", null, null);
       var helpMenu = new qx.ui.menubar.Button("Help", null, null);
@@ -58,6 +53,21 @@ qx.Class.define("app.components.menuBar",
       }
 
       return frame;
-    }
+    },
+
+    getFileMenu : function()
+    {
+      var fileMenu = new qx.ui.menu.Menu;
+
+      var newButton = new qx.ui.menu.Button("New", null, null);
+      var openButton = new qx.ui.menu.Button("Load", null, null);
+      var saveButton = new qx.ui.menu.Button("Save", null, null);
+
+      fileMenu.add(newButton);
+      fileMenu.add(openButton);
+      fileMenu.add(saveButton);
+
+      return fileMenu;
+    },
   }
 });
