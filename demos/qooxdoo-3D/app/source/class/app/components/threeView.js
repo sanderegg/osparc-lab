@@ -179,15 +179,6 @@
       this._scene.add(mesh);
       this._meshes.push(mesh);
 
-      // wireframe
-      var geo = new THREE.WireframeGeometry( mesh.geometry );
-      var mat = new THREE.LineBasicMaterial({
-        color: 0x000000,
-        linewidth: 1
-      });
-      var wireframe = new THREE.LineSegments( geo, mat );
-      mesh.add( wireframe );
-
       this._render();
 
       return mesh;
@@ -221,18 +212,36 @@
       this._scene.add(mesh);
       this._meshes.push(mesh);
 
-      // wireframe
-      var geo = new THREE.WireframeGeometry( mesh.geometry );
-      var mat = new THREE.LineBasicMaterial({
-        color: 0x000000,
-        linewidth: 1
-      });
-      var wireframe = new THREE.LineSegments( geo, mat );
-      mesh.add( wireframe );
-
       this._render();
 
       return mesh;
+    },
+
+    SetSelectionMode : function( mode ) {
+      this._showEdges(mode === 2);
+    },
+
+    _showEdges : function( show_edges ) {
+      if (show_edges) {
+        for (var i = 0; i < this._meshes.length; i++) {
+          var geo = new THREE.WireframeGeometry( this._meshes[i].geometry );
+          var mat = new THREE.LineBasicMaterial({
+            color: 0x000000,
+            linewidth: 1
+          });
+          var wireframe = new THREE.LineSegments( geo, mat );
+          wireframe.name = "wireframe";
+          this._meshes[i].add( wireframe );
+        }
+      } else {
+        for (var i = 0; i < this._meshes.length; i++) {
+          var wireObj = this._meshes[i].getObjectByName("wireframe");
+          if (wireObj) {
+            this._meshes[i].remove(wireObj);
+          }
+        }
+      }
+      this._render();
     },
 
     _onDocumentMouseDown : function( event ) {
