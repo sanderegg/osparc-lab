@@ -26,6 +26,7 @@ qx.Class.define("app.components.availableServices",
   events : {
     "newSphereRequested": "qx.event.type.Event",
     "newBlockRequested": "qx.event.type.Event",
+    "newDodecaRequested": "qx.event.type.Event",
     "selectionModeChanged": "qx.event.type.Data",
     "moveToolRequested": "qx.event.type.Data",
   },
@@ -95,8 +96,12 @@ qx.Class.define("app.components.availableServices",
         var block_btn = new qx.ui.toolbar.Button("Add Block");
         block_btn.addListener("execute", this._onAddBlockRequested.bind(this));
 
+        var dodeca_btn = new qx.ui.toolbar.Button("Add Dodecahedron");
+        dodeca_btn.addListener("execute", this._onAddDodecaRequested.bind(this));
+
         menuPart.add(sphere_btn);
         menuPart.add(block_btn);
+        menuPart.add(dodeca_btn);
       }
 
       return frame;
@@ -112,6 +117,10 @@ qx.Class.define("app.components.availableServices",
 
     _onAddBlockRequested : function() {
       this.fireDataEvent("newBlockRequested");
+    },
+
+    _onAddDodecaRequested : function() {
+      this.fireDataEvent("newDodecaRequested");
     },
 
     _onMoveToolRequested : function() {

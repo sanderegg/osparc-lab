@@ -41,10 +41,14 @@ qx.Class.define("app.components.objectList",
       height: 30,
       textColor: 'black'
     });
-    remove_button.addListener("execute", this.RemoveObject.bind(this));
+    remove_button.addListener("execute", this.RemoveObjectPressed.bind(this));
 
     scroller.add(this._tree);
     this.add(remove_button);
+  },
+
+  events : {
+    "removeObjectRequested": "qx.event.type.Data",
   },
 
   members: {
@@ -57,8 +61,18 @@ qx.Class.define("app.components.objectList",
       this._tree.getRoot().add(newItem);
     },
 
-    RemoveObject : function() {
-      console.log("ToDo", this._tree.getSelection()[0].id);
+    RemoveObject : function(uuid) {
+      for (var i = 0; i < this._tree.getRoot().getChildren().length; i++) {
+        if (this._tree.getRoot().getChildren()[i].id === uuid) {
+          this._tree.getRoot().remove(this._tree.getRoot().getChildren()[i]);
+        }
+      }
+    },
+
+    RemoveObjectPressed : function(uuid) {
+      if (this.GetSelectedObjectId()) {
+        this.fireDataEvent("removeObjectRequested", this.GetSelectedObjectId());
+      }
     },
 
     OnEntitySelectedChanged : function(uuid) {
@@ -75,7 +89,14 @@ qx.Class.define("app.components.objectList",
 
     GetSelectedObject : function() {
       if ( this._tree.getSelection().length > 0 ) {
-        return this._tree.getSelection()[0].id;
+        return this._tree.getSelection()[0];
+      }
+      return null;
+    },
+
+    GetSelectedObjectId : function() {
+      if ( this.GetSelectedObject() ) {
+        return this.GetSelectedObject().id;
       }
       return null;
     },

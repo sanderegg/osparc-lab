@@ -140,15 +140,14 @@ qx.Class.define("app.Application",
         this._addBlock(e.getData());
       }, this);
 
-      this._threeView.addListener("entitySelected", function(e) {
-        this._availableServicesBar.OnEntitySelectedChanged(e.getData());
-        this._objectList.OnEntitySelectedChanged(e.getData());
+      this._availableServicesBar.addListener("newDodecaRequested", function(e) {
+        this._addDodeca(e.getData());
       }, this);
 
       this._availableServicesBar.addListener("moveToolRequested", function(e) {
         this._threeView.SetSelectionMode(0);
         if (e.getData()) {
-          var selObjId = this._objectList.GetSelectedObject();
+          var selObjId = this._objectList.GetSelectedObjectId();
           if (selObjId) {
             this._threeView.StartMoveTool(selObjId);
           } else {
@@ -158,18 +157,34 @@ qx.Class.define("app.Application",
           this._threeView.StopMoveTool();
         }
       }, this);
+
+      this._objectList.addListener("removeObjectRequested", function(e) {
+        if (this._threeView.RemoveObject(e.getData()));
+          this._objectList.RemoveObject(e.getData());
+      }, this);
+
+      this._threeView.addListener("entitySelected", function(e) {
+        this._availableServicesBar.OnEntitySelectedChanged(e.getData());
+        this._objectList.OnEntitySelectedChanged(e.getData());
+      }, this);
     },
 
     _addSphere : function()
     {
-      var mesh = this._threeView.AddSphere("Sphere", 3);
+      var mesh = this._threeView.AddObject("Sphere", 3);
       this._objectList.AddObject(mesh.uuid, mesh.name);
     },
 
     _addBlock : function()
     {
-      var mesh = this._threeView.AddBlock("Block", 3);
+      var mesh = this._threeView.AddObject("Box", 3);
       this._objectList.AddObject(mesh.uuid, mesh.name);
-    }
+    },
+
+    _addDodeca : function()
+    {
+      var mesh = this._threeView.AddObject("Dodecahedron", 3);
+      this._objectList.AddObject(mesh.uuid, mesh.name);
+    },
   }
 });

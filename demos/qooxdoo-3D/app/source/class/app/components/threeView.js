@@ -213,54 +213,86 @@
       this.AddSphere(1, 0, 0, 0);
     },
 
-    AddSphere : function(name="Sphere", scale=1, transX=0, transY=0, transZ=0)
+    AddObject : function(objType = "Sphere", scale = 1)
+    {
+      var geometry;
+
+      switch (objType) {
+        case "Sphere":
+          geometry = this.AddSphere(scale);
+          break;
+        case "Box":
+          geometry = this.AddBox(scale);
+          break;
+        case "Dodecahedron":
+          geometry = this.AddDodecahedron(scale);
+          break;
+        default:
+          break;
+      }
+
+      if (geometry) {
+        // mesh
+        var material = new THREE.MeshPhongMaterial({
+          color: qx.util.ColorUtil.randomColor(),
+          polygonOffset: true,
+          polygonOffsetFactor: 1,
+          polygonOffsetUnits: 1
+        });
+        material.vertexColors = THREE.FaceColors;
+
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.name = objType;
+
+        this._scene.add(mesh);
+        this._meshes.push(mesh);
+
+        this._render();
+
+        return mesh;
+      } else {
+        console.log(name, " not implemented yet");
+      }
+    },
+
+    AddSphere : function(scale=3, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.SphereGeometry(scale, 32, 16);
       geometry.translate(transX, transY, transZ);
-
-      // mesh
-      var material = new THREE.MeshPhongMaterial({
-        color: qx.util.ColorUtil.randomColor(),
-        polygonOffset: true,
-        polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1
-      });
-      material.vertexColors = THREE.FaceColors;
-
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.name = "Sphere";
-
-      this._scene.add(mesh);
-      this._meshes.push(mesh);
-
-      this._render();
-
-      return mesh;
+      return geometry;
     },
 
-    AddBlock : function(name="Block", scale=1, transX=0, transY=0, transZ=0)
+    AddBox : function(scale=3, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.BoxGeometry(scale, scale, scale, 4, 4, 4);
       geometry.translate(transX, transY, transZ);
+      return geometry;
+    },
 
-      // mesh
-      var material = new THREE.MeshPhongMaterial({
-        color: qx.util.ColorUtil.randomColor(),
-        polygonOffset: true,
-        polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1
-      });
-      material.vertexColors = THREE.FaceColors;
+    AddDodecahedron : function(scale=3, transX=0, transY=0, transZ=0)
+    {
+      var geometry = new THREE.DodecahedronGeometry(scale);
+      geometry.translate(transX, transY, transZ);
+      return geometry;
+    },
 
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.name = "Block";
+    RemoveObject : function(uuid)
+    {
+      for (var i = 0; i < this._scene.children.length; i++) {
+        if (this._scene.children[i].uuid === uuid) {
+          this._scene.remove(this._scene.children[i]);
+          break;
+        }
+      }
 
-      this._scene.add(mesh);
-      this._meshes.push(mesh);
+      for (var i = 0; i < this._meshes.length; i++) {
+        if (this._meshes[i].uuid === uuid) {
+          this._scene.remove(this._meshes[i]);
+          break;
+        }
+      }
 
       this._render();
-
-      return mesh;
     },
 
     StartMoveTool : function( selObjId ) {
