@@ -27,6 +27,7 @@ qx.Class.define("app.components.availableServices",
     "newSphereRequested": "qx.event.type.Event",
     "newBlockRequested": "qx.event.type.Event",
     "selectionModeChanged": "qx.event.type.Data",
+    "moveToolRequested": "qx.event.type.Event",
   },
 
   members: {
@@ -78,8 +79,8 @@ qx.Class.define("app.components.availableServices",
         toolbar.add(menuPart);
 
         this._moveBtn = new qx.ui.toolbar.Button("Move");
-        this._moveBtn.setEnabled(false);
-        this._moveBtn.addListener("execute", this._onAddSphereRequested.bind(this));
+        //this._moveBtn.setEnabled(false);
+        this._moveBtn.addListener("execute", this._onMoveToolRequested.bind(this));
 
         menuPart.add(this._moveBtn);
       }
@@ -103,11 +104,7 @@ qx.Class.define("app.components.availableServices",
     },
 
     OnEntitySelectedChanged : function(uuid) {
-      this._moveBtn.setEnabled(uuid !== null);
-    },
-
-    _onSelectionModeChanged : function() {
-      this.fireDataEvent("newSphereRequested");
+      //this._moveBtn.setEnabled(uuid !== null);
     },
 
     _onAddSphereRequested : function() {
@@ -116,6 +113,10 @@ qx.Class.define("app.components.availableServices",
 
     _onAddBlockRequested : function() {
       this.fireDataEvent("newBlockRequested");
+    },
+
+    _onMoveToolRequested : function() {
+      this.fireDataEvent("moveToolRequested");
     },
   }
 });

@@ -144,6 +144,11 @@ qx.Class.define("app.Application",
         this._availableServicesBar.OnEntitySelectedChanged(e.getData());
         this._objectList.OnEntitySelectedChanged(e.getData());
       }, this);
+
+      this._availableServicesBar.addListener("moveToolRequested", function(e) {
+        var selObjId = this._objectList.GetSelectedObject();
+        this._threeView.AddMoveTool(selObjId);
+      }, this);
     },
 
     _addSphere : function()

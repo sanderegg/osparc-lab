@@ -69,8 +69,15 @@ qx.Class.define("app.components.objectList",
           if (this._tree.getRoot().getChildren()[i].id === uuid) {
             this._tree.setSelection([this._tree.getRoot().getChildren()[i]]);
           }
-        }  
+        }
       }
+    },
+
+    GetSelectedObject : function() {
+      if ( this._tree.getSelection().length > 0 ) {
+        return this._tree.getSelection()[0].id;
+      }
+      return null;
     },
   }
 });
