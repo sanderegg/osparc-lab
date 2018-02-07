@@ -146,8 +146,17 @@ qx.Class.define("app.Application",
       }, this);
 
       this._availableServicesBar.addListener("moveToolRequested", function(e) {
-        var selObjId = this._objectList.GetSelectedObject();
-        this._threeView.AddMoveTool(selObjId);
+        this._threeView.SetSelectionMode(0);
+        if (e.getData()) {
+          var selObjId = this._objectList.GetSelectedObject();
+          if (selObjId) {
+            this._threeView.StartMoveTool(selObjId);
+          } else {
+            this._availableServicesBar._moveBtn.setValue(false);
+          }
+        } else {
+          this._threeView.StopMoveTool();
+        }
       }, this);
     },
 

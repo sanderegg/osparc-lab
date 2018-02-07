@@ -27,7 +27,7 @@ qx.Class.define("app.components.availableServices",
     "newSphereRequested": "qx.event.type.Event",
     "newBlockRequested": "qx.event.type.Event",
     "selectionModeChanged": "qx.event.type.Data",
-    "moveToolRequested": "qx.event.type.Event",
+    "moveToolRequested": "qx.event.type.Data",
   },
 
   members: {
@@ -78,8 +78,7 @@ qx.Class.define("app.components.availableServices",
         var menuPart = new qx.ui.toolbar.Part;
         toolbar.add(menuPart);
 
-        this._moveBtn = new qx.ui.toolbar.Button("Move");
-        //this._moveBtn.setEnabled(false);
+        this._moveBtn = new qx.ui.toolbar.CheckBox("Move");
         this._moveBtn.addListener("execute", this._onMoveToolRequested.bind(this));
 
         menuPart.add(this._moveBtn);
@@ -116,7 +115,7 @@ qx.Class.define("app.components.availableServices",
     },
 
     _onMoveToolRequested : function() {
-      this.fireDataEvent("moveToolRequested");
+      this.fireDataEvent("moveToolRequested", this._moveBtn.getValue());
     },
   }
 });

@@ -263,9 +263,9 @@
       return mesh;
     },
 
-    AddMoveTool : function( selObjId ) {
+    StartMoveTool : function( selObjId ) {
       for (var i = 0; i < this._meshes.length; i++) {
-        if (this._meshes[i].uuid = selObjId) {
+        if (this._meshes[i].uuid === selObjId) {
           var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
           transformControl.addEventListener('change', this._updateTransformControls.bind(this));
           transformControl.setMode("translate");
@@ -277,9 +277,22 @@
       this._render();
     },
 
+    StopMoveTool : function() {
+      for (var i = 0; i < this._transformControls.length; i++) {
+        var index = this._scene.children.indexOf(this._transformControls[i]);
+        if (index >= 0) {
+          this._scene.remove(this._scene.children[index]);
+          this._transformControls[i].detach();
+        }
+      }
+      this._transformControls = [];
+      this._render();
+    },
+
     SetSelectionMode : function( mode ) {
       this._showEdges(mode === 2);
       this._selectionMode = mode;
+      this.StopMoveTool();
     },
 
     _showEdges : function( show_edges ) {
