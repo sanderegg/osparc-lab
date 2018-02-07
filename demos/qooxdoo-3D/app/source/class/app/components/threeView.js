@@ -87,11 +87,11 @@
       this._camera.updateProjectionMatrix();
       this._renderer.setSize(this.getWidth(), this.getHeight());
 
-      var widget = new qx.ui.core.Widget();
-      this.add(widget, {flex: 1});
+      this._threeDViewer = new qx.ui.core.Widget();
+      this.add(this._threeDViewer, {flex: 1});
 
-      widget.addListenerOnce('appear', function() {
-        widget.getContentElement().getDomElement().appendChild(this._renderer.domElement);
+      this._threeDViewer.addListenerOnce('appear', function() {
+        this._threeDViewer.getContentElement().getDomElement().appendChild(this._renderer.domElement);
 
         this._orbitControls = new THREE.OrbitControls(this._camera, this._renderer.domElement);
         this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
@@ -148,6 +148,61 @@
       for (var i = 0; i < this._transformControls.length; i++) {
         this._transformControls[i].update();
       }
+      this._render();
+    },
+
+    _onDocumentMouseDown : function( event ) {
+      event.preventDefault();
+      if (this._selectionMode === 0) {
+        //this.fireDataEvent("entitySelected", null);
+        return;
+      }
+
+      const highlightedColor = 0x000000;
+
+      this._mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      this._mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+      this._raycaster.setFromCamera( this._mouse, this._camera );
+      var intersects = this._raycaster.intersectObjects( this._meshes );
+      if (intersects.length > 0)
+      {
+        if(this._intersected != null) {
+          if (this._selectionMode === 1) {
+            this._intersected.object.material.color.setHex(this._intersected.currentHex);
+          } else if (this._selectionMode === 2) {
+            this._intersected.face.color.setHex(this._intersected.currentHex);
+          }
+        }
+        this._intersected = intersects[0];
+
+        if (this._selectionMode === 1) {
+          this.fireDataEvent("entitySelected", this._intersected.object.uuid);
+          this._intersected.currentHex = this._intersected.object.material.color.getHex();
+          this._intersected.object.material.color.setHex(highlightedColor);
+        } else if (this._selectionMode === 2) {
+          this.fireDataEvent("entitySelected", null);
+          this._intersected.currentHex = this._intersected.face.color.getHex();
+          this._intersected.face.color.setHex(highlightedColor);
+        }
+
+        this._intersected.object.geometry.__dirtyColors = true;
+        this._intersected.object.geometry.colorsNeedUpdate = true;
+      } else {
+    		if (this._intersected) {
+          this.fireDataEvent("entitySelected", null);
+          if (this._selectionMode === 1) {
+            this._intersected.object.material.color.setHex(this._intersected.currentHex);
+          } else if (this._selectionMode === 2) {
+            this._intersected.face.color.setHex(this._intersected.currentHex);
+          }
+          this._intersected.object.geometry.__dirtyColors = true;
+          this._intersected.object.geometry.colorsNeedUpdate = true;
+    		}
+    		// remove previous intersection object reference
+    		this._intersected = null;
+      }
+
       this._render();
     },
 
@@ -249,60 +304,5 @@
       }
       this._render();
     },
-
-    _onDocumentMouseDown : function( event ) {
-      event.preventDefault();
-      if (this._selectionMode === 0) {
-        //this.fireDataEvent("entitySelected", null);
-        return;
-      }
-
-      const highlightedColor = 0x000000;
-
-      this._mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      this._mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-      this._raycaster.setFromCamera( this._mouse, this._camera );
-      var intersects = this._raycaster.intersectObjects( this._meshes );
-      if (intersects.length > 0)
-      {
-        if(this._intersected != null) {
-          if (this._selectionMode === 1) {
-            this._intersected.object.material.color.setHex(this._intersected.currentHex);
-          } else if (this._selectionMode === 2) {
-            this._intersected.face.color.setHex(this._intersected.currentHex);
-          }
-        }
-        this._intersected = intersects[0];
-
-        if (this._selectionMode === 1) {
-          this.fireDataEvent("entitySelected", this._intersected.object.uuid);
-          this._intersected.currentHex = this._intersected.object.material.color.getHex();
-          this._intersected.object.material.color.setHex(highlightedColor);
-        } else if (this._selectionMode === 2) {
-          this.fireDataEvent("entitySelected", null);
-          this._intersected.currentHex = this._intersected.face.color.getHex();
-          this._intersected.face.color.setHex(highlightedColor);
-        }
-
-        this._intersected.object.geometry.__dirtyColors = true;
-        this._intersected.object.geometry.colorsNeedUpdate = true;
-      } else {
-    		if (this._intersected) {
-          this.fireDataEvent("entitySelected", null);
-          if (this._selectionMode === 1) {
-            this._intersected.object.material.color.setHex(this._intersected.currentHex);
-          } else if (this._selectionMode === 2) {
-            this._intersected.face.color.setHex(this._intersected.currentHex);
-          }
-          this._intersected.object.geometry.__dirtyColors = true;
-          this._intersected.object.geometry.colorsNeedUpdate = true;
-    		}
-    		// remove previous intersection object reference
-    		this._intersected = null;
-      }
-
-      this._render();
-    }
   }
 });
