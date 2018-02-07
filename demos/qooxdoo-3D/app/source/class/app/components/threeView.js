@@ -116,6 +116,10 @@
     LibReady: { check: "Boolean" }
   },
 
+  events : {
+    "entitySelected": "qx.event.type.Data",
+  },
+
   members: {
     _threeDViewer: null,
     _scene: null,
@@ -127,6 +131,7 @@
     _mouse: null,
     _meshes: [],
     _intersected: null,
+    _selectionMode: 0,
 
     _render : function()
     {
@@ -219,6 +224,7 @@
 
     SetSelectionMode : function( mode ) {
       this._showEdges(mode === 2);
+      this._selectionMode = mode;
     },
 
     _showEdges : function( show_edges ) {
@@ -246,6 +252,10 @@
 
     _onDocumentMouseDown : function( event ) {
       event.preventDefault();
+      if (this._selectionMode === 0) {
+        //this.fireDataEvent("entitySelected", null);
+        return;
+      }
 
       const highlightedColor = 0x000000;
 
@@ -257,22 +267,41 @@
       if (intersects.length > 0)
       {
         if(this._intersected != null) {
-          this._intersected.face.color.setHex(this._intersected.currentHex);
+          if (this._selectionMode === 1) {
+            this._intersected.object.material.color.setHex(this._intersected.currentHex);
+          } else if (this._selectionMode === 2) {
+            this._intersected.face.color.setHex(this._intersected.currentHex);
+          }
         }
         this._intersected = intersects[0];
-        this._intersected.currentHex = this._intersected.face.color.getHex();
-        this._intersected.face.color.setHex(highlightedColor);
+
+        if (this._selectionMode === 1) {
+          this.fireDataEvent("entitySelected", this._intersected.object.uuid);
+          this._intersected.currentHex = this._intersected.object.material.color.getHex();
+          this._intersected.object.material.color.setHex(highlightedColor);
+        } else if (this._selectionMode === 2) {
+          this.fireDataEvent("entitySelected", null);
+          this._intersected.currentHex = this._intersected.face.color.getHex();
+          this._intersected.face.color.setHex(highlightedColor);
+        }
+
         this._intersected.object.geometry.__dirtyColors = true;
         this._intersected.object.geometry.colorsNeedUpdate = true;
       } else {
     		if (this._intersected) {
-          this._intersected.face.color.setHex(this._intersected.currentHex);
+          this.fireDataEvent("entitySelected", null);
+          if (this._selectionMode === 1) {
+            this._intersected.object.material.color.setHex(this._intersected.currentHex);
+          } else if (this._selectionMode === 2) {
+            this._intersected.face.color.setHex(this._intersected.currentHex);
+          }
           this._intersected.object.geometry.__dirtyColors = true;
-    			this._intersected.object.geometry.colorsNeedUpdate = true;
+          this._intersected.object.geometry.colorsNeedUpdate = true;
     		}
     		// remove previous intersection object reference
     		this._intersected = null;
       }
+
       this._render();
     }
   }

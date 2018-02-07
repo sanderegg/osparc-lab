@@ -58,7 +58,19 @@ qx.Class.define("app.components.objectList",
     },
 
     RemoveObject : function() {
-      console.log(this._tree.getSelection()[0].id);
-    }
+      console.log("ToDo", this._tree.getSelection()[0].id);
+    },
+
+    OnEntitySelectedChanged : function(uuid) {
+      if (uuid === null) {
+        this._tree.resetSelection();
+      } else {
+        for (var i = 0; i < this._tree.getRoot().getChildren().length; i++) {
+          if (this._tree.getRoot().getChildren()[i].id === uuid) {
+            this._tree.setSelection([this._tree.getRoot().getChildren()[i]]);
+          }
+        }  
+      }
+    },
   }
 });

@@ -31,6 +31,7 @@ qx.Class.define("app.components.availableServices",
 
   members: {
     _menubar: null,
+    _moveBtn: null,
 
     getAvailableServicesBar : function(width, backgroundColor)
     {
@@ -76,11 +77,11 @@ qx.Class.define("app.components.availableServices",
         var menuPart = new qx.ui.toolbar.Part;
         toolbar.add(menuPart);
 
-        var move_btn = new qx.ui.toolbar.Button("Move");
-        move_btn.setEnabled(false);
-        move_btn.addListener("execute", this._onAddSphereRequested.bind(this));
+        this._moveBtn = new qx.ui.toolbar.Button("Move");
+        this._moveBtn.setEnabled(false);
+        this._moveBtn.addListener("execute", this._onAddSphereRequested.bind(this));
 
-        menuPart.add(move_btn);
+        menuPart.add(this._moveBtn);
       }
 
       // Create standard model
@@ -101,15 +102,19 @@ qx.Class.define("app.components.availableServices",
       return frame;
     },
 
-    _onSelectionModeChanged: function() {
+    OnEntitySelectedChanged : function(uuid) {
+      this._moveBtn.setEnabled(uuid !== null);
+    },
+
+    _onSelectionModeChanged : function() {
       this.fireDataEvent("newSphereRequested");
     },
 
-    _onAddSphereRequested: function() {
+    _onAddSphereRequested : function() {
       this.fireDataEvent("newSphereRequested");
     },
 
-    _onAddBlockRequested: function() {
+    _onAddBlockRequested : function() {
       this.fireDataEvent("newBlockRequested");
     },
   }

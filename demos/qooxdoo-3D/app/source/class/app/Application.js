@@ -100,6 +100,11 @@ qx.Class.define("app.Application",
         this._addBlock(e.getData());
       }, this);
 
+      this._threeView.addListener("entitySelected", function(e) {
+        this._availableServicesBar.OnEntitySelectedChanged(e.getData());
+        this._objectList.OnEntitySelectedChanged(e.getData());
+      }, this);
+
 
       // components to document
       doc.add(this._threeView);
