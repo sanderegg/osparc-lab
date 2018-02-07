@@ -70,10 +70,6 @@ qx.Class.define("app.Application",
       const menuBarHeight = 35;
       const avaiBarHeight = 55;
 
-      this._threeView = new app.components.threeView(
-        docWidth, docHeight,
-        this._initialStore.get3DView().getBackground());
-
       this._menuBar = new app.components.menuBar(
         docWidth, menuBarHeight,
         this._initialStore.getMenuBar().getBackground(), this._initialStore.getMenuBar().getFont());
@@ -82,28 +78,13 @@ qx.Class.define("app.Application",
         docWidth, avaiBarHeight,
         this._initialStore.getToolBar().getBackground(), this._initialStore.getToolBar().getFont());
 
+      this._threeView = new app.components.threeView(
+        docWidth, docHeight,
+        this._initialStore.get3DView().getBackground());
+
       this._objectList = new app.components.objectList(
         250, 300,
         this._initialStore.getSettingsView().getBackground(), this._initialStore.getSettingsView().getFont());
-
-
-      // signals
-      this._availableServicesBar.addListener("selectionModeChanged", function(e) {
-        this._threeView.SetSelectionMode(e.getData());
-      }, this);
-
-      this._availableServicesBar.addListener("newSphereRequested", function(e) {
-        this._addSphere(e.getData());
-      }, this);
-
-      this._availableServicesBar.addListener("newBlockRequested", function(e) {
-        this._addBlock(e.getData());
-      }, this);
-
-      this._threeView.addListener("entitySelected", function(e) {
-        this._availableServicesBar.OnEntitySelectedChanged(e.getData());
-        this._objectList.OnEntitySelectedChanged(e.getData());
-      }, this);
 
 
       // components to document
@@ -115,10 +96,14 @@ qx.Class.define("app.Application",
       });
       toolBarcontainer.add(this._menuBar);
       toolBarcontainer.add(this._availableServicesBar);
+      //toolBarcontainer.add(this._threeView);
       doc.add(toolBarcontainer);
 
       this._objectList.moveTo(10, menuBarHeight + avaiBarHeight + 10);
       this._objectList.open();
+
+
+      this._initSignals();
     },
 
     _getInitialStore : function() {
@@ -140,6 +125,25 @@ qx.Class.define("app.Application",
         },
       };
       return myInitialStore;
+    },
+
+    _initSignals : function() {
+      this._availableServicesBar.addListener("selectionModeChanged", function(e) {
+        this._threeView.SetSelectionMode(e.getData());
+      }, this);
+
+      this._availableServicesBar.addListener("newSphereRequested", function(e) {
+        this._addSphere(e.getData());
+      }, this);
+
+      this._availableServicesBar.addListener("newBlockRequested", function(e) {
+        this._addBlock(e.getData());
+      }, this);
+
+      this._threeView.addListener("entitySelected", function(e) {
+        this._availableServicesBar.OnEntitySelectedChanged(e.getData());
+        this._objectList.OnEntitySelectedChanged(e.getData());
+      }, this);
     },
 
     _addSphere : function()
