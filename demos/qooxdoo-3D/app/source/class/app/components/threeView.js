@@ -153,7 +153,9 @@
 
     _onDocumentMouseDown : function( event ) {
       event.preventDefault();
-      if (this._selectionMode === 0) {
+      if (this._selectionMode === 0 ||
+        //hacky
+        event.target.nodeName != 'CANVAS') {
         //this.fireDataEvent("entitySelected", null);
         return;
       }
@@ -228,14 +230,6 @@
       var mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Sphere";
 
-      var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
-      transformControl.addEventListener('change', this._updateTransformControls.bind(this));
-      transformControl.setMode("translate");
-      transformControl.attach(mesh);
-      this._transformControls.push(transformControl);
-
-      this._scene.add(transformControl);
-
       this._scene.add(mesh);
       this._meshes.push(mesh);
 
@@ -261,20 +255,26 @@
       var mesh = new THREE.Mesh(geometry, material);
       mesh.name = "Block";
 
-      var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
-      transformControl.addEventListener('change', this._updateTransformControls.bind(this));
-      transformControl.setMode("translate");
-      transformControl.attach(mesh);
-      this._transformControls.push(transformControl);
-
-      this._scene.add(transformControl);
-
       this._scene.add(mesh);
       this._meshes.push(mesh);
 
       this._render();
 
       return mesh;
+    },
+
+    AddMoveTool : function( selObjId ) {
+      for (var i = 0; i < this._meshes.length; i++) {
+        if (this._meshes[i].uuid = selObjId) {
+          var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
+          transformControl.addEventListener('change', this._updateTransformControls.bind(this));
+          transformControl.setMode("translate");
+          transformControl.attach(this._meshes[i]);
+          this._transformControls.push(transformControl);
+          this._scene.add(transformControl);
+        }
+      }
+      this._render();
     },
 
     SetSelectionMode : function( mode ) {
