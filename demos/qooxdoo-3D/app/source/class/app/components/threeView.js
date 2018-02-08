@@ -290,7 +290,8 @@
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === uuid) {
           if (i > -1) {
-            this._meshes.splice(i, 1);
+            var el = this._meshes.splice(i, 1);
+            //delete el;
           }
           break;
         }

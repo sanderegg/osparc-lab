@@ -59,7 +59,7 @@ qx.Class.define("app.components.objectList",
     _tree: null,
 
     _onSelectionChanged : function(e) {
-      if (e.getData()[0].id) {
+      if (e.getData().length > 0 && e.getData()[0].id) {
         this.fireDataEvent("selectionChanged", e.getData()[0].id);
       } else {
         this.fireDataEvent("selectionChanged", null);
