@@ -213,6 +213,13 @@
       this.AddSphere(1, 0, 0, 0);
     },
 
+    AddMeshToScene : function(mesh)
+    {
+      this._scene.add(mesh);
+      this._meshes.push(mesh);
+      this._render();
+    },
+
     AddObject : function(objType = "Sphere", scale = 1)
     {
       var geometry;
@@ -246,10 +253,7 @@
         var mesh = new THREE.Mesh(geometry, material);
         mesh.name = objType;
 
-        this._scene.add(mesh);
-        this._meshes.push(mesh);
-
-        this._render();
+        this.AddMeshToScene(mesh);
 
         return mesh;
       } else {
@@ -363,6 +367,7 @@
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === id) {
           this._meshes[i].material.opacity = 0.9;
+          //this.SerializeMeshes();
         }
       }
       this._render();
@@ -390,6 +395,17 @@
         }
       }
       this._render();
+    },
+
+    SerializeMeshes : function()
+    {
+      // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
+      for (var i = 0; i < this._meshes.length; i++) {
+        var serializedMesh = this._meshes[i].toJSON();
+        console.log(serializedMesh);
+        var mesh = new THREE.Mesh(serializedMesh.geometries[0], serializedMesh.materials[0]);
+        this.AddMeshToScene(mesh);
+      }
     },
   }
 });
