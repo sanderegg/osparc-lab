@@ -35,6 +35,8 @@ qx.Class.define("app.components.objectList",
     root.setOpen(true);
     this._tree.setRoot(root);
 
+    this._tree.addListener("changeSelection", this._onSelectionChanged.bind(this));
+
     var remove_button = new qx.ui.form.Button("Remove object");
     remove_button.set({
       width: 100,
@@ -49,16 +51,26 @@ qx.Class.define("app.components.objectList",
 
   events : {
     "removeObjectRequested": "qx.event.type.Data",
+    "selectionChanged": "qx.event.type.Data",
   },
 
   members: {
     _currentList: null,
     _tree: null,
 
+    _onSelectionChanged : function(e) {
+      if (e.getData()[0].id) {
+        this.fireDataEvent("selectionChanged", e.getData()[0].id);
+      } else {
+        this.fireDataEvent("selectionChanged", null);
+      }
+    },
+
     AddObject : function(id, name) {
       var newItem = new qx.ui.tree.TreeFile(name);
       newItem.id = id;
       this._tree.getRoot().add(newItem);
+      this._tree.setSelection([newItem]);
     },
 
     RemoveObject : function(uuid) {

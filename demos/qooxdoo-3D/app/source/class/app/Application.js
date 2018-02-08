@@ -128,45 +128,58 @@ qx.Class.define("app.Application",
     },
 
     _initSignals : function() {
-      this._availableServicesBar.addListener("selectionModeChanged", function(e) {
-        this._threeView.SetSelectionMode(e.getData());
-      }, this);
+      // Services
+      {
+        this._availableServicesBar.addListener("selectionModeChanged", function(e) {
+          this._threeView.SetSelectionMode(e.getData());
+        }, this);
 
-      this._availableServicesBar.addListener("newSphereRequested", function(e) {
-        this._addSphere(e.getData());
-      }, this);
+        this._availableServicesBar.addListener("newSphereRequested", function(e) {
+          this._addSphere(e.getData());
+        }, this);
 
-      this._availableServicesBar.addListener("newBlockRequested", function(e) {
-        this._addBlock(e.getData());
-      }, this);
+        this._availableServicesBar.addListener("newBlockRequested", function(e) {
+          this._addBlock(e.getData());
+        }, this);
 
-      this._availableServicesBar.addListener("newDodecaRequested", function(e) {
-        this._addDodeca(e.getData());
-      }, this);
+        this._availableServicesBar.addListener("newDodecaRequested", function(e) {
+          this._addDodeca(e.getData());
+        }, this);
 
-      this._availableServicesBar.addListener("moveToolRequested", function(e) {
-        this._threeView.SetSelectionMode(0);
-        if (e.getData()) {
-          var selObjId = this._objectList.GetSelectedObjectId();
-          if (selObjId) {
-            this._threeView.StartMoveTool(selObjId);
+        this._availableServicesBar.addListener("moveToolRequested", function(e) {
+          this._threeView.SetSelectionMode(0);
+          if (e.getData()) {
+            var selObjId = this._objectList.GetSelectedObjectId();
+            if (selObjId) {
+              this._threeView.StartMoveTool(selObjId);
+            } else {
+              this._availableServicesBar._moveBtn.setValue(false);
+            }
           } else {
-            this._availableServicesBar._moveBtn.setValue(false);
+            this._threeView.StopMoveTool();
           }
-        } else {
-          this._threeView.StopMoveTool();
-        }
-      }, this);
+        }, this);
+      }
 
-      this._objectList.addListener("removeObjectRequested", function(e) {
-        if (this._threeView.RemoveObject(e.getData()));
-          this._objectList.RemoveObject(e.getData());
-      }, this);
+      // Objects list
+      {
+        this._objectList.addListener("removeObjectRequested", function(e) {
+          if (this._threeView.RemoveObject(e.getData()));
+            this._objectList.RemoveObject(e.getData());
+        }, this);
 
-      this._threeView.addListener("entitySelected", function(e) {
-        this._availableServicesBar.OnEntitySelectedChanged(e.getData());
-        this._objectList.OnEntitySelectedChanged(e.getData());
-      }, this);
+        this._objectList.addListener("selectionChanged", function(e) {
+          this._threeView.HighlightObject(e.getData());
+        }, this);
+      }
+
+      // 3D View
+      {
+        this._threeView.addListener("entitySelected", function(e) {
+          this._availableServicesBar.OnEntitySelectedChanged(e.getData());
+          this._objectList.OnEntitySelectedChanged(e.getData());
+        }, this);
+      }
     },
 
     _addSphere : function()

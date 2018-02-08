@@ -171,7 +171,7 @@
       {
         if(this._intersected != null) {
           if (this._selectionMode === 1) {
-            this._intersected.object.material.color.setHex(this._intersected.currentHex);
+            this._intersected.object.material.opacity = 0.6;
           } else if (this._selectionMode === 2) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }
@@ -181,7 +181,7 @@
         if (this._selectionMode === 1) {
           this.fireDataEvent("entitySelected", this._intersected.object.uuid);
           this._intersected.currentHex = this._intersected.object.material.color.getHex();
-          this._intersected.object.material.color.setHex(highlightedColor);
+          this._intersected.object.material.opacity = 0.9;
         } else if (this._selectionMode === 2) {
           this.fireDataEvent("entitySelected", null);
           this._intersected.currentHex = this._intersected.face.color.getHex();
@@ -194,7 +194,7 @@
     		if (this._intersected) {
           this.fireDataEvent("entitySelected", null);
           if (this._selectionMode === 1) {
-            this._intersected.object.material.color.setHex(this._intersected.currentHex);
+            this._intersected.object.material.opacity = 0.6;
           } else if (this._selectionMode === 2) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }
@@ -237,7 +237,9 @@
           color: qx.util.ColorUtil.randomColor(),
           polygonOffset: true,
           polygonOffsetFactor: 1,
-          polygonOffsetUnits: 1
+          polygonOffsetUnits: 1,
+          transparent: true,
+          opacity: 0.6,
         });
         material.vertexColors = THREE.FaceColors;
 
@@ -287,7 +289,9 @@
 
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === uuid) {
-          this._scene.remove(this._meshes[i]);
+          if (i > -1) {
+            this._meshes.splice(i, 1);
+          }
           break;
         }
       }
@@ -295,7 +299,8 @@
       this._render();
     },
 
-    StartMoveTool : function( selObjId ) {
+    StartMoveTool : function( selObjId )
+    {
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === selObjId) {
           var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
@@ -309,7 +314,8 @@
       this._render();
     },
 
-    StopMoveTool : function() {
+    StopMoveTool : function()
+    {
       for (var i = 0; i < this._transformControls.length; i++) {
         var index = this._scene.children.indexOf(this._transformControls[i]);
         if (index >= 0) {
@@ -321,13 +327,48 @@
       this._render();
     },
 
-    SetSelectionMode : function( mode ) {
-      this._showEdges(mode === 2);
+    SetSelectionMode : function( mode )
+    {
+      if (mode === 2) {
+        this._showEdges(true);
+        this._highlightAll();
+      } else {
+        this._showEdges(false);
+        this._unhighlightAll();
+      }
+
       this._selectionMode = mode;
       this.StopMoveTool();
+      this._render();
     },
 
-    _showEdges : function( show_edges ) {
+    _highlightAll : function()
+    {
+      for (var i = 0; i < this._meshes.length; i++) {
+        this._meshes[i].material.opacity = 0.9;
+      }
+    },
+
+    _unhighlightAll : function()
+    {
+      for (var i = 0; i < this._meshes.length; i++) {
+        this._meshes[i].material.opacity = 0.6;
+      }
+    },
+
+    HighlightObject : function( id )
+    {
+      this._unhighlightAll();
+      for (var i = 0; i < this._meshes.length; i++) {
+        if (this._meshes[i].uuid === id) {
+          this._meshes[i].material.opacity = 0.9;
+        }
+      }
+      this._render();
+    },
+
+    _showEdges : function( show_edges )
+    {
       if (show_edges) {
         for (var i = 0; i < this._meshes.length; i++) {
           var geo = new THREE.WireframeGeometry( this._meshes[i].geometry );
