@@ -135,7 +135,7 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("fileLoadPressed", function(e) {
-          const modelsToLoad = 3;
+          const modelsToLoad = 4;
           for (var i = 0; i < modelsToLoad; i++) {
             this._threeView.LoadMesh('model_'+i.toString()+'.obj');
           }
