@@ -34,11 +34,15 @@
     var three_path = "resource/three/three.min.js";
     var orbit_path = "resource/three/OrbitControls.js";
     var transform_path = "resource/three/TransformControls.js";
+    var loader_path = "resource/three/OBJLoader.js";
+    var exporter_path = "resource/three/OBJExporter.js";
     var vtk_loader_path = "resource/three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
       three_path,
       orbit_path,
       transform_path,
+      loader_path,
+      exporter_path,
       vtk_loader_path
     ]);
 
@@ -119,6 +123,7 @@
   events : {
     "entitySelected": "qx.event.type.Data",
     "entityAdded": "qx.event.type.Data",
+    "entityRemoved": "qx.event.type.Data",
   },
 
   members: {
@@ -284,6 +289,13 @@
       return geometry;
     },
 
+    RemoveAll : function()
+    {
+      for (var i = this._meshes.length-1; i >= 0 ; i--) {
+        this.RemoveObject(this._meshes[i].uuid);
+      }
+    },
+
     RemoveObject : function(uuid)
     {
       for (var i = 0; i < this._scene.children.length; i++) {
@@ -302,6 +314,8 @@
           break;
         }
       }
+
+      this.fireDataEvent("entityRemoved", uuid);
 
       this._render();
     },
@@ -369,7 +383,6 @@
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === id) {
           this._meshes[i].material.opacity = 0.9;
-          //this.SerializeMeshes();
         }
       }
       this._render();
@@ -403,11 +416,64 @@
     {
       // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
       for (var i = 0; i < this._meshes.length; i++) {
-        var serializedMesh = this._meshes[i].toJSON();
-        console.log(serializedMesh);
-        var mesh = new THREE.Mesh(serializedMesh.geometries[0], serializedMesh.materials[0]);
-        this.AddMeshToScene(mesh);
+        //var mesh_copy = this.CloneMesh(this._meshes[i]);
+
+        var exporter = new THREE.OBJExporter();
+        var mesh_to_export = exporter.parse(this._meshes[i]);
+        var mesh_name = 'model_' + i.toString() + '.obj';
+        saveString(mesh_to_export, mesh_name);
+
+        /*
+        var serializedGeometry = this._meshes[i].geometry.toJSON();
+        var serializedMaterial = this._meshes[i].material.toJSON();
+        console.log(serializedGeometry);
+        console.log(serializedMaterial);
+        var jsonLoader = new THREE.JSONLoader();
+        var result1 = jsonLoader.parse(serializedGeometry.data);
+        var result2 = jsonLoader.parse(serializedMaterial.data);
+        var geo_copy = result1.geometry;
+        var mat_copy = result2.material;
+        geo_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
+        mat_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
+        var mesh_copy = new THREE.Mesh(geo_copy, mat_copy);
+        mesh_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
+
+        mesh_copy.traverse(function(child) {
+            if (child instanceof THREE.Mesh) {
+                child.material = mat_copy;
+            }
+        });
+
+        this.AddMeshToScene(mesh_copy);
+        */
       }
+    },
+
+    LoadMesh : function (mesh)
+    {
+      var exported_mesh = new THREE.OBJExporter().parse(mesh);
+      var loader = new THREE.OBJLoader();
+      var that = this;
+      loader.load( 'resource/three/model_0.obj', function (object) {
+        object.traverse( function ( child ) {
+          if ( child instanceof THREE.Mesh ) {
+            //child.material.map = texture;
+            var material = new THREE.MeshPhongMaterial({
+              color: qx.util.ColorUtil.randomColor(),
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1,
+              transparent: true,
+              opacity: 0.6,
+            });
+            material.vertexColors = THREE.FaceColors;
+
+            child.material = material;
+          }
+        });
+        that.AddMeshToScene(object);
+      //}, onProgress, onError );
+      }, that );
     },
   }
 });

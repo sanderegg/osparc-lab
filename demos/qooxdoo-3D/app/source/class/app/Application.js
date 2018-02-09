@@ -131,11 +131,12 @@ qx.Class.define("app.Application",
       // Menu bar
       {
         this._menuBar.addListener("fileNewPressed", function(e) {
-          console.log("fileNewPressed");
+          this._threeView.RemoveAll();
         }, this);
 
         this._menuBar.addListener("fileLoadPressed", function(e) {
           console.log("fileLoadPressed");
+          //this._threeView.SerializeMeshes();
         }, this);
 
         this._menuBar.addListener("fileSavePressed", function(e) {
@@ -143,20 +144,22 @@ qx.Class.define("app.Application",
         }, this);
       }
 
-
       // Services
       {
         this._availableServicesBar.addListener("selectionModeChanged", function(e) {
-          this._threeView.SetSelectionMode(e.getData());
+          var selectionMode = e.getData();
+          this._threeView.SetSelectionMode(selectionMode);
         }, this);
 
         this._availableServicesBar.addListener("newBasicObjectRequested", function(e) {
-          this._addBasicObject(e.getData());
+          var objectTypeName = e.getData();
+          this._threeView.AddObject(objectTypeName, 3);
         }, this);
 
         this._availableServicesBar.addListener("moveToolRequested", function(e) {
           this._threeView.SetSelectionMode(0);
-          if (e.getData()) {
+          var enableMoveTool = e.getData();
+          if (enableMoveTool) {
             var selObjId = this._objectList.GetSelectedObjectId();
             if (selObjId) {
               this._threeView.StartMoveTool(selObjId);
@@ -172,36 +175,36 @@ qx.Class.define("app.Application",
       // Objects list
       {
         this._objectList.addListener("removeObjectRequested", function(e) {
-          if (this._threeView.RemoveObject(e.getData()));
-            this._objectList.RemoveObject(e.getData());
+          var entityId = e.getData();
+          if (this._threeView.RemoveObject(entityId));
+            this._objectList.RemoveObject(entityId);
         }, this);
 
         this._objectList.addListener("selectionChanged", function(e) {
-          this._threeView.HighlightObject(e.getData());
+          var entityId = e.getData();
+          this._threeView.HighlightObject(entityId);
         }, this);
       }
 
       // 3D View
       {
         this._threeView.addListener("entitySelected", function(e) {
-          this._availableServicesBar.OnEntitySelectedChanged(e.getData());
-          this._objectList.OnEntitySelectedChanged(e.getData());
+          var entityId = e.getData();
+          this._availableServicesBar.OnEntitySelectedChanged(entityId);
+          this._objectList.OnEntitySelectedChanged(entityId);
         }, this);
 
         this._threeView.addListener("entityAdded", function(e) {
-          this._objectAdddedTo3DView(e.getData()[0], e.getData()[1]);
+          var entityName = e.getData()[0];
+          var entityId = e.getData()[1];
+          this._objectList.AddObject(entityName, entityId);
+        }, this);
+
+        this._threeView.addListener("entityRemoved", function(e) {
+          var entityId = e.getData();
+          this._objectList.RemoveObject(entityId);
         }, this);
       }
-    },
-
-    _addBasicObject : function(objcetName)
-    {
-      var mesh = this._threeView.AddObject(objcetName, 3);
-    },
-
-    _objectAdddedTo3DView : function(mesh_uuid, mesh_name)
-    {
-      this._objectList.AddObject(mesh_uuid, mesh_name);
     },
   }
 });
