@@ -19,17 +19,17 @@ qx.Class.define("app.components.menuBar",
       height: height
     });
 
-    this.createCommands();
     var bar = this.getMenuBar(width, backgroundColor, fontColor);
     this.add(bar);
   },
 
+  events : {
+    "fileNewPressed": "qx.event.type.Event",
+    "fileLoadPressed": "qx.event.type.Event",
+    "fileSavePressed": "qx.event.type.Event",
+  },
+
   members: {
-
-    createCommands : function()
-    {
-    },
-
     getMenuBar : function(width, backgroundColor, fontColor)
     {
       var frame = new qx.ui.container.Composite(new qx.ui.layout.Grow);
@@ -60,11 +60,23 @@ qx.Class.define("app.components.menuBar",
       var fileMenu = new qx.ui.menu.Menu;
 
       var newButton = new qx.ui.menu.Button("New", null, null);
-      var openButton = new qx.ui.menu.Button("Load", null, null);
+      var loadButton = new qx.ui.menu.Button("Load", null, null);
       var saveButton = new qx.ui.menu.Button("Save", null, null);
 
+      newButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileNewPressed");
+      }, this);
+
+      loadButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileLoadPressed");
+      }, this);
+
+      saveButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileSavePressed");
+      }, this);
+
       fileMenu.add(newButton);
-      fileMenu.add(openButton);
+      fileMenu.add(loadButton);
       fileMenu.add(saveButton);
 
       return fileMenu;

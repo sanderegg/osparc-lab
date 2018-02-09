@@ -128,6 +128,22 @@ qx.Class.define("app.Application",
     },
 
     _initSignals : function() {
+      // Menu bar
+      {
+        this._menuBar.addListener("fileNewPressed", function(e) {
+          console.log("fileNewPressed");
+        }, this);
+
+        this._menuBar.addListener("fileLoadPressed", function(e) {
+          console.log("fileLoadPressed");
+        }, this);
+
+        this._menuBar.addListener("fileSavePressed", function(e) {
+          console.log("fileSavePressed");
+        }, this);
+      }
+
+
       // Services
       {
         this._availableServicesBar.addListener("selectionModeChanged", function(e) {
