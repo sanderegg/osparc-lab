@@ -134,16 +134,8 @@ qx.Class.define("app.Application",
           this._threeView.SetSelectionMode(e.getData());
         }, this);
 
-        this._availableServicesBar.addListener("newSphereRequested", function(e) {
-          this._addSphere(e.getData());
-        }, this);
-
-        this._availableServicesBar.addListener("newBlockRequested", function(e) {
-          this._addBlock(e.getData());
-        }, this);
-
-        this._availableServicesBar.addListener("newDodecaRequested", function(e) {
-          this._addDodeca(e.getData());
+        this._availableServicesBar.addListener("newBasicObjectRequested", function(e) {
+          this._addBasicObject(e.getData());
         }, this);
 
         this._availableServicesBar.addListener("moveToolRequested", function(e) {
@@ -182,21 +174,9 @@ qx.Class.define("app.Application",
       }
     },
 
-    _addSphere : function()
+    _addBasicObject : function(objcetName)
     {
-      var mesh = this._threeView.AddObject("Sphere", 3);
-      this._objectList.AddObject(mesh.uuid, mesh.name);
-    },
-
-    _addBlock : function()
-    {
-      var mesh = this._threeView.AddObject("Box", 3);
-      this._objectList.AddObject(mesh.uuid, mesh.name);
-    },
-
-    _addDodeca : function()
-    {
-      var mesh = this._threeView.AddObject("Dodecahedron", 3);
+      var mesh = this._threeView.AddObject(objcetName, 3);
       this._objectList.AddObject(mesh.uuid, mesh.name);
     },
   }
