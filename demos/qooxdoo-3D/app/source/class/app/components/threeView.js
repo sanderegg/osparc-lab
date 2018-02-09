@@ -258,8 +258,15 @@
 
     _getNewMaterial : function()
     {
+      //var randColor = qx.util.ColorUtil.randomColor();
+      var rCh = Math.floor((Math.random() * 170) + 80);
+      var gCh = Math.floor((Math.random() * 170) + 80);
+      var bCh = Math.floor((Math.random() * 170) + 80);
+      var randColor = 'rgb('+rCh+','+gCh+','+bCh+')';
+      console.log(randColor);
+
       var material = new THREE.MeshPhongMaterial({
-        color: qx.util.ColorUtil.randomColor(),
+        color: randColor,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
