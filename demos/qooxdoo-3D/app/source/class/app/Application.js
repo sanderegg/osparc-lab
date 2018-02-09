@@ -135,12 +135,14 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("fileLoadPressed", function(e) {
-          console.log("fileLoadPressed");
-          //this._threeView.SerializeMeshes();
+          const modelsToLoad = 3;
+          for (var i = 0; i < modelsToLoad; i++) {
+            this._threeView.LoadMesh('model_'+i.toString()+'.obj');
+          }
         }, this);
 
         this._menuBar.addListener("fileSavePressed", function(e) {
-          console.log("fileSavePressed");
+          this._threeView.SerializeMeshes();
         }, this);
       }
 

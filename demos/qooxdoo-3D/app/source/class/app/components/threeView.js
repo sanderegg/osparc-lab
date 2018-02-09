@@ -412,6 +412,37 @@
       this._render();
     },
 
+    LoadMesh : function (model_name)
+    {
+      var loader = new THREE.OBJLoader();
+      var that = this;
+      loader.load( 'resource/models/'+model_name, function (object) {
+        object.traverse( function ( child ) {
+          if ( child instanceof THREE.Mesh ) {
+            //child.material.map = texture;
+            var material = new THREE.MeshPhongMaterial({
+              color: qx.util.ColorUtil.randomColor(),
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1,
+              transparent: true,
+              opacity: 0.6,
+            });
+            material.vertexColors = THREE.FaceColors;
+
+            //child.material = material;
+            //that.AddMeshToScene(child);
+
+            var newMesh = new THREE.Mesh(child.geometry, material);
+            newMesh.name = model_name;
+
+            that.AddMeshToScene(newMesh);
+          }
+        });
+      //}, onProgress, onError );
+      }, that );
+    },
+
     SerializeMeshes : function()
     {
       // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
@@ -420,8 +451,9 @@
 
         var exporter = new THREE.OBJExporter();
         var mesh_to_export = exporter.parse(this._meshes[i]);
+        console.log(mesh_to_export);
         var mesh_name = 'model_' + i.toString() + '.obj';
-        saveString(mesh_to_export, mesh_name);
+        //this._saveString(mesh_to_export, mesh_name);
 
         /*
         var serializedGeometry = this._meshes[i].geometry.toJSON();
@@ -447,33 +479,6 @@
         this.AddMeshToScene(mesh_copy);
         */
       }
-    },
-
-    LoadMesh : function (mesh)
-    {
-      var exported_mesh = new THREE.OBJExporter().parse(mesh);
-      var loader = new THREE.OBJLoader();
-      var that = this;
-      loader.load( 'resource/three/model_0.obj', function (object) {
-        object.traverse( function ( child ) {
-          if ( child instanceof THREE.Mesh ) {
-            //child.material.map = texture;
-            var material = new THREE.MeshPhongMaterial({
-              color: qx.util.ColorUtil.randomColor(),
-              polygonOffset: true,
-              polygonOffsetFactor: 1,
-              polygonOffsetUnits: 1,
-              transparent: true,
-              opacity: 0.6,
-            });
-            material.vertexColors = THREE.FaceColors;
-
-            child.material = material;
-          }
-        });
-        that.AddMeshToScene(object);
-      //}, onProgress, onError );
-      }, that );
     },
   }
 });
