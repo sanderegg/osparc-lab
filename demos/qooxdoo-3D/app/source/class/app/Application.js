@@ -171,13 +171,21 @@ qx.Class.define("app.Application",
           this._availableServicesBar.OnEntitySelectedChanged(e.getData());
           this._objectList.OnEntitySelectedChanged(e.getData());
         }, this);
+
+        this._threeView.addListener("entityAdded", function(e) {
+          this._objectAdddedTo3DView(e.getData()[0], e.getData()[1]);
+        }, this);
       }
     },
 
     _addBasicObject : function(objcetName)
     {
       var mesh = this._threeView.AddObject(objcetName, 3);
-      this._objectList.AddObject(mesh.uuid, mesh.name);
+    },
+
+    _objectAdddedTo3DView : function(mesh_uuid, mesh_name)
+    {
+      this._objectList.AddObject(mesh_uuid, mesh_name);
     },
   }
 });

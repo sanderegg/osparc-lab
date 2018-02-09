@@ -118,6 +118,7 @@
 
   events : {
     "entitySelected": "qx.event.type.Data",
+    "entityAdded": "qx.event.type.Data",
   },
 
   members: {
@@ -217,6 +218,7 @@
     {
       this._scene.add(mesh);
       this._meshes.push(mesh);
+      this.fireDataEvent("entityAdded", [mesh.uuid, mesh.name]);
       this._render();
     },
 
