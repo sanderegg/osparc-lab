@@ -246,26 +246,29 @@
       }
 
       if (geometry) {
-        // mesh
-        var material = new THREE.MeshPhongMaterial({
-          color: qx.util.ColorUtil.randomColor(),
-          polygonOffset: true,
-          polygonOffsetFactor: 1,
-          polygonOffsetUnits: 1,
-          transparent: true,
-          opacity: 0.6,
-        });
-        material.vertexColors = THREE.FaceColors;
-
+        var material = this._getNewMaterial();
         var mesh = new THREE.Mesh(geometry, material);
         mesh.name = objType;
-
         this.AddMeshToScene(mesh);
-
         return mesh;
       } else {
         console.log(name, " not implemented yet");
       }
+    },
+
+    _getNewMaterial : function()
+    {
+      var material = new THREE.MeshPhongMaterial({
+        color: qx.util.ColorUtil.randomColor(),
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
+        transparent: true,
+        opacity: 0.6,
+      });
+      material.vertexColors = THREE.FaceColors;
+
+      return material;
     },
 
     AddSphere : function(scale=3, transX=0, transY=0, transZ=0)
@@ -419,24 +422,15 @@
       loader.load( 'resource/models/'+model_name, function (object) {
         object.traverse( function ( child ) {
           if ( child instanceof THREE.Mesh ) {
-            //child.material.map = texture;
-            var material = new THREE.MeshPhongMaterial({
-              color: qx.util.ColorUtil.randomColor(),
-              polygonOffset: true,
-              polygonOffsetFactor: 1,
-              polygonOffsetUnits: 1,
-              transparent: true,
-              opacity: 0.6,
-            });
-            material.vertexColors = THREE.FaceColors;
+            var material = that._getNewMaterial();
 
-            //child.material = material;
-            //that.AddMeshToScene(child);
+            child.material = material;
+            child.name = model_name;
+            that.AddMeshToScene(child);
 
-            var newMesh = new THREE.Mesh(child.geometry, material);
-            newMesh.name = model_name;
-
-            that.AddMeshToScene(newMesh);
+            //var newMesh = new THREE.Mesh(child.geometry, material);
+            //newMesh.name = model_name;
+            //that.AddMeshToScene(newMesh);
           }
         });
       //}, onProgress, onError );
@@ -451,8 +445,8 @@
 
         var exporter = new THREE.OBJExporter();
         var mesh_to_export = exporter.parse(this._meshes[i]);
-        console.log(mesh_to_export);
         var mesh_name = 'model_' + i.toString() + '.obj';
+        console.log(mesh_to_export);
         //this._saveString(mesh_to_export, mesh_name);
 
         /*
