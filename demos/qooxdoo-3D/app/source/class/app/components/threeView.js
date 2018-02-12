@@ -1,9 +1,3 @@
-
-/**
- * @asset(resource/three/*)
- * @ignore(THREE)
- */
-
 qx.Class.define("app.components.threeView",
 {
   extend: qx.ui.container.Composite,
@@ -29,89 +23,37 @@ qx.Class.define("app.components.threeView",
       layout: box
     });
 
+    this._threeWrapper = new app.components.threeWrapper();
 
-    // initialize the script loading
-    var three_path = "resource/three/three.min.js";
-    var orbit_path = "resource/three/OrbitControls.js";
-    var transform_path = "resource/three/TransformControls.js";
-    var loader_path = "resource/three/OBJLoader.js";
-    var exporter_path = "resource/three/OBJExporter.js";
-    var vtk_loader_path = "resource/three/VTKLoader.js";
-    var dynLoader = new qx.util.DynamicScriptLoader([
-      three_path,
-      orbit_path,
-      transform_path,
-      loader_path,
-      exporter_path,
-      vtk_loader_path
-    ]);
+    this._threeWrapper.addListener(("ThreeLibReady"), function(e) {
+      var ready = e.getData();
+      if (ready) {
+        this._threeDViewer = new qx.ui.core.Widget();
+        this.add(this._threeDViewer, {flex: 1});
 
-    dynLoader.addListenerOnce('ready', function(e) {
-      console.log(three_path + " loaded");
-      this.setLibReady(true);
+        this._threeDViewer.addListenerOnce('appear', function() {
 
-      this._scene = new THREE.Scene();
-      this._scene.background = new THREE.Color(backgroundColor);
+          this._threeDViewer.getContentElement().getDomElement().appendChild(this._threeWrapper.GetDomElement());
 
-      this._camera = new THREE.PerspectiveCamera();
-      this._camera.position.x = 18;
-      this._camera.position.z = 25;
-      this._scene.add(this._camera);
+          this._threeWrapper.SetBackgroundColor(backgroundColor);
+          this._threeWrapper.SetCameraPosition(18, 0, 25);
+          this._threeWrapper.SetSize(this.getWidth(), this.getHeight());
 
-      var pointLight = new THREE.PointLight(0xBBBBBB);
-      pointLight.position.x = -10;
-      pointLight.position.y = 10;
-      pointLight.position.z = 40;
-      this._scene.add(pointLight);
+          document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
+          this._render();
 
-      var pointLight2 = new THREE.PointLight(0xFFFFFF);
-      pointLight2.position.x = 10;
-      pointLight2.position.y = -10;
-      pointLight2.position.z = -40;
-      this._scene.add(pointLight2);
-
-      // grid
-      const grid_size = 20;
-      const grid_divisions = 20;
-      const center_line = new THREE.Color(0x666666);
-      const grid_color = new THREE.Color(0x555555);
-      var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line, grid_color );
-      this._scene.add(gridHelper);
-
-      // axes
-      var axes = new THREE.AxesHelper(1);
-      this._scene.add(axes);
-
-      this._mouse = new THREE.Vector2();
-      this._raycaster = new THREE.Raycaster();
-
-      this._renderer = new THREE.WebGLRenderer();
-      this._renderer.setSize(this.getWidth(), this.getHeight());
-      this._camera.aspect = this.getWidth() / this.getHeight();
-      this._camera.updateProjectionMatrix();
-      this._renderer.setSize(this.getWidth(), this.getHeight());
-
-      this._orbitControls = new THREE.OrbitControls(this._camera, this._renderer.domElement);
-      this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
-      this._orbitControls.update();
-
-      this._threeDViewer = new qx.ui.core.Widget();
-      this.add(this._threeDViewer, {flex: 1});
-
-      this._threeDViewer.addListenerOnce('appear', function() {
-        this._threeDViewer.getContentElement().getDomElement().appendChild(this._renderer.domElement);
-        document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
-        this._render();
-      }, this);
-
+        }, this);
+      } else {
+        console.log("Three.js was not loaded");
+      }
     }, this);
 
-    dynLoader.addListener('failed', function(e) {
-      var data = e.getData();
-      console.log("failed to load " + data.script);
+    this._threeWrapper.addListener(("MeshToBeAdded"), function(e) {
+      var newMesh = e.getData();
+      if (newMesh) {
+        this.AddMeshToScene(newMesh);
+      }
     }, this);
-
-    dynLoader.start();
   },
 
   properties: {
@@ -126,25 +68,15 @@ qx.Class.define("app.components.threeView",
 
   members: {
     _threeDViewer: null,
-    _scene: null,
-    _camera: null,
-    _raycaster: null,
-    _renderer: null,
-    _orbitControls: null,
+    _threeWrapper: null,
     _transformControls: [],
-    _mouse: null,
     _meshes: [],
     _intersected: null,
     _selectionMode: 0,
 
     _render : function()
     {
-      this._renderer.render(this._scene, this._camera);
-    },
-
-    _updateOrbitControls : function()
-    {
-      this._render();
+      this._threeWrapper.Render();
     },
 
     _updateTransformControls : function()
@@ -166,11 +98,9 @@ qx.Class.define("app.components.threeView",
 
       const highlightedColor = 0x000000;
 
-      this._mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      this._mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-      this._raycaster.setFromCamera( this._mouse, this._camera );
-      var intersects = this._raycaster.intersectObjects( this._meshes );
+      var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
+      var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      var intersects = this._threeWrapper.IntersectMeshes(this._meshes, posX, posY);
       if (intersects.length > 0)
       {
         if(this._intersected != null) {
@@ -214,10 +144,9 @@ qx.Class.define("app.components.threeView",
 
     AddMeshToScene : function(mesh)
     {
-      this._scene.add(mesh);
+      this._threeWrapper.AddObjectToScene(mesh);
       this._meshes.push(mesh);
       this.fireDataEvent("entityAdded", [mesh.uuid, mesh.name]);
-      this._render();
     },
 
     AddObject : function(objType = "Sphere", scale = 1)
@@ -226,70 +155,27 @@ qx.Class.define("app.components.threeView",
 
       switch (objType) {
         case "Sphere":
-          geometry = this.CreateSphere(scale);
+          geometry = this._threeWrapper.CreateSphere(scale);
           break;
         case "Box":
-          geometry = this.CreateBox(scale);
+          geometry = this._threeWrapper.CreateBox(scale);
           break;
         case "Dodecahedron":
-          geometry = this.CreateDodecahedron(scale);
+          geometry = this._threeWrapper.CreateDodecahedron(scale);
           break;
         default:
           break;
       }
 
       if (geometry) {
-        var material = this._getNewMaterial();
-        var mesh = new THREE.Mesh(geometry, material);
+        var material = this._threeWrapper.CreateNewMaterial();
+        var mesh = this._threeWrapper.CreateMesh(geometry, material);
         mesh.name = objType;
         this.AddMeshToScene(mesh);
         return mesh;
       } else {
         console.log(name, " not implemented yet");
       }
-    },
-
-    _getNewMaterial : function()
-    {
-      //var randColor = qx.util.ColorUtil.randomColor();
-      var rCh = Math.floor((Math.random() * 170) + 80);
-      var gCh = Math.floor((Math.random() * 170) + 80);
-      var bCh = Math.floor((Math.random() * 170) + 80);
-      var randColor = 'rgb('+rCh+','+gCh+','+bCh+')';
-      console.log(randColor);
-
-      var material = new THREE.MeshPhongMaterial({
-        color: randColor,
-        polygonOffset: true,
-        polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1,
-        transparent: true,
-        opacity: 0.6,
-      });
-      material.vertexColors = THREE.FaceColors;
-
-      return material;
-    },
-
-    CreateSphere : function(scale=3, transX=0, transY=0, transZ=0)
-    {
-      var geometry = new THREE.SphereGeometry(scale, 32, 16);
-      geometry.translate(transX, transY, transZ);
-      return geometry;
-    },
-
-    CreateBox : function(scale=3, transX=0, transY=0, transZ=0)
-    {
-      var geometry = new THREE.BoxGeometry(scale, scale, scale, 4, 4, 4);
-      geometry.translate(transX, transY, transZ);
-      return geometry;
-    },
-
-    CreateDodecahedron : function(scale=3, transX=0, transY=0, transZ=0)
-    {
-      var geometry = new THREE.DodecahedronGeometry(scale);
-      geometry.translate(transX, transY, transZ);
-      return geometry;
     },
 
     RemoveAll : function()
@@ -301,12 +187,7 @@ qx.Class.define("app.components.threeView",
 
     RemoveObject : function(uuid)
     {
-      for (var i = 0; i < this._scene.children.length; i++) {
-        if (this._scene.children[i].uuid === uuid) {
-          this._scene.remove(this._scene.children[i]);
-          break;
-        }
-      }
+      this._threeWrapper.RemoveFromSceneById(uuid);
 
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === uuid) {
@@ -327,12 +208,12 @@ qx.Class.define("app.components.threeView",
     {
       for (var i = 0; i < this._meshes.length; i++) {
         if (this._meshes[i].uuid === selObjId) {
-          var transformControl = new THREE.TransformControls(this._camera, this._renderer.domElement);
+          var transformControl = this._threeWrapper.CreateTransformControls();
           transformControl.addEventListener('change', this._updateTransformControls.bind(this));
           transformControl.setMode("translate");
           transformControl.attach(this._meshes[i]);
           this._transformControls.push(transformControl);
-          this._scene.add(transformControl);
+          this._threeWrapper.AddObjectToScene(transformControl);
         }
       }
       this._render();
@@ -341,9 +222,7 @@ qx.Class.define("app.components.threeView",
     StopMoveTool : function()
     {
       for (var i = 0; i < this._transformControls.length; i++) {
-        var index = this._scene.children.indexOf(this._transformControls[i]);
-        if (index >= 0) {
-          this._scene.remove(this._scene.children[index]);
+        if (this._threeWrapper.RemoveFromScene(this._transformControls[i])) {
           this._transformControls[i].detach();
         }
       }
@@ -395,13 +274,7 @@ qx.Class.define("app.components.threeView",
     {
       if (show_edges) {
         for (var i = 0; i < this._meshes.length; i++) {
-          var geo = new THREE.WireframeGeometry( this._meshes[i].geometry );
-          var mat = new THREE.LineBasicMaterial({
-            color: 0x000000,
-            linewidth: 1
-          });
-          var wireframe = new THREE.LineSegments( geo, mat );
-          wireframe.name = "wireframe";
+          var wireframe = this._threeWrapper.CreateWireframeFromGeometry(this._meshes[i].geometry);
           this._meshes[i].add( wireframe );
         }
       } else {
@@ -415,63 +288,18 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
-    LoadMesh : function (model_name)
+    ImportMesh : function (model_name)
     {
-      var loader = new THREE.OBJLoader();
-      var that = this;
-      loader.load( 'resource/models/'+model_name, function (object) {
-        object.traverse( function ( child ) {
-          if ( child instanceof THREE.Mesh ) {
-            var material = that._getNewMaterial();
-
-            child.material = material;
-            child.name = model_name;
-            that.AddMeshToScene(child);
-
-            //var newMesh = new THREE.Mesh(child.geometry, material);
-            //newMesh.name = model_name;
-            //that.AddMeshToScene(newMesh);
-          }
-        });
-      //}, onProgress, onError );
-      }, that );
+      const models_path = 'resource/models/';
+      this._threeWrapper.ImportMesh(models_path, model_name);
     },
 
     SerializeMeshes : function()
     {
-      // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
       for (var i = 0; i < this._meshes.length; i++) {
-        //var mesh_copy = this.CloneMesh(this._meshes[i]);
-
-        var exporter = new THREE.OBJExporter();
-        var mesh_to_export = exporter.parse(this._meshes[i]);
+        var mesh_to_export = this._threeWrapper.ExportMesh(this._meshes[i]);
         var mesh_name = 'model_' + i.toString() + '.obj';
         console.log(mesh_to_export);
-        //this._saveString(mesh_to_export, mesh_name);
-
-        /*
-        var serializedGeometry = this._meshes[i].geometry.toJSON();
-        var serializedMaterial = this._meshes[i].material.toJSON();
-        console.log(serializedGeometry);
-        console.log(serializedMaterial);
-        var jsonLoader = new THREE.JSONLoader();
-        var result1 = jsonLoader.parse(serializedGeometry.data);
-        var result2 = jsonLoader.parse(serializedMaterial.data);
-        var geo_copy = result1.geometry;
-        var mat_copy = result2.material;
-        geo_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
-        mat_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
-        var mesh_copy = new THREE.Mesh(geo_copy, mat_copy);
-        mesh_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
-
-        mesh_copy.traverse(function(child) {
-            if (child instanceof THREE.Mesh) {
-                child.material = mat_copy;
-            }
-        });
-
-        this.AddMeshToScene(mesh_copy);
-        */
       }
     },
   }
