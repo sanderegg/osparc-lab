@@ -64,6 +64,7 @@ qx.Class.define("app.Application",
       var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
 
       this._initialStore = qx.data.marshal.Json.createModel(this._getInitialStore());
+      console.log(this._initialStore);
 
 
       // initialize components
@@ -72,19 +73,19 @@ qx.Class.define("app.Application",
 
       this._menuBar = new app.components.menuBar(
         docWidth, menuBarHeight,
-        this._initialStore.getMenuBar().getBackground(), this._initialStore.getMenuBar().getFont());
+        this._initialStore.getColors().getMenuBar().getBackground(), this._initialStore.getColors().getMenuBar().getFont());
 
       this._availableServicesBar = new app.components.availableServices(
         docWidth, avaiBarHeight,
-        this._initialStore.getToolBar().getBackground(), this._initialStore.getToolBar().getFont());
+        this._initialStore.getColors().getToolBar().getBackground(), this._initialStore.getColors().getToolBar().getFont());
 
       this._threeView = new app.components.threeView(
         docWidth, docHeight,
-        this._initialStore.get3DView().getBackground());
+        this._initialStore.getColors().get3DView().getBackground());
 
       this._objectList = new app.components.objectList(
         250, 300,
-        this._initialStore.getSettingsView().getBackground(), this._initialStore.getSettingsView().getFont());
+        this._initialStore.getColors().getSettingsView().getBackground(), this._initialStore.getColors().getSettingsView().getFont());
 
 
       // components to document
@@ -108,21 +109,34 @@ qx.Class.define("app.Application",
 
     _getInitialStore : function() {
       var myInitialStore = {
-        "MenuBar": {
-          "Background": "#535353", // 83, 83, 83
-          "Font": "#FFFFFF", // 255, 255, 255
+        "Colors": {
+          "MenuBar": {
+            "Background": "#535353", // 83, 83, 83
+            "Font": "#FFFFFF", // 255, 255, 255
+          },
+          "ToolBar": {
+            "Background": "#252526", // 37, 37, 38
+            "Font": "#FFFFFF", // 255, 255, 255
+          },
+          "SettingsView": {
+            "Background": "#252526", // 37, 37, 38
+            "Font": "#FFFFFF", // 255, 255, 255
+          },
+          "3DView": {
+            "Background": "#3F3F3F", // 63, 63, 63
+          },
         },
-        "ToolBar": {
-          "Background": "#252526", // 37, 37, 38
-          "Font": "#FFFFFF", // 255, 255, 255
-        },
-        "SettingsView": {
-          "Background": "#252526", // 37, 37, 38
-          "Font": "#FFFFFF", // 255, 255, 255
-        },
-        "3DView": {
-          "Background": "#3F3F3F", // 63, 63, 63
-        },
+        "ActiveUser" : 0,
+        "Users": [
+          {
+            "Name": "Odei",
+            "NumberOfItems": 3,
+          },
+          {
+            "Name": "Sylvain",
+            "NumberOfItems": 1,
+          },
+        ],
       };
       return myInitialStore;
     },
@@ -130,14 +144,18 @@ qx.Class.define("app.Application",
     _initSignals : function() {
       // Menu bar
       {
+        var activeUser = this._initialStore.getActiveUser();
+
         this._menuBar.addListener("fileNewPressed", function(e) {
           this._threeView.RemoveAll();
         }, this);
 
         this._menuBar.addListener("fileLoadPressed", function(e) {
-          const modelsToLoad = 4;
+          var models_path = 'resource/models/';
+          models_path = models_path + this._initialStore.getUsers().toArray()[activeUser].getName() + '/';
+          const modelsToLoad = this._initialStore.getUsers().toArray()[activeUser].getNumberOfItems();
           for (var i = 0; i < modelsToLoad; i++) {
-            this._threeView.ImportMesh('model_'+i.toString()+'.obj');
+            this._threeView.ImportMesh(models_path, 'model_'+i.toString()+'.obj');
           }
         }, this);
 

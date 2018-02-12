@@ -288,9 +288,8 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
-    ImportMesh : function (model_name)
+    ImportMesh : function (models_path, model_name)
     {
-      const models_path = 'resource/models/';
       this._threeWrapper.ImportMesh(models_path, model_name);
     },
 
