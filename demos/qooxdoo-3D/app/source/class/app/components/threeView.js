@@ -102,7 +102,6 @@
         this._orbitControls.update();
 
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
-
         this._render();
       }, this);
 
