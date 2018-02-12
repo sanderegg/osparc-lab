@@ -64,8 +64,6 @@ qx.Class.define("app.Application",
       var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
 
       this._initialStore = qx.data.marshal.Json.createModel(this._getInitialStore());
-      console.log(this._initialStore);
-
 
       // initialize components
       const menuBarHeight = 35;
@@ -104,6 +102,17 @@ qx.Class.define("app.Application",
       this._objectList.open();
 
 
+      var activeUser = this._initialStore.getActiveUser();
+      var activeName = this._initialStore.getUsers().toArray()[activeUser].getName();
+      var container1 = new qx.ui.container.Composite(new qx.ui.layout.HBox(1));
+      container1.add(new qx.ui.basic.Atom("Hello, " + activeName).set({
+        backgroundColor : this._initialStore.getColors().getMenuBar().getBackground(),
+        textColor: this._initialStore.getColors().getMenuBar().getFont(),
+        padding : 7,
+        allowGrowY: false,
+      }));
+      doc.add(container1, { right : 30});
+
       this._initSignals();
     },
 
@@ -134,6 +143,10 @@ qx.Class.define("app.Application",
           },
           {
             "Name": "Sylvain",
+            "NumberOfItems": 1,
+          },
+          {
+            "Name": "Alessandro",
             "NumberOfItems": 1,
           },
         ],
