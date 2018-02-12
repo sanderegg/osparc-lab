@@ -158,22 +158,22 @@ qx.Class.define("app.Application",
       // Menu bar
       {
         var activeUser = this._initialStore.getActiveUser();
+        var activeUserName = this._initialStore.getUsers().toArray()[activeUser].getName();
+        var models_path = 'resource/models/' + activeUserName;
 
         this._menuBar.addListener("fileNewPressed", function(e) {
           this._threeView.RemoveAll();
         }, this);
 
         this._menuBar.addListener("fileLoadPressed", function(e) {
-          var models_path = 'resource/models/';
-          models_path = models_path + this._initialStore.getUsers().toArray()[activeUser].getName() + '/';
           const modelsToLoad = this._initialStore.getUsers().toArray()[activeUser].getNumberOfItems();
           for (var i = 0; i < modelsToLoad; i++) {
-            this._threeView.ImportMesh(models_path, 'model_'+i.toString()+'.obj');
+            this._threeView.ImportMesh(models_path, '/model_'+i.toString()+'.obj');
           }
         }, this);
 
         this._menuBar.addListener("fileSavePressed", function(e) {
-          this._threeView.SerializeMeshes();
+          this._threeView.SerializeMeshes(models_path);
         }, this);
       }
 

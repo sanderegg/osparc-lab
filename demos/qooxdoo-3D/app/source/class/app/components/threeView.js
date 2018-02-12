@@ -293,11 +293,12 @@ qx.Class.define("app.components.threeView",
       this._threeWrapper.ImportMesh(models_path, model_name);
     },
 
-    SerializeMeshes : function()
+    SerializeMeshes : function(models_path)
     {
       for (var i = 0; i < this._meshes.length; i++) {
         var mesh_to_export = this._threeWrapper.ExportMesh(this._meshes[i]);
         var mesh_name = 'model_' + i.toString() + '.obj';
+        console.log(models_path + '/' + mesh_name);
         console.log(mesh_to_export);
       }
     },
