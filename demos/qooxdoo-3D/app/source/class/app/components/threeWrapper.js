@@ -95,15 +95,13 @@ qx.Class.define("app.components.threeWrapper",
         object.traverse( function ( child ) {
           if ( child instanceof THREE.Mesh ) {
             var material = that.CreateNewMaterial();
-
             child.material = material;
             child.name = model_name;
-            //that.AddMeshToScene(child);
             that.fireDataEvent("MeshToBeAdded", child);
           }
         });
       //}, onProgress, onError );
-      }, that );
+      }, that);
     },
 
     ExportMesh : function (mesh)
@@ -204,7 +202,6 @@ qx.Class.define("app.components.threeWrapper",
       var gCh = Math.floor((Math.random() * 170) + 80);
       var bCh = Math.floor((Math.random() * 170) + 80);
       var randColor = 'rgb('+rCh+','+gCh+','+bCh+')';
-      console.log(randColor);
 
       var material = new THREE.MeshPhongMaterial({
         color: randColor,
