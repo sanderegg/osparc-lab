@@ -4,7 +4,7 @@
  * @ignore(THREE)
  */
 
- qx.Class.define("app.components.threeView",
+qx.Class.define("app.components.threeView",
 {
   extend: qx.ui.container.Composite,
 
@@ -91,16 +91,15 @@
       this._camera.updateProjectionMatrix();
       this._renderer.setSize(this.getWidth(), this.getHeight());
 
+      this._orbitControls = new THREE.OrbitControls(this._camera, this._renderer.domElement);
+      this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
+      this._orbitControls.update();
+
       this._threeDViewer = new qx.ui.core.Widget();
       this.add(this._threeDViewer, {flex: 1});
 
       this._threeDViewer.addListenerOnce('appear', function() {
         this._threeDViewer.getContentElement().getDomElement().appendChild(this._renderer.domElement);
-
-        this._orbitControls = new THREE.OrbitControls(this._camera, this._renderer.domElement);
-        this._orbitControls.addEventListener('change', this._updateOrbitControls.bind(this));
-        this._orbitControls.update();
-
         document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
         this._render();
       }, this);
