@@ -214,11 +214,6 @@
       this._render();
     },
 
-    LoadDefault : function()
-    {
-      this.AddSphere(1, 0, 0, 0);
-    },
-
     AddMeshToScene : function(mesh)
     {
       this._scene.add(mesh);
@@ -233,13 +228,13 @@
 
       switch (objType) {
         case "Sphere":
-          geometry = this.AddSphere(scale);
+          geometry = this.CreateSphere(scale);
           break;
         case "Box":
-          geometry = this.AddBox(scale);
+          geometry = this.CreateBox(scale);
           break;
         case "Dodecahedron":
-          geometry = this.AddDodecahedron(scale);
+          geometry = this.CreateDodecahedron(scale);
           break;
         default:
           break;
@@ -278,21 +273,21 @@
       return material;
     },
 
-    AddSphere : function(scale=3, transX=0, transY=0, transZ=0)
+    CreateSphere : function(scale=3, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.SphereGeometry(scale, 32, 16);
       geometry.translate(transX, transY, transZ);
       return geometry;
     },
 
-    AddBox : function(scale=3, transX=0, transY=0, transZ=0)
+    CreateBox : function(scale=3, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.BoxGeometry(scale, scale, scale, 4, 4, 4);
       geometry.translate(transX, transY, transZ);
       return geometry;
     },
 
-    AddDodecahedron : function(scale=3, transX=0, transY=0, transZ=0)
+    CreateDodecahedron : function(scale=3, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.DodecahedronGeometry(scale);
       geometry.translate(transX, transY, transZ);
