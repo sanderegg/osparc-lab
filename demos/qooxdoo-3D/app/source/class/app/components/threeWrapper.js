@@ -120,8 +120,15 @@ qx.Class.define("app.components.threeWrapper",
       this.fireDataEvent("MeshToBeAdded", local);
       */
 
+      // https://threejs.org/docs/#api/loaders/MaterialLoader
+      // Have a look at this to load materials together with geometry.
+      //Could be stored in userData{}
+
       var objLoader = new THREE.OBJLoader();
       var myObj = objLoader.parse(model_buffer);
+
+      // object is black
+      // https://github.com/expo/expo-three/issues/5#issuecomment-360956203
       var scope = this;
       myObj.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {

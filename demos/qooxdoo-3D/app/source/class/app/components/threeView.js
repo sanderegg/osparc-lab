@@ -144,7 +144,6 @@ qx.Class.define("app.components.threeView",
 
     AddMeshToScene : function(mesh)
     {
-      console.log("AddMeshToScene", mesh);
       this._threeWrapper.AddObjectToScene(mesh);
       this._meshes.push(mesh);
       this.fireDataEvent("entityAdded", [mesh.uuid, mesh.name]);
