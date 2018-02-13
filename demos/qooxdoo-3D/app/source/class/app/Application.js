@@ -57,6 +57,10 @@ qx.Class.define("app.Application",
       // Document is the application root
       var doc = this.getRoot();
 
+      // openning web socket
+      this._socket = new app.api.WebSocket('app');
+      this._socket.connect();
+
       var body = document.body;
       var html = document.documentElement;
 
