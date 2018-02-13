@@ -105,7 +105,7 @@ qx.Class.define("app.components.threeWrapper",
           }
         });
       //}, onProgress, onError );
-      }, that);
+      });
     },
 
     ImportMeshFromBuffer : function(model_buffer, model_name)
@@ -122,7 +122,6 @@ qx.Class.define("app.components.threeWrapper",
 
       var objLoader = new THREE.OBJLoader();
       var myObj = objLoader.parse(model_buffer);
-
       var scope = this;
       myObj.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {
