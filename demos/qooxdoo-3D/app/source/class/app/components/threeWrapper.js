@@ -127,14 +127,20 @@ qx.Class.define("app.components.threeWrapper",
       var objLoader = new THREE.OBJLoader();
       var myObj = objLoader.parse(model_buffer);
 
-      // object is black
-      // https://github.com/expo/expo-three/issues/5#issuecomment-360956203
       var scope = this;
       myObj.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {
+
+          // object is black
+          // https://github.com/expo/expo-three/issues/5#issuecomment-360956203
           var material = scope.CreateNewMaterial();
           child.material = material;
           child.name = model_name;
+
+          child.geometry.__dirtyColors = true;
+          child.geometry.colorsNeedUpdate = true;
+          child.geometry.dynamic = true;
+
           scope.fireDataEvent("MeshToBeAdded", child);
         }
       });
