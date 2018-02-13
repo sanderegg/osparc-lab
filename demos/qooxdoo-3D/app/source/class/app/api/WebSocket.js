@@ -199,6 +199,15 @@ qx.Class.define("app.api.WebSocket", {
       } else {
         this.getSocket().on(name, fn);
       }
+    },
+
+    slotExists: function(name) {
+      for (var i = 0; i < this.__name.length; ++i) {
+        if (this.__name[i] === name) {
+          return true;
+        }
+      }
+      return false;
     }
   },
 

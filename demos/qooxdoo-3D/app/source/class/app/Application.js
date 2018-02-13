@@ -177,12 +177,14 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("fileLoadFromServerPressed", function(e) {
+          if (!this._socket.slotExists("loadFromServer")) {
+            this._socket.on("loadFromServer", function(val) {
+              if (val.type === "loadFromServer") {
+                this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
+              }
+            }, this);
+          }
           this._socket.emit("loadFromServer", models_path);
-          this._socket.on("loadFromServer", function(val) {
-            if (val.type === "loadFromServer") {
-              this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
-            }
-          }, this);
         }, this);
 
         this._menuBar.addListener("fileSavePressed", function(e) {
