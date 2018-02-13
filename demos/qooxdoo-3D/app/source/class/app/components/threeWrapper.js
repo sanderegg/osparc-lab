@@ -14,6 +14,7 @@ qx.Class.define("app.components.threeWrapper",
     var orbit_path = "resource/three/OrbitControls.js";
     var transform_path = "resource/three/TransformControls.js";
     var loader_path = "resource/three/OBJLoader.js";
+    var loaderSupp_path = "resource/three/LoaderSupport.js";
     var loader2_path = "resource/three/OBJLoader2.js";
     var exporter_path = "resource/three/OBJExporter.js";
     var vtk_loader_path = "resource/three/VTKLoader.js";
@@ -22,6 +23,7 @@ qx.Class.define("app.components.threeWrapper",
       orbit_path,
       transform_path,
       loader_path,
+      loaderSupp_path,
       loader2_path,
       exporter_path,
       vtk_loader_path
@@ -91,15 +93,15 @@ qx.Class.define("app.components.threeWrapper",
 
     ImportMeshFromPath : function(models_path, model_name)
     {
-      var loader = new THREE.OBJLoader2();
-      var that = this;
+      var loader = new THREE.OBJLoader();
+      var scope = this;
       loader.load( models_path + model_name, function (object) {
         object.traverse( function ( child ) {
           if ( child instanceof THREE.Mesh ) {
-            var material = that.CreateNewMaterial();
+            var material = scope.CreateNewMaterial();
             child.material = material;
             child.name = model_name;
-            that.fireDataEvent("MeshToBeAdded", child);
+            scope.fireDataEvent("MeshToBeAdded", child);
           }
         });
       //}, onProgress, onError );
@@ -108,8 +110,14 @@ qx.Class.define("app.components.threeWrapper",
 
     ImportMeshFromBuffer : function(model_buffer, model_name)
     {
-      var loader = new THREE.OBJLoader2();
-    }
+      var objLoader = new THREE.OBJLoader2();
+      var local = new THREE.Object3D();
+      local.add( objLoader.parse( model_buffer ) );
+      local.name = model_name;
+      var material = this.CreateNewMaterial();
+      local.material = material;
+      this.fireDataEvent("MeshToBeAdded", local);
+    },
 
     ExportMesh : function (mesh)
     {

@@ -139,7 +139,7 @@ qx.Class.define("app.Application",
             "Background": "#3F3F3F", // 63, 63, 63
           },
         },
-        "ActiveUser" : 0,
+        "ActiveUser" : 2,
         "Users": [
           {
             "Name": "Odei",
@@ -174,6 +174,15 @@ qx.Class.define("app.Application",
           for (var i = 0; i < modelsToLoad; i++) {
             this._threeView.ImportMeshFromPath(models_path + '/', 'model_'+i.toString()+'.obj');
           }
+        }, this);
+
+        this._menuBar.addListener("fileLoadFromServerPressed", function(e) {
+          this._socket.emit("loadFromServer", models_path);
+          this._socket.on("loadFromServer", function(val) {
+            if (val.type === "loadFromServer") {
+              this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
+            }
+          }, this);
         }, this);
 
         this._menuBar.addListener("fileSavePressed", function(e) {

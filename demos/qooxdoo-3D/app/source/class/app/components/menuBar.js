@@ -26,6 +26,7 @@ qx.Class.define("app.components.menuBar",
   events : {
     "fileNewPressed": "qx.event.type.Event",
     "fileLoadPressed": "qx.event.type.Event",
+    "fileLoadFromServerPressed": "qx.event.type.Event",
     "fileSavePressed": "qx.event.type.Event",
   },
 
@@ -61,6 +62,7 @@ qx.Class.define("app.components.menuBar",
 
       var newButton = new qx.ui.menu.Button("New", null, null);
       var loadButton = new qx.ui.menu.Button("Load", null, null);
+      var loadFromServerButton = new qx.ui.menu.Button("Load from Server", null, null);
       var saveButton = new qx.ui.menu.Button("Save", null, null);
 
       newButton.addListener("execute", function(e) {
@@ -71,12 +73,17 @@ qx.Class.define("app.components.menuBar",
         this.fireDataEvent("fileLoadPressed");
       }, this);
 
+      loadFromServerButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileLoadFromServerPressed");
+      }, this);
+
       saveButton.addListener("execute", function(e) {
         this.fireDataEvent("fileSavePressed");
       }, this);
 
       fileMenu.add(newButton);
       fileMenu.add(loadButton);
+      fileMenu.add(loadFromServerButton);
       fileMenu.add(saveButton);
 
       return fileMenu;

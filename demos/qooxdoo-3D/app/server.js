@@ -24,50 +24,29 @@ var io = require('socket.io')(server);
 io.on('connection', function(client) {
   console.log('Client connected...');
 
-  client.on('requestAvailableServices', function() {
-    console.log('requestAvailableServices');
-    getServices(client);
+  client.on('loadFromServer', function(models_path) {
+    loadFromServer(client, models_path);
   });
 
 });
 
 
-function getServices(client) {
-  console.log('requestAvailableServices');
-  var url = 'https://raw.githubusercontent.com/odeimaiz/oSPARC_Test/master/demos/frontend-data/ServiceRegistry.json';
-  https.get(url, function(res) {
-    var json = '';
-
-    res.on('data', function(chunk) {
-      json += chunk;
+function loadFromServer(client, models_dir) {
+  models_dir = 'source-output/app/' + models_dir;
+  console.log('loadFromServer: ', models_dir);
+  var fs = require("fs");
+  fs.readdirSync(models_dir).forEach(file => {
+    file_path = models_dir +'/'+ file;
+    fs.readFile(file_path, function (err, data) {
+      if (err)
+        throw err;
+      var modelJson = {};
+      modelJson.modelName = file;
+      modelJson.value = data.toString();
+      modelJson.type = 'loadFromServer';
+      console.log("sending file: ", modelJson.modelName);
+      client.emit('loadFromServer', modelJson);
     });
-
-    res.on('end', function() {
-      if (res.statusCode === 200) {
-        try {
-          var availableServicesJson = JSON.parse(json);
-          var availableServices = [];
-          console.log('Found', Object.keys(availableServicesJson).length, ':');
-          for (var key in availableServicesJson) {
-            if (!availableServicesJson.hasOwnProperty(key)) {
-              continue;
-            }
-            console.log(availableServicesJson[key].text);
-            availableServices.push(availableServicesJson[key]);
-          };
-          client.emit('availableServices', {
-            type: 'availableServices',
-            value: availableServices
-          })
-        } catch (e) {
-          console.log('Error parsing JSON!');
-        }
-      } else {
-        console.log('Status:', res.statusCode);
-      }
-    });
-  }).on('error', function(e) {
-    console.log("Got an error: ", e);
   });
 };
 
