@@ -110,13 +110,28 @@ qx.Class.define("app.components.threeWrapper",
 
     ImportMeshFromBuffer : function(model_buffer, model_name)
     {
-      var objLoader = new THREE.OBJLoader2();
+      /*
+      var objLoader2 = new THREE.OBJLoader2();
       var local = new THREE.Object3D();
-      local.add( objLoader.parse( model_buffer ) );
+      local.add( objLoader2.parse( model_buffer ) );
       local.name = model_name;
       var material = this.CreateNewMaterial();
       local.material = material;
       this.fireDataEvent("MeshToBeAdded", local);
+      */
+
+      var objLoader = new THREE.OBJLoader();
+      var myObj = objLoader.parse(model_buffer);
+
+      var scope = this;
+      myObj.traverse( function ( child ) {
+        if ( child instanceof THREE.Mesh ) {
+          var material = scope.CreateNewMaterial();
+          child.material = material;
+          child.name = model_name;
+          scope.fireDataEvent("MeshToBeAdded", child);
+        }
+      });
     },
 
     ExportMesh : function (mesh)
