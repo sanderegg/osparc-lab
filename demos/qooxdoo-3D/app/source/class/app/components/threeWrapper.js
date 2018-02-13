@@ -14,6 +14,7 @@ qx.Class.define("app.components.threeWrapper",
     var orbit_path = "resource/three/OrbitControls.js";
     var transform_path = "resource/three/TransformControls.js";
     var loader_path = "resource/three/OBJLoader.js";
+    var loader2_path = "resource/three/OBJLoader2.js";
     var exporter_path = "resource/three/OBJExporter.js";
     var vtk_loader_path = "resource/three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
@@ -21,6 +22,7 @@ qx.Class.define("app.components.threeWrapper",
       orbit_path,
       transform_path,
       loader_path,
+      loader2_path,
       exporter_path,
       vtk_loader_path
     ]);
@@ -87,9 +89,9 @@ qx.Class.define("app.components.threeWrapper",
       this.Render();
     },
 
-    ImportMesh : function (models_path, model_name)
+    ImportMeshFromPath : function(models_path, model_name)
     {
-      var loader = new THREE.OBJLoader();
+      var loader = new THREE.OBJLoader2();
       var that = this;
       loader.load( models_path + model_name, function (object) {
         object.traverse( function ( child ) {
@@ -103,6 +105,11 @@ qx.Class.define("app.components.threeWrapper",
       //}, onProgress, onError );
       }, that);
     },
+
+    ImportMeshFromBuffer : function(model_buffer, model_name)
+    {
+      var loader = new THREE.OBJLoader2();
+    }
 
     ExportMesh : function (mesh)
     {

@@ -288,9 +288,14 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
-    ImportMesh : function (models_path, model_name)
+    ImportMeshFromPath : function (models_path, model_name)
     {
-      this._threeWrapper.ImportMesh(models_path, model_name);
+      this._threeWrapper.ImportMeshFromPath(models_path, model_name);
+    },
+
+    ImportMeshFromBuffer : function (model_buffer, model_name)
+    {
+      this._threeWrapper.ImportMeshFromBuffer(model_buffer, model_name);
     },
 
     SerializeMeshes : function(models_path)
