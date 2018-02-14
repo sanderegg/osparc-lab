@@ -26,9 +26,10 @@ qx.Class.define("app.components.menuBar",
   events : {
     "fileNewPressed": "qx.event.type.Event",
     "fileLoadMeshesPressed": "qx.event.type.Event",
-    "fileLoadViPPressed": "qx.event.type.Data",
+    "fileSaveMeshesPressed": "qx.event.type.Event",
     "fileLoadScenePressed": "qx.event.type.Event",
     "fileSaveScenePressed": "qx.event.type.Event",
+    "fileLoadViPPressed": "qx.event.type.Data",
   },
 
   members: {
@@ -63,6 +64,7 @@ qx.Class.define("app.components.menuBar",
 
       var newButton = new qx.ui.menu.Button("New", null, null);
       var loadMeshesButton = new qx.ui.menu.Button("Load meshes", null, null);
+      var saveMeshesButton = new qx.ui.menu.Button("Save meshes", null, null);
       var loadSceneButton = new qx.ui.menu.Button("Load scene", null, null);
       var saveSceneButton = new qx.ui.menu.Button("Save scene", null, null);
       var loadViPButton = new qx.ui.menu.Button("Load ViP", null, null, this.getViPList());
@@ -75,6 +77,10 @@ qx.Class.define("app.components.menuBar",
         this.fireDataEvent("fileLoadMeshesPressed");
       }, this);
 
+      saveMeshesButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileSaveMeshesPressed");
+      }, this);
+
       loadSceneButton.addListener("execute", function(e) {
         this.fireDataEvent("fileLoadScenePressed");
       }, this);
@@ -85,6 +91,7 @@ qx.Class.define("app.components.menuBar",
 
       fileMenu.add(newButton);
       fileMenu.add(loadMeshesButton);
+      fileMenu.add(saveMeshesButton);
       fileMenu.add(loadSceneButton);
       fileMenu.add(saveSceneButton);
       fileMenu.add(loadViPButton);

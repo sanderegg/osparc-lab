@@ -24,12 +24,14 @@ var io = require('socket.io')(server);
 io.on('connection', function(client) {
   console.log('Client connected...');
 
-  client.on('loadMeshes', function(models_path) {
-    loadMeshes(client, models_path);
+  client.on('importMeshes', function(models_path) {
+    importMeshes(client, models_path);
   });
 
-  client.on('loadViP', function(ViP_model) {
-    loadViPFromServer(client, ViP_model);
+  client.on('exportMeshes', function(args) {
+    var path = args[0];
+    var meshes_json = args[1];
+    exportMeshes(client, path, meshes_json);
   });
 
   client.on('importScene', function(models_path) {
@@ -41,12 +43,16 @@ io.on('connection', function(client) {
     var scene_json = args[1];
     exportScene(client, path, scene_json);
   });
+
+  client.on('importViP', function(ViP_model) {
+    importViP(client, ViP_model);
+  });
 });
 
 
-function loadMeshes(client, models_dir) {
+function importMeshes(client, models_dir) {
   models_dir = 'source-output/app/' + models_dir;
-  console.log('loadMeshes: ', models_dir);
+  console.log('import Meshes from: ', models_dir);
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
     if ('obj' === file.split('.').pop()) {
@@ -57,32 +63,16 @@ function loadMeshes(client, models_dir) {
         var modelJson = {};
         modelJson.modelName = file;
         modelJson.value = data.toString();
-        modelJson.type = 'loadMeshes';
+        modelJson.type = 'importMeshes';
         console.log("sending file: ", modelJson.modelName);
-        client.emit('loadMeshes', modelJson);
+        client.emit('importMeshes', modelJson);
       });
     }
   });
 };
 
-function loadViPFromServer(client, ViP_model) {
-  models_dir = 'source-output/app/resource/models/ViP/' + ViP_model;
-  console.log('loadViPFromServer: ', ViP_model);
-  var fs = require("fs");
-  fs.readdirSync(models_dir).forEach(file => {
-    if ('obj' === file.split('.').pop()) {
-      file_path = models_dir +'/'+ file;
-      fs.readFile(file_path, function (err, data) {
-        if (err)
-          throw err;
-        var modelJson = {};
-        modelJson.modelName = file;
-        modelJson.value = data.toString();
-        modelJson.type = 'loadViP';
-        client.emit('loadViP', modelJson);
-      });
-    }
-  });
+function importMeshes(client, path, scene_json) {
+  console.log('export Meshes to: ', path);
 };
 
 function importScene(client, models_dir) {
@@ -122,6 +112,26 @@ function exportScene(client, path, scene_json) {
       response.value = true;
     }
     client.emit('exportScene', response);
+  });
+};
+
+function importViP(client, ViP_model) {
+  models_dir = 'source-output/app/resource/models/ViP/' + ViP_model;
+  console.log('importViP: ', ViP_model);
+  var fs = require("fs");
+  fs.readdirSync(models_dir).forEach(file => {
+    if ('obj' === file.split('.').pop()) {
+      file_path = models_dir +'/'+ file;
+      fs.readFile(file_path, function (err, data) {
+        if (err)
+          throw err;
+        var modelJson = {};
+        modelJson.modelName = file;
+        modelJson.value = data.toString();
+        modelJson.type = 'importViP';
+        client.emit('importViP', modelJson);
+      });
+    }
   });
 };
 
