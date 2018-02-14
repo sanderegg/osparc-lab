@@ -323,6 +323,7 @@ qx.Class.define("app.components.threeWrapper",
       pointLight.position.x = -10;
       pointLight.position.y = 10;
       pointLight.position.z = 40;
+      pointLight.name = "PointLight1";
       this._scene.add(pointLight);
     },
 
@@ -332,6 +333,7 @@ qx.Class.define("app.components.threeWrapper",
       pointLight2.position.x = 10;
       pointLight2.position.y = -10;
       pointLight2.position.z = -40;
+      pointLight2.name = "PointLight2";
       this._scene.add(pointLight2);
     },
 
@@ -342,13 +344,14 @@ qx.Class.define("app.components.threeWrapper",
       const center_line = new THREE.Color(0x666666);
       const grid_color = new THREE.Color(0x555555);
       var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line, grid_color );
+      gridHelper.name = "GridHelper";
       this._scene.add(gridHelper);
     },
 
     _addAxesHelper : function()
     {
-      // axes
       var axes = new THREE.AxesHelper(1);
+      axes.name = "AxesHelper";
       this._scene.add(axes);
     },
 
