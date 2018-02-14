@@ -112,7 +112,7 @@ qx.Class.define("app.Application",
       container1.add(new qx.ui.basic.Atom("Hello, " + activeName).set({
         backgroundColor : this._initialStore.getColors().getMenuBar().getBackground(),
         textColor: this._initialStore.getColors().getMenuBar().getFont(),
-        padding : 7,
+        padding : 6,
         allowGrowY: false,
       }));
       doc.add(container1, { right : 30});
@@ -143,15 +143,12 @@ qx.Class.define("app.Application",
         "Users": [
           {
             "Name": "Odei",
-            "NumberOfItems": 3,
           },
           {
             "Name": "Sylvain",
-            "NumberOfItems": 1,
           },
           {
             "Name": "Alessandro",
-            "NumberOfItems": 1,
           },
         ],
       };
@@ -169,34 +166,27 @@ qx.Class.define("app.Application",
           this._threeView.RemoveAll();
         }, this);
 
-        this._menuBar.addListener("fileLoadPressed", function(e) {
-          const modelsToLoad = this._initialStore.getUsers().toArray()[activeUser].getNumberOfItems();
-          for (var i = 0; i < modelsToLoad; i++) {
-            this._threeView.ImportMeshFromPath(models_path + '/', 'model_'+i.toString()+'.obj');
-          }
-        }, this);
-
-        this._menuBar.addListener("fileLoadFromServerPressed", function(e) {
-          if (!this._socket.slotExists("loadFromServer")) {
-            this._socket.on("loadFromServer", function(val) {
-              if (val.type === "loadFromServer") {
+        this._menuBar.addListener("fileLoadMeshesPressed", function(e) {
+          if (!this._socket.slotExists("loadMeshes")) {
+            this._socket.on("loadMeshes", function(val) {
+              if (val.type === "loadMeshes") {
                 this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
               }
             }, this);
           }
-          this._socket.emit("loadFromServer", models_path);
+          this._socket.emit("loadMeshes", models_path);
         }, this);
 
-        this._menuBar.addListener("fileLoadViP", function(e) {
+        this._menuBar.addListener("fileLoadViPPressed", function(e) {
           var selectedViP = e.getData();
-          if (!this._socket.slotExists("loadViPServer")) {
-            this._socket.on("loadViPServer", function(val) {
-              if (val.type === "loadViPServer") {
+          if (!this._socket.slotExists("loadViP")) {
+            this._socket.on("loadViP", function(val) {
+              if (val.type === "loadViP") {
                 this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
               }
             }, this);
           }
-          this._socket.emit("loadViPServer", selectedViP);
+          this._socket.emit("loadViP", selectedViP);
         }, this);
 
         this._menuBar.addListener("fileLoadScenePressed", function(e) {

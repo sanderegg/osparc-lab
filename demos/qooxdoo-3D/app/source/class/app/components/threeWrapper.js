@@ -35,6 +35,7 @@ qx.Class.define("app.components.threeWrapper",
       this._scene = new THREE.Scene();
 
       this._camera = new THREE.PerspectiveCamera();
+      this._camera.far = 10000;
       this._scene.add(this._camera);
 
       this._addPointLight1();
@@ -90,23 +91,6 @@ qx.Class.define("app.components.threeWrapper",
     {
       this._scene.add(objToScene);
       this.Render();
-    },
-
-    ImportMeshFromPath : function(models_path, model_name)
-    {
-      var loader = new THREE.OBJLoader();
-      var scope = this;
-      loader.load( models_path + model_name, function (object) {
-        object.traverse( function ( child ) {
-          if ( child instanceof THREE.Mesh ) {
-            var material = scope.CreateNewMaterial();
-            child.material = material;
-            child.name = model_name;
-            scope.fireDataEvent("MeshToBeAdded", child);
-          }
-        });
-      //}, onProgress, onError );
-      });
     },
 
     ImportMeshFromBuffer : function(model_buffer, model_name)

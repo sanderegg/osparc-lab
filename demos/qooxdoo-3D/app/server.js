@@ -24,11 +24,11 @@ var io = require('socket.io')(server);
 io.on('connection', function(client) {
   console.log('Client connected...');
 
-  client.on('loadFromServer', function(models_path) {
-    loadFromServer(client, models_path);
+  client.on('loadMeshes', function(models_path) {
+    loadMeshes(client, models_path);
   });
 
-  client.on('loadViPServer', function(ViP_model) {
+  client.on('loadViP', function(ViP_model) {
     loadViPFromServer(client, ViP_model);
   });
 
@@ -44,22 +44,24 @@ io.on('connection', function(client) {
 });
 
 
-function loadFromServer(client, models_dir) {
+function loadMeshes(client, models_dir) {
   models_dir = 'source-output/app/' + models_dir;
-  console.log('loadFromServer: ', models_dir);
+  console.log('loadMeshes: ', models_dir);
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
-    file_path = models_dir +'/'+ file;
-    fs.readFile(file_path, function (err, data) {
-      if (err)
-        throw err;
-      var modelJson = {};
-      modelJson.modelName = file;
-      modelJson.value = data.toString();
-      modelJson.type = 'loadFromServer';
-      console.log("sending file: ", modelJson.modelName);
-      client.emit('loadFromServer', modelJson);
-    });
+    if ('obj' === file.split('.').pop()) {
+      file_path = models_dir +'/'+ file;
+      fs.readFile(file_path, function (err, data) {
+        if (err)
+          throw err;
+        var modelJson = {};
+        modelJson.modelName = file;
+        modelJson.value = data.toString();
+        modelJson.type = 'loadMeshes';
+        console.log("sending file: ", modelJson.modelName);
+        client.emit('loadMeshes', modelJson);
+      });
+    }
   });
 };
 
@@ -68,16 +70,18 @@ function loadViPFromServer(client, ViP_model) {
   console.log('loadViPFromServer: ', ViP_model);
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
-    file_path = models_dir +'/'+ file;
-    fs.readFile(file_path, function (err, data) {
-      if (err)
-        throw err;
-      var modelJson = {};
-      modelJson.modelName = file;
-      modelJson.value = data.toString();
-      modelJson.type = 'loadViPServer';
-      client.emit('loadViPServer', modelJson);
-    });
+    if ('obj' === file.split('.').pop()) {
+      file_path = models_dir +'/'+ file;
+      fs.readFile(file_path, function (err, data) {
+        if (err)
+          throw err;
+        var modelJson = {};
+        modelJson.modelName = file;
+        modelJson.value = data.toString();
+        modelJson.type = 'loadViP';
+        client.emit('loadViP', modelJson);
+      });
+    }
   });
 };
 
