@@ -109,7 +109,7 @@ qx.Class.define("app.Application",
       var activeUser = this._initialStore.getActiveUser();
       var activeName = this._initialStore.getUsers().toArray()[activeUser].getName();
       var container1 = new qx.ui.container.Composite(new qx.ui.layout.HBox(1));
-      container1.add(new qx.ui.basic.Atom("Hello, " + activeName).set({
+      container1.add(new qx.ui.basic.Atom("Grüezi, " + activeName).set({
         backgroundColor : this._initialStore.getColors().getMenuBar().getBackground(),
         textColor: this._initialStore.getColors().getMenuBar().getFont(),
         padding : 6,
@@ -178,7 +178,7 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("fileSaveMeshesPressed", function(e) {
-          this._threeView.SerializeMeshes(activeUserName);
+          this._threeView.SerializeMeshes();
         }, this);
 
         this._menuBar.addListener("fileLoadScenePressed", function(e) {
@@ -279,6 +279,17 @@ qx.Class.define("app.Application",
         this._threeView.addListener("entityRemoved", function(e) {
           var entityId = e.getData();
           this._objectList.RemoveObject(entityId);
+        }, this);
+
+        this._threeView.addListener(("MeshesToBeExported"), function(e) {
+          if (!this._socket.slotExists("exportMeshes")) {
+            this._socket.on("exportMeshes", function(val) {
+              if (val.type === "exportMeshes") {
+                console.log("Meshes exported: ", val.value);
+              }
+            }, this);
+          }
+          this._socket.emit("exportMeshes", [activeUserName, e.getData()]);
         }, this);
 
         this._threeView.addListener(("SceneToBeExported"), function(e) {

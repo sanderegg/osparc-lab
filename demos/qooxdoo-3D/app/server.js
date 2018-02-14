@@ -54,12 +54,12 @@ io.on('connection', function(client) {
 
 
 function importMeshes(client, active_user) {
-  var models_dir = APP_PATH + MODELS_PATH + active_user;
+  const models_dir = APP_PATH + MODELS_PATH + active_user;
   console.log('import Meshes from: ', models_dir);
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
     if ('obj' === file.split('.').pop()) {
-      file_path = models_dir +'/'+ file;
+      const file_path = models_dir +'/'+ file;
       fs.readFile(file_path, function (err, data) {
         if (err)
           throw err;
@@ -74,17 +74,33 @@ function importMeshes(client, active_user) {
   });
 };
 
-function exportMeshes(client, active_user, scene_json) {
-  console.log('export Meshes to: ', path);
+function exportMeshes(client, active_user, meshes_json) {
+  const models_dir = APP_PATH + MODELS_PATH + active_user;
+  var fs = require('fs');
+  for (var i = 0; i < meshes_json.length; i++) {
+    const file_path = models_dir +'/'+ meshes_json[i].name;
+    fs.writeFile(file_path, meshes_json[i].data, 'utf8', function (err) {
+      var response = {};
+      response.type = 'exportScene';
+      response.value = false;
+      if (err) {
+        console.log("Error: ", err);
+      } else {
+        console.log(models_dir, " file was saved!");
+        response.value = true;
+      }
+      client.emit('exportScene', response);
+    });
+  }
 };
 
 function importScene(client, active_user) {
-  var models_dir = APP_PATH + MODELS_PATH + active_user;
+  const models_dir = APP_PATH + MODELS_PATH + active_user;
   console.log('import Scene from: ', models_dir);
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
-    file_path = models_dir +'/'+ file;
-    if (file === 'helloScene.json') {
+    const file_path = models_dir +'/'+ file;
+    if (file === 'myScene.json') {
       fs.readFile(file_path, function (err, data) {
         if (err)
           throw err;
@@ -100,7 +116,7 @@ function importScene(client, active_user) {
 };
 
 function exportScene(client, active_user, scene_json) {
-  var models_dir = APP_PATH + MODELS_PATH + active_user + '/helloScene.json';
+  const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.json';
   console.log('export Scene to: ', models_dir);
   var content = JSON.stringify(scene_json);
   var fs = require('fs');
@@ -139,4 +155,4 @@ function importViP(client, ViP_model) {
 };
 
 
-console.log("server started on " + port + '/app');
+console.log("server started on " + PORT + '/app');
