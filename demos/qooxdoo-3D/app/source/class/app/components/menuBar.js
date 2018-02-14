@@ -28,6 +28,7 @@ qx.Class.define("app.components.menuBar",
     "fileLoadPressed": "qx.event.type.Event",
     "fileLoadFromServerPressed": "qx.event.type.Event",
     "fileSavePressed": "qx.event.type.Event",
+    "fileLoadViP": "qx.event.type.Data",
   },
 
   members: {
@@ -63,6 +64,7 @@ qx.Class.define("app.components.menuBar",
       var newButton = new qx.ui.menu.Button("New", null, null);
       var loadButton = new qx.ui.menu.Button("Load", null, null);
       var loadFromServerButton = new qx.ui.menu.Button("Load from Server", null, null);
+      var loadViP = new qx.ui.menu.Button("Load ViP", null, null, this.getViPList());
       var saveButton = new qx.ui.menu.Button("Save", null, null);
 
       newButton.addListener("execute", function(e) {
@@ -84,9 +86,25 @@ qx.Class.define("app.components.menuBar",
       fileMenu.add(newButton);
       fileMenu.add(loadButton);
       fileMenu.add(loadFromServerButton);
+      fileMenu.add(loadViP);
       fileMenu.add(saveButton);
 
       return fileMenu;
+    },
+
+    getViPList : function()
+    {
+      var vipMenu = new qx.ui.menu.Menu;
+
+      var theoButton = new qx.ui.menu.Button("Thelonious", null, null);
+
+      theoButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileLoadViP", "Thelonious");
+      }, this);
+
+      vipMenu.add(theoButton);
+
+      return vipMenu;
     },
   }
 });

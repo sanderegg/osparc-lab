@@ -187,6 +187,18 @@ qx.Class.define("app.Application",
           this._socket.emit("loadFromServer", models_path);
         }, this);
 
+        this._menuBar.addListener("fileLoadViP", function(e) {
+          var selectedViP = e.getData();
+          if (!this._socket.slotExists("loadViPServer")) {
+            this._socket.on("loadViPServer", function(val) {
+              if (val.type === "loadViPServer") {
+                this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
+              }
+            }, this);
+          }
+          this._socket.emit("loadViPServer", selectedViP);
+        }, this);
+
         this._menuBar.addListener("fileSavePressed", function(e) {
           this._threeView.SerializeMeshes(models_path);
         }, this);

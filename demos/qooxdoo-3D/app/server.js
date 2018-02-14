@@ -28,6 +28,9 @@ io.on('connection', function(client) {
     loadFromServer(client, models_path);
   });
 
+  client.on('loadViPServer', function(ViP_model) {
+    loadViPFromServer(client, ViP_model);
+  });
 });
 
 
@@ -49,5 +52,24 @@ function loadFromServer(client, models_dir) {
     });
   });
 };
+
+function loadViPFromServer(client, ViP_model) {
+  models_dir = 'source-output/app/resource/models/ViP/' + ViP_model;
+  console.log('loadViPFromServer: ', ViP_model);
+  var fs = require("fs");
+  fs.readdirSync(models_dir).forEach(file => {
+    file_path = models_dir +'/'+ file;
+    fs.readFile(file_path, function (err, data) {
+      if (err)
+        throw err;
+      var modelJson = {};
+      modelJson.modelName = file;
+      modelJson.value = data.toString();
+      modelJson.type = 'loadViPServer';
+      client.emit('loadViPServer', modelJson);
+    });
+  });
+};
+
 
 console.log("server started on " + port + '/app');
