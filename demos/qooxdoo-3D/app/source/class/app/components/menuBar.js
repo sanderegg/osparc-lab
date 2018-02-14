@@ -27,8 +27,9 @@ qx.Class.define("app.components.menuBar",
     "fileNewPressed": "qx.event.type.Event",
     "fileLoadPressed": "qx.event.type.Event",
     "fileLoadFromServerPressed": "qx.event.type.Event",
-    "fileSaveScenePressed": "qx.event.type.Event",
     "fileLoadViP": "qx.event.type.Data",
+    "fileLoadScenePressed": "qx.event.type.Event",
+    "fileSaveScenePressed": "qx.event.type.Event",
   },
 
   members: {
@@ -65,6 +66,7 @@ qx.Class.define("app.components.menuBar",
       var loadButton = new qx.ui.menu.Button("Load", null, null);
       var loadFromServerButton = new qx.ui.menu.Button("Load from Server", null, null);
       var loadViP = new qx.ui.menu.Button("Load ViP", null, null, this.getViPList());
+      var loadSceneButton = new qx.ui.menu.Button("Load scene", null, null);
       var saveSceneButton = new qx.ui.menu.Button("Save scene", null, null);
 
       newButton.addListener("execute", function(e) {
@@ -79,6 +81,10 @@ qx.Class.define("app.components.menuBar",
         this.fireDataEvent("fileLoadFromServerPressed");
       }, this);
 
+      loadSceneButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileLoadScenePressed");
+      }, this);
+
       saveSceneButton.addListener("execute", function(e) {
         this.fireDataEvent("fileSaveScenePressed");
       }, this);
@@ -87,6 +93,7 @@ qx.Class.define("app.components.menuBar",
       fileMenu.add(loadButton);
       fileMenu.add(loadFromServerButton);
       fileMenu.add(loadViP);
+      fileMenu.add(loadSceneButton);
       fileMenu.add(saveSceneButton);
 
       return fileMenu;

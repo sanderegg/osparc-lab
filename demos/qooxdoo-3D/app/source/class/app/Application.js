@@ -199,8 +199,30 @@ qx.Class.define("app.Application",
           this._socket.emit("loadViPServer", selectedViP);
         }, this);
 
+        this._menuBar.addListener("fileLoadScenePressed", function(e) {
+          if (!this._socket.slotExists("importScene")) {
+            this._socket.on("importScene", function(val) {
+              if (val.type === "importScene") {
+                this._threeView.ImportSceneFromBuffer(val.value);
+              }
+            }, this);
+          }
+          this._socket.emit("importScene", models_path);
+        }, this);
+
         this._menuBar.addListener("fileSaveScenePressed", function(e) {
           //this._threeView.SerializeMeshes(models_path);
+          if (!this._socket.slotExists("exportScene")) {
+            this._socket.on("exportScene", function(res) {
+              if (res.type === "exportScene") {
+                if (res.value) {
+                  console.log("File was saved");
+                } else {
+                  console.log("File was not saved");
+                }
+              }
+            }, this);
+          }
           this._threeView.SerializeScene(models_path);
         }, this);
       }

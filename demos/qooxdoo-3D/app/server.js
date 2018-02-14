@@ -32,10 +32,14 @@ io.on('connection', function(client) {
     loadViPFromServer(client, ViP_model);
   });
 
+  client.on('importScene', function(models_path) {
+    importScene(client, models_path);
+  });
+
   client.on('exportScene', function(args) {
     var path = args[0];
     var scene_json = args[1];
-    exportScene(path, scene_json);
+    exportScene(client, path, scene_json);
   });
 });
 
@@ -77,17 +81,43 @@ function loadViPFromServer(client, ViP_model) {
   });
 };
 
-function exportScene(path, scene_json) {
-  models_dir = 'source-output/app/' + path + '/hallo.json';
+function importScene(client, models_dir) {
+  models_dir = 'source-output/app/' + models_dir;
+  console.log('loadSceneFromServer: ', models_dir);
+  var fs = require("fs");
+  fs.readdirSync(models_dir).forEach(file => {
+    file_path = models_dir +'/'+ file;
+    if (file === 'helloScene.json') {
+      fs.readFile(file_path, function (err, data) {
+        if (err)
+          throw err;
+        var modelJson = {};
+        modelJson.modelName = file;
+        modelJson.value = data.toString();
+        modelJson.type = 'importScene';
+        console.log("sending file: ", modelJson.modelName);
+        client.emit('importScene', modelJson);
+      });
+    }
+  });
+};
+
+function exportScene(client, path, scene_json) {
+  models_dir = 'source-output/app/' + path + '/helloScene.json';
   console.log('here: ', models_dir);
   var content = JSON.stringify(scene_json);
   var fs = require('fs');
   fs.writeFile(models_dir, content, 'utf8', function (err) {
+    var response = {};
+    response.type = 'exportScene';
+    response.value = false;
     if (err) {
       console.log("Error: ", err);
     } else {
       console.log(models_dir, " file was saved!");
+      response.value = true;
     }
+    client.emit('exportScene', response);
   });
 };
 

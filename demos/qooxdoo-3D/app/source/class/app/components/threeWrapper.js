@@ -170,6 +170,16 @@ qx.Class.define("app.components.threeWrapper",
       */
     },
 
+    ImportSceneFromBuffer : function(model_buffer)
+    {
+      var scope = this;
+      var glTFLoader = new THREE.GLTFLoader();
+      glTFLoader.parse(model_buffer, null, function( myScene ) {
+        scope._scene.add(myScene.scene);
+        scope.Render();
+      });
+    },
+
     ExportScene : function (models_path)
     {
       var options = {
@@ -177,8 +187,8 @@ qx.Class.define("app.components.threeWrapper",
       };
 
       var scope = this;
-      var exporter = new THREE.GLTFExporter();
-      exporter.parse( this._scene, function ( gltf ) {
+      var glTFExporter = new THREE.GLTFExporter();
+      glTFExporter.parse( this._scene, function ( gltf ) {
         scope.fireDataEvent("SceneToBeExported", gltf);
       }, options );
     },
