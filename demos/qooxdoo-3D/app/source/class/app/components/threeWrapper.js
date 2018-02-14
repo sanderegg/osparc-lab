@@ -252,8 +252,8 @@ qx.Class.define("app.components.threeWrapper",
         polygonOffsetUnits: 1,
         transparent: true,
         opacity: 0.6,
+        vertexColors: THREE.FaceColors,
       });
-      material.vertexColors = THREE.FaceColors;
 
       return material;
     },

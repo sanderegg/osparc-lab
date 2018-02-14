@@ -139,7 +139,7 @@ qx.Class.define("app.Application",
             "Background": "#3F3F3F", // 63, 63, 63
           },
         },
-        "ActiveUser" : 2,
+        "ActiveUser" : 0,
         "Users": [
           {
             "Name": "Odei",
