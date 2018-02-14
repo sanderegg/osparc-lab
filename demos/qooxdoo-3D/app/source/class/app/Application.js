@@ -156,12 +156,12 @@ qx.Class.define("app.Application",
     },
 
     _initSignals : function() {
+
+      const activeUserId = this._initialStore.getActiveUser();
+      const activeUserName = this._initialStore.getUsers().toArray()[activeUserId].getName();
+
       // Menu bar
       {
-        var activeUser = this._initialStore.getActiveUser();
-        var activeUserName = this._initialStore.getUsers().toArray()[activeUser].getName();
-        var models_path = 'resource/models/' + activeUserName;
-
         this._menuBar.addListener("fileNewPressed", function(e) {
           this._threeView.RemoveAll();
         }, this);
@@ -174,22 +174,11 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("importMeshes", models_path);
+          this._socket.emit("importMeshes", activeUserName);
         }, this);
 
         this._menuBar.addListener("fileSaveMeshesPressed", function(e) {
-          if (!this._socket.slotExists("exportScene")) {
-            this._socket.on("exportScene", function(res) {
-              if (res.type === "exportScene") {
-                if (res.value) {
-                  console.log("File was saved");
-                } else {
-                  console.log("File was not saved");
-                }
-              }
-            }, this);
-          }
-          this._threeView.SerializeMeshes(models_path);
+          this._threeView.SerializeMeshes(activeUserName);
         }, this);
 
         this._menuBar.addListener("fileLoadScenePressed", function(e) {
@@ -200,7 +189,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("importScene", models_path);
+          this._socket.emit("importScene", activeUserName);
         }, this);
 
         this._menuBar.addListener("fileSaveScenePressed", function(e) {
@@ -208,26 +197,26 @@ qx.Class.define("app.Application",
             this._socket.on("exportScene", function(res) {
               if (res.type === "exportScene") {
                 if (res.value) {
-                  console.log("File was saved");
+                  console.log("Scene was saved");
                 } else {
-                  console.log("File was not saved");
+                  console.log("Scene was not saved");
                 }
               }
             }, this);
           }
-          this._threeView.SerializeScene(models_path);
+          this._threeView.SerializeScene();
         }, this);
 
         this._menuBar.addListener("fileLoadViPPressed", function(e) {
           var selectedViP = e.getData();
-          if (!this._socket.slotExists("loadViP")) {
-            this._socket.on("loadViP", function(val) {
-              if (val.type === "loadViP") {
+          if (!this._socket.slotExists("importViP")) {
+            this._socket.on("importViP", function(val) {
+              if (val.type === "importViP") {
                 this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
               }
             }, this);
           }
-          this._socket.emit("loadViP", selectedViP);
+          this._socket.emit("importViP", selectedViP);
         }, this);
       }
 
@@ -300,7 +289,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("exportScene", [models_path, e.getData()]);
+          this._socket.emit("exportScene", [activeUserName, e.getData()]);
         }, this);
       }
     },

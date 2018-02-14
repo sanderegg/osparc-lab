@@ -164,7 +164,7 @@ qx.Class.define("app.components.threeWrapper",
       });
     },
 
-    ExportScene : function (models_path)
+    ExportScene : function ()
     {
       var options = {
         binary: false,
