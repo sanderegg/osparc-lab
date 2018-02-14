@@ -14,8 +14,6 @@ qx.Class.define("app.components.threeWrapper",
     var orbit_path = "resource/three/OrbitControls.js";
     var transform_path = "resource/three/TransformControls.js";
     var loader_path = "resource/three/OBJLoader.js";
-    var loaderSupp_path = "resource/three/LoaderSupport.js";
-    var loader2_path = "resource/three/OBJLoader2.js";
     var exporter_path = "resource/three/OBJExporter.js";
     var vtk_loader_path = "resource/three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
@@ -23,8 +21,6 @@ qx.Class.define("app.components.threeWrapper",
       orbit_path,
       transform_path,
       loader_path,
-      loaderSupp_path,
-      loader2_path,
       exporter_path,
       vtk_loader_path
     ]);
@@ -110,16 +106,6 @@ qx.Class.define("app.components.threeWrapper",
 
     ImportMeshFromBuffer : function(model_buffer, model_name)
     {
-      /*
-      var objLoader2 = new THREE.OBJLoader2();
-      var local = new THREE.Object3D();
-      local.add( objLoader2.parse( model_buffer ) );
-      local.name = model_name;
-      var material = this.CreateNewMaterial();
-      local.material = material;
-      this.fireDataEvent("MeshToBeAdded", local);
-      */
-
       // https://threejs.org/docs/#api/loaders/MaterialLoader
       // Have a look at this to load materials together with geometry.
       //Could be stored in userData{}
