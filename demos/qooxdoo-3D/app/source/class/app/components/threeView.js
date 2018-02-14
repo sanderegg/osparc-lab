@@ -54,6 +54,10 @@ qx.Class.define("app.components.threeView",
         this.AddMeshToScene(newMesh);
       }
     }, this);
+
+    this._threeWrapper.addListener(("SceneToBeExported"), function(e) {
+      this.fireDataEvent("SceneToBeExported", e.getData());
+    }, this);
   },
 
   properties: {
@@ -64,6 +68,7 @@ qx.Class.define("app.components.threeView",
     "entitySelected": "qx.event.type.Data",
     "entityAdded": "qx.event.type.Data",
     "entityRemoved": "qx.event.type.Data",
+    "SceneToBeExported": "qx.event.type.Data",
   },
 
   members: {
@@ -306,6 +311,11 @@ qx.Class.define("app.components.threeView",
         console.log(models_path + '/' + mesh_name);
         console.log(mesh_to_export);
       }
+    },
+
+    SerializeScene : function(models_path)
+    {
+      this._threeWrapper.ExportScene(models_path);
     },
   }
 });

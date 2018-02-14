@@ -31,6 +31,12 @@ io.on('connection', function(client) {
   client.on('loadViPServer', function(ViP_model) {
     loadViPFromServer(client, ViP_model);
   });
+
+  client.on('exportScene', function(args) {
+    var path = args[0];
+    var scene_json = args[1];
+    exportScene(path, scene_json);
+  });
 });
 
 
@@ -68,6 +74,20 @@ function loadViPFromServer(client, ViP_model) {
       modelJson.type = 'loadViPServer';
       client.emit('loadViPServer', modelJson);
     });
+  });
+};
+
+function exportScene(path, scene_json) {
+  models_dir = 'source-output/app/' + path + '/hallo.json';
+  console.log('here: ', models_dir);
+  var content = JSON.stringify(scene_json);
+  var fs = require('fs');
+  fs.writeFile(models_dir, content, 'utf8', function (err) {
+    if (err) {
+      console.log("Error: ", err);
+    } else {
+      console.log(models_dir, " file was saved!");
+    }
   });
 };
 

@@ -13,15 +13,19 @@ qx.Class.define("app.components.threeWrapper",
     var three_path = "resource/three/three.min.js";
     var orbit_path = "resource/three/OrbitControls.js";
     var transform_path = "resource/three/TransformControls.js";
-    var loader_path = "resource/three/OBJLoader.js";
-    var exporter_path = "resource/three/OBJExporter.js";
+    var obj_loader_path = "resource/three/OBJLoader.js";
+    var obj_exporter_path = "resource/three/OBJExporter.js";
+    var gltf_loader_path = "resource/three/GLTFLoader.js";
+    var gltf_exporter_path = "resource/three/GLTFExporter.js";
     var vtk_loader_path = "resource/three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
       three_path,
       orbit_path,
       transform_path,
-      loader_path,
-      exporter_path,
+      obj_loader_path,
+      obj_exporter_path,
+      gltf_loader_path,
+      gltf_exporter_path,
       vtk_loader_path
     ]);
 
@@ -61,6 +65,7 @@ qx.Class.define("app.components.threeWrapper",
   events: {
     "ThreeLibReady": "qx.event.type.Data",
     "MeshToBeAdded": "qx.event.type.Data",
+    "SceneToBeExported": "qx.event.type.Data",
   },
 
   members: {
@@ -163,6 +168,19 @@ qx.Class.define("app.components.threeWrapper",
 
       this.AddMeshToScene(mesh_copy);
       */
+    },
+
+    ExportScene : function (models_path)
+    {
+      var options = {
+        binary: false,
+      };
+
+      var scope = this;
+      var exporter = new THREE.GLTFExporter();
+      exporter.parse( this._scene, function ( gltf ) {
+        scope.fireDataEvent("SceneToBeExported", gltf);
+      }, options );
     },
 
     RemoveFromScene : function(objFromScene)

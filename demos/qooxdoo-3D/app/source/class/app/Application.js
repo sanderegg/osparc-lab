@@ -199,8 +199,9 @@ qx.Class.define("app.Application",
           this._socket.emit("loadViPServer", selectedViP);
         }, this);
 
-        this._menuBar.addListener("fileSavePressed", function(e) {
-          this._threeView.SerializeMeshes(models_path);
+        this._menuBar.addListener("fileSaveScenePressed", function(e) {
+          //this._threeView.SerializeMeshes(models_path);
+          this._threeView.SerializeScene(models_path);
         }, this);
       }
 
@@ -263,6 +264,17 @@ qx.Class.define("app.Application",
         this._threeView.addListener("entityRemoved", function(e) {
           var entityId = e.getData();
           this._objectList.RemoveObject(entityId);
+        }, this);
+
+        this._threeView.addListener(("SceneToBeExported"), function(e) {
+          if (!this._socket.slotExists("exportScene")) {
+            this._socket.on("exportScene", function(val) {
+              if (val.type === "exportScene") {
+                console.log("Scene exported: ", val.value);
+              }
+            }, this);
+          }
+          this._socket.emit("exportScene", [models_path, e.getData()]);
         }, this);
       }
     },
