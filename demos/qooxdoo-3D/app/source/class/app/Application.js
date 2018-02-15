@@ -166,19 +166,19 @@ qx.Class.define("app.Application",
           this._threeView.RemoveAll();
         }, this);
 
-        this._menuBar.addListener("fileLoadMeshesPressed", function(e) {
-          if (!this._socket.slotExists("importMeshes")) {
-            this._socket.on("importMeshes", function(val) {
-              if (val.type === "importMeshes") {
-                this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
+        this._menuBar.addListener("fileLoadEntitiesPressed", function(e) {
+          if (!this._socket.slotExists("importEntities")) {
+            this._socket.on("importEntities", function(val) {
+              if (val.type === "importEntities") {
+                this._threeView.ImportEntityFromBuffer(val.value, val.modelName);
               }
             }, this);
           }
-          this._socket.emit("importMeshes", activeUserName);
+          this._socket.emit("importEntities", activeUserName);
         }, this);
 
-        this._menuBar.addListener("fileSaveMeshesPressed", function(e) {
-          this._threeView.SerializeMeshes();
+        this._menuBar.addListener("fileSaveEntitiesPressed", function(e) {
+          this._threeView.SerializeEntities();
         }, this);
 
         this._menuBar.addListener("fileLoadScenePressed", function(e) {
@@ -212,7 +212,7 @@ qx.Class.define("app.Application",
           if (!this._socket.slotExists("importViP")) {
             this._socket.on("importViP", function(val) {
               if (val.type === "importViP") {
-                this._threeView.ImportMeshFromBuffer(val.value, val.modelName);
+                this._threeView.ImportEntityFromBuffer(val.value, val.modelName);
               }
             }, this);
           }
@@ -281,15 +281,15 @@ qx.Class.define("app.Application",
           this._objectList.RemoveObject(entityId);
         }, this);
 
-        this._threeView.addListener(("MeshesToBeExported"), function(e) {
-          if (!this._socket.slotExists("exportMeshes")) {
-            this._socket.on("exportMeshes", function(val) {
-              if (val.type === "exportMeshes") {
-                console.log("Meshes exported: ", val.value);
+        this._threeView.addListener(("EntitiesToBeExported"), function(e) {
+          if (!this._socket.slotExists("exportEntities")) {
+            this._socket.on("exportEntities", function(val) {
+              if (val.type === "exportEntities") {
+                console.log("Entities exported: ", val.value);
               }
             }, this);
           }
-          this._socket.emit("exportMeshes", [activeUserName, e.getData()]);
+          this._socket.emit("exportEntities", [activeUserName, e.getData()]);
         }, this);
 
         this._threeView.addListener(("SceneToBeExported"), function(e) {

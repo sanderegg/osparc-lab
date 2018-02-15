@@ -25,8 +25,8 @@ qx.Class.define("app.components.menuBar",
 
   events : {
     "fileNewPressed": "qx.event.type.Event",
-    "fileLoadMeshesPressed": "qx.event.type.Event",
-    "fileSaveMeshesPressed": "qx.event.type.Event",
+    "fileLoadEntitiesPressed": "qx.event.type.Event",
+    "fileSaveEntitiesPressed": "qx.event.type.Event",
     "fileLoadScenePressed": "qx.event.type.Event",
     "fileSaveScenePressed": "qx.event.type.Event",
     "fileLoadViPPressed": "qx.event.type.Data",
@@ -63,8 +63,8 @@ qx.Class.define("app.components.menuBar",
       var fileMenu = new qx.ui.menu.Menu;
 
       var newButton = new qx.ui.menu.Button("New", null, null);
-      var loadMeshesButton = new qx.ui.menu.Button("Load meshes", null, null);
-      var saveMeshesButton = new qx.ui.menu.Button("Save meshes", null, null);
+      var loadEntitiesButton = new qx.ui.menu.Button("Load entities", null, null);
+      var saveEntitiesButton = new qx.ui.menu.Button("Save entities", null, null);
       var loadSceneButton = new qx.ui.menu.Button("Load scene", null, null);
       var saveSceneButton = new qx.ui.menu.Button("Save scene", null, null);
       var loadViPButton = new qx.ui.menu.Button("Load ViP", null, null, this.getViPList());
@@ -73,12 +73,12 @@ qx.Class.define("app.components.menuBar",
         this.fireDataEvent("fileNewPressed");
       }, this);
 
-      loadMeshesButton.addListener("execute", function(e) {
-        this.fireDataEvent("fileLoadMeshesPressed");
+      loadEntitiesButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileLoadEntitiesPressed");
       }, this);
 
-      saveMeshesButton.addListener("execute", function(e) {
-        this.fireDataEvent("fileSaveMeshesPressed");
+      saveEntitiesButton.addListener("execute", function(e) {
+        this.fireDataEvent("fileSaveEntitiesPressed");
       }, this);
 
       loadSceneButton.addListener("execute", function(e) {
@@ -90,8 +90,8 @@ qx.Class.define("app.components.menuBar",
       }, this);
 
       fileMenu.add(newButton);
-      fileMenu.add(loadMeshesButton);
-      fileMenu.add(saveMeshesButton);
+      fileMenu.add(loadEntitiesButton);
+      fileMenu.add(saveEntitiesButton);
       fileMenu.add(loadSceneButton);
       fileMenu.add(saveSceneButton);
       fileMenu.add(loadViPButton);

@@ -65,7 +65,7 @@ qx.Class.define("app.components.threeWrapper",
 
   events: {
     "ThreeLibReady": "qx.event.type.Data",
-    "MeshToBeAdded": "qx.event.type.Data",
+    "EntityToBeAdded": "qx.event.type.Data",
     "SceneToBeExported": "qx.event.type.Data",
   },
 
@@ -93,7 +93,7 @@ qx.Class.define("app.components.threeWrapper",
       this.Render();
     },
 
-    ImportMeshFromBuffer : function(model_buffer, model_name)
+    ImportEntityFromBuffer : function(model_buffer, model_name)
     {
       // https://threejs.org/docs/#api/loaders/MaterialLoader
       // Have a look at this to load materials together with geometry.
@@ -116,42 +116,18 @@ qx.Class.define("app.components.threeWrapper",
           child.geometry.colorsNeedUpdate = true;
           child.geometry.dynamic = true;
 
-          scope.fireDataEvent("MeshToBeAdded", child);
+          scope.fireDataEvent("EntityToBeAdded", child);
         }
       });
     },
 
-    ExportMesh : function (mesh)
+    ExportEntity : function (entity)
     {
       // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
 
       var exporter = new THREE.OBJExporter();
-      var mesh_to_export = exporter.parse(mesh);
-      return mesh_to_export;
-
-      /*
-      var serializedGeometry = this._meshes[i].geometry.toJSON();
-      var serializedMaterial = this._meshes[i].material.toJSON();
-      console.log(serializedGeometry);
-      console.log(serializedMaterial);
-      var jsonLoader = new THREE.JSONLoader();
-      var result1 = jsonLoader.parse(serializedGeometry.data);
-      var result2 = jsonLoader.parse(serializedMaterial.data);
-      var geo_copy = result1.geometry;
-      var mat_copy = result2.material;
-      geo_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
-      mat_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
-      var mesh_copy = new THREE.Mesh(geo_copy, mat_copy);
-      mesh_copy.uuid = "00000000-0000-0000-0000-000000" + Math.floor((Math.random() * 100000)).toString();
-
-      mesh_copy.traverse(function(child) {
-          if (child instanceof THREE.Mesh) {
-              child.material = mat_copy;
-          }
-      });
-
-      this.AddMeshToScene(mesh_copy);
-      */
+      var entity_to_export = exporter.parse(entity);
+      return entity_to_export;
     },
 
     ImportSceneFromBuffer : function(model_buffer)
@@ -206,12 +182,12 @@ qx.Class.define("app.components.threeWrapper",
       return null;
     },
 
-    IntersectMeshes : function(meshes, posX, posY)
+    IntersectEntities : function(entities, posX, posY)
     {
       this._mouse.x = posX;
       this._mouse.y = posY;
       this._raycaster.setFromCamera( this._mouse, this._camera );
-      var intersects = this._raycaster.intersectObjects( meshes );
+      var intersects = this._raycaster.intersectObjects( entities );
       return intersects;
     },
 
@@ -256,10 +232,10 @@ qx.Class.define("app.components.threeWrapper",
       return material;
     },
 
-    CreateMesh : function(geometry, material)
+    CreateEntity : function(geometry, material)
     {
-      var mesh = new THREE.Mesh(geometry, material);
-      return mesh;
+      var entity = new THREE.Mesh(geometry, material);
+      return entity;
     },
 
     CreateWireframeFromGeometry : function(geometry)

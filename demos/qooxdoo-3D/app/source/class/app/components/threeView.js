@@ -48,10 +48,10 @@ qx.Class.define("app.components.threeView",
       }
     }, this);
 
-    this._threeWrapper.addListener(("MeshToBeAdded"), function(e) {
-      var newMesh = e.getData();
-      if (newMesh) {
-        this.AddMeshToScene(newMesh);
+    this._threeWrapper.addListener(("EntityToBeAdded"), function(e) {
+      var newEntity = e.getData();
+      if (newEntity) {
+        this.AddEntityToScene(newEntity);
       }
     }, this);
 
@@ -68,7 +68,7 @@ qx.Class.define("app.components.threeView",
     "entitySelected": "qx.event.type.Data",
     "entityAdded": "qx.event.type.Data",
     "entityRemoved": "qx.event.type.Data",
-    "MeshesToBeExported": "qx.event.type.Data",
+    "EntitiesToBeExported": "qx.event.type.Data",
     "SceneToBeExported": "qx.event.type.Data",
   },
 
@@ -76,7 +76,7 @@ qx.Class.define("app.components.threeView",
     _threeDViewer: null,
     _threeWrapper: null,
     _transformControls: [],
-    _meshes: [],
+    _entities: [],
     _intersected: null,
     _selectionMode: 0,
 
@@ -106,7 +106,7 @@ qx.Class.define("app.components.threeView",
 
       var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
       var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
-      var intersects = this._threeWrapper.IntersectMeshes(this._meshes, posX, posY);
+      var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
       if (intersects.length > 0)
       {
         if(this._intersected != null) {
@@ -148,11 +148,11 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
-    AddMeshToScene : function(mesh)
+    AddEntityToScene : function(entity)
     {
-      this._threeWrapper.AddObjectToScene(mesh);
-      this._meshes.push(mesh);
-      this.fireDataEvent("entityAdded", [mesh.uuid, mesh.name]);
+      this._threeWrapper.AddObjectToScene(entity);
+      this._entities.push(entity);
+      this.fireDataEvent("entityAdded", [entity.uuid, entity.name]);
     },
 
     AddObject : function(objType = "Sphere", scale = 1)
@@ -175,10 +175,10 @@ qx.Class.define("app.components.threeView",
 
       if (geometry) {
         var material = this._threeWrapper.CreateNewMaterial();
-        var mesh = this._threeWrapper.CreateMesh(geometry, material);
-        mesh.name = objType;
-        this.AddMeshToScene(mesh);
-        return mesh;
+        var entity = this._threeWrapper.CreateEntity(geometry, material);
+        entity.name = objType;
+        this.AddEntityToScene(entity);
+        return entity;
       } else {
         console.log(name, " not implemented yet");
       }
@@ -186,8 +186,8 @@ qx.Class.define("app.components.threeView",
 
     RemoveAll : function()
     {
-      for (var i = this._meshes.length-1; i >= 0 ; i--) {
-        this.RemoveObject(this._meshes[i].uuid);
+      for (var i = this._entities.length-1; i >= 0 ; i--) {
+        this.RemoveObject(this._entities[i].uuid);
       }
     },
 
@@ -195,10 +195,10 @@ qx.Class.define("app.components.threeView",
     {
       this._threeWrapper.RemoveFromSceneById(uuid);
 
-      for (var i = 0; i < this._meshes.length; i++) {
-        if (this._meshes[i].uuid === uuid) {
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i].uuid === uuid) {
           if (i > -1) {
-            var el = this._meshes.splice(i, 1);
+            var el = this._entities.splice(i, 1);
             //delete el;
           }
           break;
@@ -212,12 +212,12 @@ qx.Class.define("app.components.threeView",
 
     StartMoveTool : function( selObjId )
     {
-      for (var i = 0; i < this._meshes.length; i++) {
-        if (this._meshes[i].uuid === selObjId) {
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i].uuid === selObjId) {
           var transformControl = this._threeWrapper.CreateTransformControls();
           transformControl.addEventListener('change', this._updateTransformControls.bind(this));
           transformControl.setMode("translate");
-          transformControl.attach(this._meshes[i]);
+          transformControl.attach(this._entities[i]);
           this._transformControls.push(transformControl);
           this._threeWrapper.AddObjectToScene(transformControl);
         }
@@ -253,24 +253,24 @@ qx.Class.define("app.components.threeView",
 
     _highlightAll : function()
     {
-      for (var i = 0; i < this._meshes.length; i++) {
-        this._meshes[i].material.opacity = 0.9;
+      for (var i = 0; i < this._entities.length; i++) {
+        this._entities[i].material.opacity = 0.9;
       }
     },
 
     _unhighlightAll : function()
     {
-      for (var i = 0; i < this._meshes.length; i++) {
-        this._meshes[i].material.opacity = 0.6;
+      for (var i = 0; i < this._entities.length; i++) {
+        this._entities[i].material.opacity = 0.6;
       }
     },
 
     HighlightObject : function( id )
     {
       this._unhighlightAll();
-      for (var i = 0; i < this._meshes.length; i++) {
-        if (this._meshes[i].uuid === id) {
-          this._meshes[i].material.opacity = 0.9;
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i].uuid === id) {
+          this._entities[i].material.opacity = 0.9;
         }
       }
       this._render();
@@ -279,39 +279,39 @@ qx.Class.define("app.components.threeView",
     _showEdges : function( show_edges )
     {
       if (show_edges) {
-        for (var i = 0; i < this._meshes.length; i++) {
-          var wireframe = this._threeWrapper.CreateWireframeFromGeometry(this._meshes[i].geometry);
-          this._meshes[i].add( wireframe );
+        for (var i = 0; i < this._entities.length; i++) {
+          var wireframe = this._threeWrapper.CreateWireframeFromGeometry(this._entities[i].geometry);
+          this._entities[i].add( wireframe );
         }
       } else {
-        for (var i = 0; i < this._meshes.length; i++) {
-          var wireObj = this._meshes[i].getObjectByName("wireframe");
+        for (var i = 0; i < this._entities.length; i++) {
+          var wireObj = this._entities[i].getObjectByName("wireframe");
           if (wireObj) {
-            this._meshes[i].remove(wireObj);
+            this._entities[i].remove(wireObj);
           }
         }
       }
       this._render();
     },
 
-    ImportMeshFromBuffer : function (model_buffer, model_name)
+    ImportEntityFromBuffer : function (model_buffer, model_name)
     {
-      this._threeWrapper.ImportMeshFromBuffer(model_buffer, model_name);
+      this._threeWrapper.ImportEntityFromBuffer(model_buffer, model_name);
     },
 
-    SerializeMeshes : function()
+    SerializeEntities : function()
     {
-      var meshes_array = [];
-      for (var i = 0; i < this._meshes.length; i++) {
-        var mesh_to_export = this._threeWrapper.ExportMesh(this._meshes[i]);
-        var mesh_name = 'model_' + i.toString() + '.obj';
-        var mesh_json = {
-          name: mesh_name,
-          data: mesh_to_export
+      var entities_array = [];
+      for (var i = 0; i < this._entities.length; i++) {
+        var entity_to_export = this._threeWrapper.ExportEntity(this._entities[i]);
+        var entity_name = 'model_' + i.toString() + '.obj';
+        var entity_json = {
+          name: entity_name,
+          data: entity_to_export
         };
-        meshes_array.push(mesh_json);
+        entities_array.push(entity_json);
       }
-      this.fireDataEvent("MeshesToBeExported", meshes_array);
+      this.fireDataEvent("EntitiesToBeExported", entities_array);
     },
 
     ImportSceneFromBuffer : function (model_buffer)

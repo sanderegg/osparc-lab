@@ -27,14 +27,14 @@ var io = require('socket.io')(server);
 io.on('connection', function(client) {
   console.log('Client connected...');
 
-  client.on('importMeshes', function(active_user) {
-    importMeshes(client, active_user);
+  client.on('importEntities', function(active_user) {
+    importEntities(client, active_user);
   });
 
-  client.on('exportMeshes', function(args) {
+  client.on('exportEntities', function(args) {
     var active_user = args[0];
-    var meshes_json = args[1];
-    exportMeshes(client, active_user, meshes_json);
+    var entities_json = args[1];
+    exportEntities(client, active_user, entities_json);
   });
 
   client.on('importScene', function(active_user) {
@@ -53,9 +53,9 @@ io.on('connection', function(client) {
 });
 
 
-function importMeshes(client, active_user) {
+function importEntities(client, active_user) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
-  console.log('import Meshes from: ', models_dir);
+  console.log('import Entities from: ', models_dir);
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
     if ('obj' === file.split('.').pop()) {
@@ -66,20 +66,20 @@ function importMeshes(client, active_user) {
         var modelJson = {};
         modelJson.modelName = file;
         modelJson.value = data.toString();
-        modelJson.type = 'importMeshes';
+        modelJson.type = 'importEntities';
         console.log("sending file: ", modelJson.modelName);
-        client.emit('importMeshes', modelJson);
+        client.emit('importEntities', modelJson);
       });
     }
   });
 };
 
-function exportMeshes(client, active_user, meshes_json) {
+function exportEntities(client, active_user, entities_json) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
   var fs = require('fs');
-  for (var i = 0; i < meshes_json.length; i++) {
-    const file_path = models_dir +'/'+ meshes_json[i].name;
-    fs.writeFile(file_path, meshes_json[i].data, 'utf8', function (err) {
+  for (var i = 0; i < entities_json.length; i++) {
+    const file_path = models_dir +'/'+ entities_json[i].name;
+    fs.writeFile(file_path, entities_json[i].data, 'utf8', function (err) {
       var response = {};
       response.type = 'exportScene';
       response.value = false;
@@ -131,6 +131,9 @@ function exportScene(client, active_user, scene_json) {
       response.value = true;
     }
     client.emit('exportScene', response);
+    if (err) {
+      throw err;
+    }
   });
 };
 
