@@ -31,6 +31,7 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     dynLoader.addListenerOnce('ready', function(e) {
       console.log(three_path + " loaded");
+      this.setLibReady(true);
 
       this._scene = new THREE.Scene();
 
@@ -61,6 +62,14 @@ qx.Class.define("app.wrappers.threeWrapper",
     }, this);
 
     dynLoader.start();
+  },
+
+  properties: {
+    libReady: {
+      nullable: false,
+      init: false,
+      check: "Boolean",
+    },
   },
 
   events: {
