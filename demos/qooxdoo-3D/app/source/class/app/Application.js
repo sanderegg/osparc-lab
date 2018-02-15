@@ -57,6 +57,9 @@ qx.Class.define("app.Application",
       this._defaultStore = qx.data.marshal.Json.createModel(this._getDefaultStore());
 
       qx.locale.Manager.getInstance().setLocale( this._defaultStore.getLocaleCode() );
+      qx.locale.Manager.getInstance().addListener("changeLocale", function(e) {
+        qx.locale.Manager.getInstance().setLocale( e.getData() );
+      }, this);
 
       // Document is the application root
       var doc = this.getRoot();
@@ -77,6 +80,10 @@ qx.Class.define("app.Application",
 
       this._menuBar = new app.components.menuBar(
         docWidth, menuBarHeight,
+        this._defaultStore.getColors().getMenuBar().getBackground(), this._defaultStore.getColors().getMenuBar().getFont());
+
+      this._userMenu = new app.components.userMenu(
+        this._getActiveUserName(),
         this._defaultStore.getColors().getMenuBar().getBackground(), this._defaultStore.getColors().getMenuBar().getFont());
 
       this._availableServicesBar = new app.components.availableServices(
@@ -104,20 +111,10 @@ qx.Class.define("app.Application",
       //toolBarcontainer.add(this._threeView);
       doc.add(toolBarcontainer);
 
+      doc.add(this._userMenu, { right : 30});
+
       this._entityList.moveTo(10, menuBarHeight + avaiBarHeight + 10);
       this._entityList.open();
-
-
-      var activeUser = this._defaultStore.getActiveUser();
-      var activeName = this._defaultStore.getUsers().toArray()[activeUser].getName();
-      var container1 = new qx.ui.container.Composite(new qx.ui.layout.HBox(1));
-      container1.add(new qx.ui.basic.Atom(this.tr("Hello, ") + activeName).set({
-        backgroundColor : this._defaultStore.getColors().getMenuBar().getBackground(),
-        textColor: this._defaultStore.getColors().getMenuBar().getFont(),
-        padding : 6,
-        allowGrowY: false,
-      }));
-      doc.add(container1, { right : 30});
 
       this._initSignals();
     },
@@ -146,22 +143,28 @@ qx.Class.define("app.Application",
         "Users": [
           {
             "Name": "Odei",
+            "ID": 0,
           },
           {
             "Name": "Sylvain",
+            "ID": 1,
           },
           {
             "Name": "Alessandro",
+            "ID": 2,
           },
         ],
       };
       return myDefaultStore;
     },
 
-    _initSignals : function() {
-
+    _getActiveUserName : function() {
       const activeUserId = this._defaultStore.getActiveUser();
-      const activeUserName = this._defaultStore.getUsers().toArray()[activeUserId].getName();
+      return this._defaultStore.getUsers().toArray()[activeUserId].getName();
+    },
+
+    _initSignals : function() {
+      const activeUserName = this._getActiveUserName();
 
       // Menu bar
       {
@@ -212,7 +215,7 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("editPreferencesPressed", function(e) {
-          
+          this.ShowPreferences();
         }, this);
       }
 
@@ -299,6 +302,20 @@ qx.Class.define("app.Application",
           this._socket.emit("exportScene", [activeUserName, e.getData()]);
         }, this);
       }
+    },
+
+    ShowPreferences : function()
+    {
+      var preferencesDlg = new app.components.preferences(
+        this._defaultStore, 250, 300,
+        this._defaultStore.getColors().getSettingsView().getBackground(), this._defaultStore.getColors().getSettingsView().getFont());
+
+      preferencesDlg.open();
+      preferencesDlg.center();
+
+      preferencesDlg.addListener(("close"), function(e) {
+        console.log('Closed, do not save');
+      }, this);
     },
   }
 });

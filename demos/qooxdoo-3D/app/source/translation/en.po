@@ -1,7 +1,3 @@
-#: app.Application:114
-msgid "Hello, "
-msgstr ""
-
 #: app.components.menuBar:50
 msgid "File"
 msgstr ""
@@ -78,6 +74,26 @@ msgstr ""
 msgid "Remove entity"
 msgstr ""
 
-#: app.components.menuBar:124
+#: app.components.preferences:9
 msgid "Preferences"
+msgstr ""
+
+#: app.components.preferences:102
+msgid "Cancel"
+msgstr ""
+
+#: app.components.preferences:111
+msgid "Save"
+msgstr ""
+
+#: app.components.preferences:77
+msgid "Language"
+msgstr ""
+
+#: app.components.preferences:89
+msgid "User"
+msgstr ""
+
+#: app.components.userMenu:15
+msgid "Hello, "
 msgstr ""
