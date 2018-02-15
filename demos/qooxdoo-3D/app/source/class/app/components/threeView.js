@@ -23,7 +23,7 @@ qx.Class.define("app.components.threeView",
       layout: box
     });
 
-    this._threeWrapper = new app.components.threeWrapper();
+    this._threeWrapper = new app.wrappers.threeWrapper();
 
     this._threeWrapper.addListener(("ThreeLibReady"), function(e) {
       var ready = e.getData();

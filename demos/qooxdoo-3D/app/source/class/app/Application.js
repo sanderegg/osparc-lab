@@ -58,7 +58,7 @@ qx.Class.define("app.Application",
       var doc = this.getRoot();
 
       // openning web socket
-      this._socket = new app.socket.WebSocket('app');
+      this._socket = new app.wrappers.webSocket('app');
       this._socket.connect();
 
       var body = document.body;

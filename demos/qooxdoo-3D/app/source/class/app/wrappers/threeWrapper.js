@@ -3,9 +3,9 @@
  * @ignore(THREE)
  */
 
-qx.Class.define("app.components.threeWrapper",
+qx.Class.define("app.wrappers.threeWrapper",
 {
-  extend : qx.ui.core.Widget,
+  extend: qx.core.Object,
 
   construct : function()
   {
