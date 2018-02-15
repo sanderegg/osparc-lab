@@ -55,8 +55,8 @@ qx.Class.define("app.components.threeView",
       }
     }, this);
 
-    this._threeWrapper.addListener(("SceneToBeExported"), function(e) {
-      this.fireDataEvent("SceneToBeExported", e.getData());
+    this._threeWrapper.addListener(("sceneToBeExported"), function(e) {
+      this.fireDataEvent("sceneToBeExported", e.getData());
     }, this);
   },
 
@@ -68,8 +68,8 @@ qx.Class.define("app.components.threeView",
     "entitySelected": "qx.event.type.Data",
     "entityAdded": "qx.event.type.Data",
     "entityRemoved": "qx.event.type.Data",
-    "EntitiesToBeExported": "qx.event.type.Data",
-    "SceneToBeExported": "qx.event.type.Data",
+    "entitiesToBeExported": "qx.event.type.Data",
+    "sceneToBeExported": "qx.event.type.Data",
   },
 
   members: {
@@ -311,7 +311,7 @@ qx.Class.define("app.components.threeView",
         };
         entities_array.push(entity_json);
       }
-      this.fireDataEvent("EntitiesToBeExported", entities_array);
+      this.fireDataEvent("entitiesToBeExported", entities_array);
     },
 
     ImportSceneFromBuffer : function (model_buffer)

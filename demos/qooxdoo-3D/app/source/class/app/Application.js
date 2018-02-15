@@ -193,17 +193,6 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("fileSaveScenePressed", function(e) {
-          if (!this._socket.slotExists("exportScene")) {
-            this._socket.on("exportScene", function(res) {
-              if (res.type === "exportScene") {
-                if (res.value) {
-                  console.log("Scene was saved");
-                } else {
-                  console.log("Scene was not saved");
-                }
-              }
-            }, this);
-          }
           this._threeView.SerializeScene();
         }, this);
 
@@ -281,7 +270,7 @@ qx.Class.define("app.Application",
           this._entityList.RemoveEntity(entityId);
         }, this);
 
-        this._threeView.addListener(("EntitiesToBeExported"), function(e) {
+        this._threeView.addListener(("entitiesToBeExported"), function(e) {
           if (!this._socket.slotExists("exportEntities")) {
             this._socket.on("exportEntities", function(val) {
               if (val.type === "exportEntities") {
@@ -292,7 +281,7 @@ qx.Class.define("app.Application",
           this._socket.emit("exportEntities", [activeUserName, e.getData()]);
         }, this);
 
-        this._threeView.addListener(("SceneToBeExported"), function(e) {
+        this._threeView.addListener(("sceneToBeExported"), function(e) {
           if (!this._socket.slotExists("exportScene")) {
             this._socket.on("exportScene", function(val) {
               if (val.type === "exportScene") {

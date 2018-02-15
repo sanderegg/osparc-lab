@@ -66,7 +66,7 @@ qx.Class.define("app.components.threeWrapper",
   events: {
     "ThreeLibReady": "qx.event.type.Data",
     "EntityToBeAdded": "qx.event.type.Data",
-    "SceneToBeExported": "qx.event.type.Data",
+    "sceneToBeExported": "qx.event.type.Data",
   },
 
   members: {
@@ -149,7 +149,7 @@ qx.Class.define("app.components.threeWrapper",
       var scope = this;
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( this._scene, function ( gltf ) {
-        scope.fireDataEvent("SceneToBeExported", gltf);
+        scope.fireDataEvent("sceneToBeExported", gltf);
       }, options );
     },
 
