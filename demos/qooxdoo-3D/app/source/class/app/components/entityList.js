@@ -31,7 +31,7 @@ qx.Class.define("app.components.entityList",
     this._tree.setWidth(width);
     this._tree.setHeight(height);
 
-    var root = new qx.ui.tree.TreeFolder("root");
+    var root = new qx.ui.tree.TreeFolder("Model");
     root.setOpen(true);
     this._tree.setRoot(root);
 
