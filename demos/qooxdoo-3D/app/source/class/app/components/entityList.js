@@ -1,10 +1,10 @@
-qx.Class.define("app.components.objectList",
+qx.Class.define("app.components.entityList",
 {
   extend: qx.ui.window.Window,
 
   construct : function(width, height, backgroundColor, fontColor)
   {
-    this.base(arguments, "Object List");
+    this.base(arguments, "Entity List");
 
     this.set({
       contentPadding: 0,
@@ -37,20 +37,20 @@ qx.Class.define("app.components.objectList",
 
     this._tree.addListener("changeSelection", this._onSelectionChanged.bind(this));
 
-    var remove_button = new qx.ui.form.Button("Remove object");
+    var remove_button = new qx.ui.form.Button("Remove entity");
     remove_button.set({
       width: 100,
       height: 30,
       textColor: 'black'
     });
-    remove_button.addListener("execute", this.RemoveObjectPressed.bind(this));
+    remove_button.addListener("execute", this.RemoveEntityPressed.bind(this));
 
     scroller.add(this._tree);
     this.add(remove_button);
   },
 
   events : {
-    "removeObjectRequested": "qx.event.type.Data",
+    "removeEntityRequested": "qx.event.type.Data",
     "selectionChanged": "qx.event.type.Data",
   },
 
@@ -66,14 +66,14 @@ qx.Class.define("app.components.objectList",
       }
     },
 
-    AddObject : function(id, name) {
+    AddEntity : function(id, name) {
       var newItem = new qx.ui.tree.TreeFile(name);
       newItem.id = id;
       this._tree.getRoot().add(newItem);
       this._tree.setSelection([newItem]);
     },
 
-    RemoveObject : function(uuid) {
+    RemoveEntity : function(uuid) {
       for (var i = 0; i < this._tree.getRoot().getChildren().length; i++) {
         if (this._tree.getRoot().getChildren()[i].id === uuid) {
           this._tree.getRoot().remove(this._tree.getRoot().getChildren()[i]);
@@ -81,9 +81,9 @@ qx.Class.define("app.components.objectList",
       }
     },
 
-    RemoveObjectPressed : function(uuid) {
-      if (this.GetSelectedObjectId()) {
-        this.fireDataEvent("removeObjectRequested", this.GetSelectedObjectId());
+    RemoveEntityPressed : function(uuid) {
+      if (this.GetSelectedEntityId()) {
+        this.fireDataEvent("removeEntityRequested", this.GetSelectedEntityId());
       }
     },
 
@@ -99,16 +99,16 @@ qx.Class.define("app.components.objectList",
       }
     },
 
-    GetSelectedObject : function() {
+    GetSelectedEntity : function() {
       if ( this._tree.getSelection().length > 0 ) {
         return this._tree.getSelection()[0];
       }
       return null;
     },
 
-    GetSelectedObjectId : function() {
-      if ( this.GetSelectedObject() ) {
-        return this.GetSelectedObject().id;
+    GetSelectedEntityId : function() {
+      if ( this.GetSelectedEntity() ) {
+        return this.GetSelectedEntity().id;
       }
       return null;
     },

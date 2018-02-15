@@ -28,7 +28,7 @@ qx.Class.define("app.Application",
   members :
   {
     _threeView: null,
-    _objectList: null,
+    _entityList: null,
 
     /**
      * This method contains the initial application code and gets called
@@ -85,7 +85,7 @@ qx.Class.define("app.Application",
         docWidth, docHeight,
         this._initialStore.getColors().get3DView().getBackground());
 
-      this._objectList = new app.components.objectList(
+      this._entityList = new app.components.entityList(
         250, 300,
         this._initialStore.getColors().getSettingsView().getBackground(), this._initialStore.getColors().getSettingsView().getFont());
 
@@ -102,8 +102,8 @@ qx.Class.define("app.Application",
       //toolBarcontainer.add(this._threeView);
       doc.add(toolBarcontainer);
 
-      this._objectList.moveTo(10, menuBarHeight + avaiBarHeight + 10);
-      this._objectList.open();
+      this._entityList.moveTo(10, menuBarHeight + avaiBarHeight + 10);
+      this._entityList.open();
 
 
       var activeUser = this._initialStore.getActiveUser();
@@ -227,16 +227,16 @@ qx.Class.define("app.Application",
           this._threeView.SetSelectionMode(selectionMode);
         }, this);
 
-        this._availableServicesBar.addListener("newBasicObjectRequested", function(e) {
-          var objectTypeName = e.getData();
-          this._threeView.AddObject(objectTypeName, 3);
+        this._availableServicesBar.addListener("newBasicEntityRequested", function(e) {
+          var entityTypeName = e.getData();
+          this._threeView.AddEntity(entityTypeName, 3);
         }, this);
 
         this._availableServicesBar.addListener("moveToolRequested", function(e) {
           this._threeView.SetSelectionMode(0);
           var enableMoveTool = e.getData();
           if (enableMoveTool) {
-            var selObjId = this._objectList.GetSelectedObjectId();
+            var selObjId = this._entityList.GetSelectedEntityId();
             if (selObjId) {
               this._threeView.StartMoveTool(selObjId);
             } else {
@@ -248,17 +248,17 @@ qx.Class.define("app.Application",
         }, this);
       }
 
-      // Objects list
+      // Entity list
       {
-        this._objectList.addListener("removeObjectRequested", function(e) {
+        this._entityList.addListener("removeEntityRequested", function(e) {
           var entityId = e.getData();
-          if (this._threeView.RemoveObject(entityId));
-            this._objectList.RemoveObject(entityId);
+          if (this._threeView.RemoveEntity(entityId));
+            this._entityList.RemoveEntity(entityId);
         }, this);
 
-        this._objectList.addListener("selectionChanged", function(e) {
+        this._entityList.addListener("selectionChanged", function(e) {
           var entityId = e.getData();
-          this._threeView.HighlightObject(entityId);
+          this._threeView.HighlightEntity(entityId);
         }, this);
       }
 
@@ -267,18 +267,18 @@ qx.Class.define("app.Application",
         this._threeView.addListener("entitySelected", function(e) {
           var entityId = e.getData();
           this._availableServicesBar.OnEntitySelectedChanged(entityId);
-          this._objectList.OnEntitySelectedChanged(entityId);
+          this._entityList.OnEntitySelectedChanged(entityId);
         }, this);
 
         this._threeView.addListener("entityAdded", function(e) {
           var entityName = e.getData()[0];
           var entityId = e.getData()[1];
-          this._objectList.AddObject(entityName, entityId);
+          this._entityList.AddEntity(entityName, entityId);
         }, this);
 
         this._threeView.addListener("entityRemoved", function(e) {
           var entityId = e.getData();
-          this._objectList.RemoveObject(entityId);
+          this._entityList.RemoveEntity(entityId);
         }, this);
 
         this._threeView.addListener(("EntitiesToBeExported"), function(e) {

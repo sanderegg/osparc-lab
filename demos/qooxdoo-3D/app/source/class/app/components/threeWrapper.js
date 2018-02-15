@@ -87,7 +87,7 @@ qx.Class.define("app.components.threeWrapper",
       this._renderer.render(this._scene, this._camera);
     },
 
-    AddObjectToScene : function(objToScene)
+    AddEntityToScene : function(objToScene)
     {
       this._scene.add(objToScene);
       this.Render();
@@ -106,7 +106,7 @@ qx.Class.define("app.components.threeWrapper",
       myObj.traverse( function ( child ) {
         if ( child instanceof THREE.Mesh ) {
 
-          // object is black
+          // entity is black
           // https://github.com/expo/expo-three/issues/5#issuecomment-360956203
           var material = scope.CreateNewMaterial();
           child.material = material;

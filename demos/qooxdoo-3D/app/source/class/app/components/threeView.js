@@ -150,12 +150,12 @@ qx.Class.define("app.components.threeView",
 
     AddEntityToScene : function(entity)
     {
-      this._threeWrapper.AddObjectToScene(entity);
+      this._threeWrapper.AddEntityToScene(entity);
       this._entities.push(entity);
       this.fireDataEvent("entityAdded", [entity.uuid, entity.name]);
     },
 
-    AddObject : function(objType = "Sphere", scale = 1)
+    AddEntity : function(objType = "Sphere", scale = 1)
     {
       var geometry;
 
@@ -187,11 +187,11 @@ qx.Class.define("app.components.threeView",
     RemoveAll : function()
     {
       for (var i = this._entities.length-1; i >= 0 ; i--) {
-        this.RemoveObject(this._entities[i].uuid);
+        this.RemoveEntity(this._entities[i].uuid);
       }
     },
 
-    RemoveObject : function(uuid)
+    RemoveEntity : function(uuid)
     {
       this._threeWrapper.RemoveFromSceneById(uuid);
 
@@ -219,7 +219,7 @@ qx.Class.define("app.components.threeView",
           transformControl.setMode("translate");
           transformControl.attach(this._entities[i]);
           this._transformControls.push(transformControl);
-          this._threeWrapper.AddObjectToScene(transformControl);
+          this._threeWrapper.AddEntityToScene(transformControl);
         }
       }
       this._render();
@@ -265,7 +265,7 @@ qx.Class.define("app.components.threeView",
       }
     },
 
-    HighlightObject : function( id )
+    HighlightEntity : function( id )
     {
       this._unhighlightAll();
       for (var i = 0; i < this._entities.length; i++) {

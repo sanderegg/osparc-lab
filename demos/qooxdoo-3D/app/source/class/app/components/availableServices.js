@@ -24,7 +24,7 @@ qx.Class.define("app.components.availableServices",
   },
 
   events : {
-    "newBasicObjectRequested": "qx.event.type.Data",
+    "newBasicEntityRequested": "qx.event.type.Data",
     "selectionModeChanged": "qx.event.type.Data",
     "moveToolRequested": "qx.event.type.Data",
   },
@@ -110,15 +110,15 @@ qx.Class.define("app.components.availableServices",
     },
 
     _onAddSphereRequested : function() {
-      this.fireDataEvent("newBasicObjectRequested", "Sphere");
+      this.fireDataEvent("newBasicEntityRequested", "Sphere");
     },
 
     _onAddBlockRequested : function() {
-      this.fireDataEvent("newBasicObjectRequested", "Box");
+      this.fireDataEvent("newBasicEntityRequested", "Box");
     },
 
     _onAddDodecaRequested : function() {
-      this.fireDataEvent("newBasicObjectRequested", "Dodecahedron");
+      this.fireDataEvent("newBasicEntityRequested", "Dodecahedron");
     },
 
     _onMoveToolRequested : function() {
