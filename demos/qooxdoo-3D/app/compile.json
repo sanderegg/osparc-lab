@@ -14,7 +14,7 @@
     }
   ],
   "defaultTarget": "source",
-  "locales": ["en"],
+  "locales": ["en", "de", "de_CH", "eu_ES"],
 
   "applications": [
     {

@@ -2,9 +2,11 @@ qx.Class.define("app.components.entityList",
 {
   extend: qx.ui.window.Window,
 
+  include : [qx.locale.MTranslation],
+
   construct : function(width, height, backgroundColor, fontColor)
   {
-    this.base(arguments, "Entity List");
+    this.base(arguments, this.tr("Entity List"));
 
     this.set({
       contentPadding: 0,
@@ -37,7 +39,7 @@ qx.Class.define("app.components.entityList",
 
     this._tree.addListener("changeSelection", this._onSelectionChanged.bind(this));
 
-    var remove_button = new qx.ui.form.Button("Remove entity");
+    var remove_button = new qx.ui.form.Button(this.tr("Remove entity"));
     remove_button.set({
       width: 100,
       height: 30,

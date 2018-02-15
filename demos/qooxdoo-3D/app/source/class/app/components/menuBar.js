@@ -2,6 +2,8 @@ qx.Class.define("app.components.menuBar",
 {
   extend: qx.ui.container.Composite,
 
+  include : [qx.locale.MTranslation],
+
   construct : function(width, height, backgroundColor, fontColor)
   {
     this.base(arguments);
@@ -30,6 +32,7 @@ qx.Class.define("app.components.menuBar",
     "fileLoadScenePressed": "qx.event.type.Event",
     "fileSaveScenePressed": "qx.event.type.Event",
     "fileLoadViPPressed": "qx.event.type.Data",
+    "editPreferencesPressed": "qx.event.type.Data",
   },
 
   members: {
@@ -44,10 +47,10 @@ qx.Class.define("app.components.menuBar",
       });
       frame.add(menubar);
 
-      var fileMenu = new qx.ui.menubar.Button("File", null, this.getFileMenu());
-      var editMenu = new qx.ui.menubar.Button("Edit", null, null);
-      var viewMenu = new qx.ui.menubar.Button("View", null, null);
-      var helpMenu = new qx.ui.menubar.Button("Help", null, null);
+      var fileMenu = new qx.ui.menubar.Button(this.tr("File"), null, this.getFileMenu());
+      var editMenu = new qx.ui.menubar.Button(this.tr("Edit"), null, this.getEditMenu());
+      var viewMenu = new qx.ui.menubar.Button(this.tr("View"), null, null);
+      var helpMenu = new qx.ui.menubar.Button(this.tr("Help"), null, null);
       var menuOpts = [fileMenu, editMenu, viewMenu, helpMenu];
 
       for (var i = 0; i < menuOpts.length; i++) {
@@ -62,12 +65,12 @@ qx.Class.define("app.components.menuBar",
     {
       var fileMenu = new qx.ui.menu.Menu;
 
-      var newButton = new qx.ui.menu.Button("New", null, null);
-      var loadEntitiesButton = new qx.ui.menu.Button("Load entities", null, null);
-      var saveEntitiesButton = new qx.ui.menu.Button("Save entities", null, null);
-      var loadSceneButton = new qx.ui.menu.Button("Load scene", null, null);
-      var saveSceneButton = new qx.ui.menu.Button("Save scene", null, null);
-      var loadViPButton = new qx.ui.menu.Button("Load ViP", null, null, this.getViPList());
+      var newButton = new qx.ui.menu.Button(this.tr("New"), null, null);
+      var loadEntitiesButton = new qx.ui.menu.Button(this.tr("Load entities"), null, null);
+      var saveEntitiesButton = new qx.ui.menu.Button(this.tr("Save entities"), null, null);
+      var loadSceneButton = new qx.ui.menu.Button(this.tr("Load scene"), null, null);
+      var saveSceneButton = new qx.ui.menu.Button(this.tr("Save scene"), null, null);
+      var loadViPButton = new qx.ui.menu.Button(this.tr("Load ViP"), null, null, this.getViPList());
 
       newButton.addListener("execute", function(e) {
         this.fireDataEvent("fileNewPressed");
@@ -112,6 +115,21 @@ qx.Class.define("app.components.menuBar",
       vipMenu.add(theoButton);
 
       return vipMenu;
+    },
+
+    getEditMenu : function()
+    {
+      var editMenu = new qx.ui.menu.Menu;
+
+      var preferencesButton = new qx.ui.menu.Button(this.tr("Preferences"), null, null);
+
+      preferencesButton.addListener("execute", function(e) {
+        this.fireDataEvent("editPreferencesPressed");
+      }, this);
+
+      editMenu.add(preferencesButton);
+
+      return editMenu;
     },
   }
 });

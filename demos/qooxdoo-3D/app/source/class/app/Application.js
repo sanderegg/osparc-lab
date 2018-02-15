@@ -17,7 +17,7 @@ qx.Class.define("app.Application",
 {
   extend : qx.application.Standalone,
 
-
+  include : [qx.locale.MTranslation],
 
   /*
   *****************************************************************************
@@ -54,6 +54,10 @@ qx.Class.define("app.Application",
       -------------------------------------------------------------------------
       */
 
+      this._defaultStore = qx.data.marshal.Json.createModel(this._getDefaultStore());
+
+      qx.locale.Manager.getInstance().setLocale( this._defaultStore.getLocaleCode() );
+
       // Document is the application root
       var doc = this.getRoot();
 
@@ -67,27 +71,25 @@ qx.Class.define("app.Application",
       var docWidth = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
       var docHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
 
-      this._initialStore = qx.data.marshal.Json.createModel(this._getInitialStore());
-
       // initialize components
       const menuBarHeight = 35;
       const avaiBarHeight = 55;
 
       this._menuBar = new app.components.menuBar(
         docWidth, menuBarHeight,
-        this._initialStore.getColors().getMenuBar().getBackground(), this._initialStore.getColors().getMenuBar().getFont());
+        this._defaultStore.getColors().getMenuBar().getBackground(), this._defaultStore.getColors().getMenuBar().getFont());
 
       this._availableServicesBar = new app.components.availableServices(
         docWidth, avaiBarHeight,
-        this._initialStore.getColors().getToolBar().getBackground(), this._initialStore.getColors().getToolBar().getFont());
+        this._defaultStore.getColors().getToolBar().getBackground(), this._defaultStore.getColors().getToolBar().getFont());
 
       this._threeView = new app.components.threeView(
         docWidth, docHeight,
-        this._initialStore.getColors().get3DView().getBackground());
+        this._defaultStore.getColors().get3DView().getBackground());
 
       this._entityList = new app.components.entityList(
         250, 300,
-        this._initialStore.getColors().getSettingsView().getBackground(), this._initialStore.getColors().getSettingsView().getFont());
+        this._defaultStore.getColors().getSettingsView().getBackground(), this._defaultStore.getColors().getSettingsView().getFont());
 
 
       // components to document
@@ -106,12 +108,12 @@ qx.Class.define("app.Application",
       this._entityList.open();
 
 
-      var activeUser = this._initialStore.getActiveUser();
-      var activeName = this._initialStore.getUsers().toArray()[activeUser].getName();
+      var activeUser = this._defaultStore.getActiveUser();
+      var activeName = this._defaultStore.getUsers().toArray()[activeUser].getName();
       var container1 = new qx.ui.container.Composite(new qx.ui.layout.HBox(1));
-      container1.add(new qx.ui.basic.Atom("Grüezi, " + activeName).set({
-        backgroundColor : this._initialStore.getColors().getMenuBar().getBackground(),
-        textColor: this._initialStore.getColors().getMenuBar().getFont(),
+      container1.add(new qx.ui.basic.Atom(this.tr("Hello, ") + activeName).set({
+        backgroundColor : this._defaultStore.getColors().getMenuBar().getBackground(),
+        textColor: this._defaultStore.getColors().getMenuBar().getFont(),
         padding : 6,
         allowGrowY: false,
       }));
@@ -120,8 +122,9 @@ qx.Class.define("app.Application",
       this._initSignals();
     },
 
-    _getInitialStore : function() {
-      var myInitialStore = {
+    _getDefaultStore : function() {
+      var myDefaultStore = {
+        "LocaleCode" : "en",
         "Colors": {
           "MenuBar": {
             "Background": "#535353", // 83, 83, 83
@@ -152,13 +155,13 @@ qx.Class.define("app.Application",
           },
         ],
       };
-      return myInitialStore;
+      return myDefaultStore;
     },
 
     _initSignals : function() {
 
-      const activeUserId = this._initialStore.getActiveUser();
-      const activeUserName = this._initialStore.getUsers().toArray()[activeUserId].getName();
+      const activeUserId = this._defaultStore.getActiveUser();
+      const activeUserName = this._defaultStore.getUsers().toArray()[activeUserId].getName();
 
       // Menu bar
       {
@@ -206,6 +209,10 @@ qx.Class.define("app.Application",
             }, this);
           }
           this._socket.emit("importViP", selectedViP);
+        }, this);
+
+        this._menuBar.addListener("editPreferencesPressed", function(e) {
+          
         }, this);
       }
 

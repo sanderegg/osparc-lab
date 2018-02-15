@@ -1,6 +1,6 @@
 #: app.Application:114
 msgid "Hello, "
-msgstr ""
+msgstr "Hallo, "
 
 #: app.components.menuBar:50
 msgid "File"
@@ -42,20 +42,12 @@ msgstr ""
 msgid "Load ViP"
 msgstr ""
 
-#: app.components.availableServices:93
-msgid "Add Sphere"
+#: app.components.entityList:9
+msgid "Entity List"
 msgstr ""
 
-#: app.components.availableServices:96
-msgid "Add Box"
-msgstr ""
-
-#: app.components.availableServices:99
-msgid "Add Dodecahedron"
-msgstr ""
-
-#: app.components.availableServices:82
-msgid "Move"
+#: app.components.entityList:42
+msgid "Remove entity"
 msgstr ""
 
 #: app.components.availableServices:54
@@ -70,12 +62,20 @@ msgstr ""
 msgid "Select face"
 msgstr ""
 
-#: app.components.entityList:9
-msgid "Entity List"
+#: app.components.availableServices:82
+msgid "Move"
 msgstr ""
 
-#: app.components.entityList:42
-msgid "Remove entity"
+#: app.components.availableServices:93
+msgid "Add Sphere"
+msgstr ""
+
+#: app.components.availableServices:96
+msgid "Add Box"
+msgstr ""
+
+#: app.components.availableServices:99
+msgid "Add Dodecahedron"
 msgstr ""
 
 #: app.components.menuBar:124

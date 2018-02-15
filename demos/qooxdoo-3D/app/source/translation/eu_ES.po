@@ -1,6 +1,6 @@
 #: app.Application:114
 msgid "Hello, "
-msgstr ""
+msgstr "Kaixo, "
 
 #: app.components.menuBar:50
 msgid "File"
@@ -42,22 +42,6 @@ msgstr ""
 msgid "Load ViP"
 msgstr ""
 
-#: app.components.availableServices:93
-msgid "Add Sphere"
-msgstr ""
-
-#: app.components.availableServices:96
-msgid "Add Box"
-msgstr ""
-
-#: app.components.availableServices:99
-msgid "Add Dodecahedron"
-msgstr ""
-
-#: app.components.availableServices:82
-msgid "Move"
-msgstr ""
-
 #: app.components.availableServices:54
 msgid "Disabled"
 msgstr ""
@@ -68,6 +52,22 @@ msgstr ""
 
 #: app.components.availableServices:64
 msgid "Select face"
+msgstr ""
+
+#: app.components.availableServices:82
+msgid "Move"
+msgstr ""
+
+#: app.components.availableServices:93
+msgid "Add Sphere"
+msgstr ""
+
+#: app.components.availableServices:96
+msgid "Add Box"
+msgstr ""
+
+#: app.components.availableServices:99
+msgid "Add Dodecahedron"
 msgstr ""
 
 #: app.components.entityList:9
