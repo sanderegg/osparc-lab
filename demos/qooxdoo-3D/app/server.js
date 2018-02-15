@@ -77,21 +77,22 @@ function importEntities(client, active_user) {
 function exportEntities(client, active_user, entities_json) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
   var fs = require('fs');
+  var response = {};
+  response.type = 'exportEntities';
+  response.value = entities_json.length > 0;
   for (var i = 0; i < entities_json.length; i++) {
     const file_path = models_dir +'/'+ entities_json[i].name;
     fs.writeFile(file_path, entities_json[i].data, 'utf8', function (err) {
-      var response = {};
-      response.type = 'exportScene';
-      response.value = false;
       if (err) {
         console.log("Error: ", err);
+        response.value = response.value && false;
       } else {
         console.log(models_dir, " file was saved!");
-        response.value = true;
+        response.value = response.value && true;
       }
-      client.emit('exportScene', response);
     });
   }
+  client.emit('exportEntities', response);
 };
 
 function importScene(client, active_user) {
