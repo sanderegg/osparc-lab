@@ -10,8 +10,6 @@ qx.Class.define("app.components.threeView",
       height: height
     });
 
-    this.setLibReady(false);
-
     var box = new qx.ui.layout.VBox();
     box.set({
       spacing: 10,
@@ -58,10 +56,6 @@ qx.Class.define("app.components.threeView",
     this._threeWrapper.addListener(("sceneToBeExported"), function(e) {
       this.fireDataEvent("sceneToBeExported", e.getData());
     }, this);
-  },
-
-  properties: {
-    LibReady: { check: "Boolean" }
   },
 
   events : {
