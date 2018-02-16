@@ -80,7 +80,7 @@ msgstr "Einstellungen"
 
 #: app.components.preferences:102
 msgid "Cancel"
-msgstr "Absagen"
+msgstr "Abbrechen"
 
 #: app.components.preferences:111
 msgid "Save"
