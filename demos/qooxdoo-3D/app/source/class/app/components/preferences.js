@@ -86,6 +86,12 @@ qx.Class.define("app.components.preferences",
         }
       });
       userController.setModel(this._model.getUsers());
+      for (var i = 0; i < userBox.getSelectables().length; i++) {
+        if (userBox.getSelectables()[i].getModel() === this._model.getActiveUser()) {
+          userBox.setSelection([userBox.getSelectables()[i]]);
+          break;
+        }
+      }
       userBox.addListener("changeSelection", function(e) {
         var userId = e.getData()[0].getModel();
         this._model.setActiveUser(userId);

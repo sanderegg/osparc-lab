@@ -74,15 +74,15 @@ msgstr ""
 msgid "Add Dodecahedron"
 msgstr ""
 
-#: app.components.preferences:9
+#: app.components.menuBar:124
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: app.components.preferences:103
+#: app.components.preferences:109
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: app.components.preferences:111
+#: app.components.preferences:117
 msgid "Accept"
 msgstr "Akzeptieren"
 
@@ -90,7 +90,7 @@ msgstr "Akzeptieren"
 msgid "Language"
 msgstr "Sprache"
 
-#: app.components.preferences:93
+#: app.components.preferences:99
 msgid "User"
 msgstr "Benutzer"
 

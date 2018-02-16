@@ -78,11 +78,11 @@ msgstr ""
 msgid "Preferences"
 msgstr "Ezarpenak"
 
-#: app.components.preferences:103
+#: app.components.preferences:109
 msgid "Cancel"
 msgstr "Atzera"
 
-#: app.components.preferences:111
+#: app.components.preferences:117
 msgid "Accept"
 msgstr "Onartu"
 
@@ -90,7 +90,7 @@ msgstr "Onartu"
 msgid "Language"
 msgstr "Hizkuntza"
 
-#: app.components.preferences:93
+#: app.components.preferences:99
 msgid "User"
 msgstr "Erabiltzailea"
 
