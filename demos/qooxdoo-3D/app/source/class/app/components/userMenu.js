@@ -4,11 +4,11 @@ qx.Class.define("app.components.userMenu",
 
   include : [qx.locale.MTranslation],
 
-  construct : function(activeName, backgroundColor, fontColor)
+  construct : function(model, backgroundColor, fontColor)
   {
     this.base(arguments);
 
-    this.setActiveUserName(activeName);
+    this._model = model;
 
     this.setLayout( new qx.ui.layout.HBox(0) );
 
@@ -19,19 +19,27 @@ qx.Class.define("app.components.userMenu",
       allowGrowY: false,
     }));
 
-    this.add(new qx.ui.basic.Label(this.getActiveUserName()).set({
+    this._userLabel = new qx.ui.basic.Label(this._getActiveUserName()).set({
       backgroundColor : backgroundColor,
       textColor: fontColor,
       padding : 6,
       allowGrowY: false,
-    }));
+    });
+    this.add(this._userLabel);
+
+
+    this._model.addListener("changeActiveUser", function(e) {
+      this._userLabel.setValue(this._getActiveUserName());
+    }, this);
   },
 
-  properties: {
-    activeUserName: {
-      nullable: false,
-      init: false,
-      check: "String",
+  members: {
+    _model: null,
+    _userLabel: null,
+
+    _getActiveUserName : function() {
+      const activeUserId = this._model.getActiveUser();
+      return this._model.getUsers().toArray()[activeUserId].getName();
     },
-  },
+  }
 });

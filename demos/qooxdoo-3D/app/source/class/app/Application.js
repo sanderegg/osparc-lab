@@ -54,9 +54,9 @@ qx.Class.define("app.Application",
       -------------------------------------------------------------------------
       */
 
-      this._defaultStore = qx.data.marshal.Json.createModel(this._getDefaultStore());
+      this._appModel = qx.data.marshal.Json.createModel(this._getDefaultData());
 
-      qx.locale.Manager.getInstance().setLocale( this._defaultStore.getLocaleCode() );
+      qx.locale.Manager.getInstance().setLocale( this._appModel.getLocaleCode() );
       qx.locale.Manager.getInstance().addListener("changeLocale", function(e) {
         qx.locale.Manager.getInstance().setLocale( e.getData() );
       }, this);
@@ -80,23 +80,23 @@ qx.Class.define("app.Application",
 
       this._menuBar = new app.components.menuBar(
         docWidth, menuBarHeight,
-        this._defaultStore.getColors().getMenuBar().getBackground(), this._defaultStore.getColors().getMenuBar().getFont());
+        this._appModel.getColors().getMenuBar().getBackground(), this._appModel.getColors().getMenuBar().getFont());
 
       this._userMenu = new app.components.userMenu(
-        this._getActiveUserName(),
-        this._defaultStore.getColors().getMenuBar().getBackground(), this._defaultStore.getColors().getMenuBar().getFont());
+        this._appModel,
+        this._appModel.getColors().getMenuBar().getBackground(), this._appModel.getColors().getMenuBar().getFont());
 
       this._availableServicesBar = new app.components.availableServices(
         docWidth, avaiBarHeight,
-        this._defaultStore.getColors().getToolBar().getBackground(), this._defaultStore.getColors().getToolBar().getFont());
+        this._appModel.getColors().getToolBar().getBackground(), this._appModel.getColors().getToolBar().getFont());
 
       this._threeView = new app.components.threeView(
         docWidth, docHeight,
-        this._defaultStore.getColors().get3DView().getBackground());
+        this._appModel.getColors().get3DView().getBackground());
 
       this._entityList = new app.components.entityList(
         250, 300,
-        this._defaultStore.getColors().getSettingsView().getBackground(), this._defaultStore.getColors().getSettingsView().getFont());
+        this._appModel.getColors().getSettingsView().getBackground(), this._appModel.getColors().getSettingsView().getFont());
 
 
       // components to document
@@ -119,8 +119,8 @@ qx.Class.define("app.Application",
       this._initSignals();
     },
 
-    _getDefaultStore : function() {
-      var myDefaultStore = {
+    _getDefaultData : function() {
+      var myDefaultData = {
         "LocaleCode" : "en",
         "Colors": {
           "MenuBar": {
@@ -155,12 +155,12 @@ qx.Class.define("app.Application",
           },
         ],
       };
-      return myDefaultStore;
+      return myDefaultData;
     },
 
     _getActiveUserName : function() {
-      const activeUserId = this._defaultStore.getActiveUser();
-      return this._defaultStore.getUsers().toArray()[activeUserId].getName();
+      const activeUserId = this._appModel.getActiveUser();
+      return this._appModel.getUsers().toArray()[activeUserId].getName();
     },
 
     _initSignals : function() {
@@ -305,15 +305,11 @@ qx.Class.define("app.Application",
     ShowPreferences : function()
     {
       var preferencesDlg = new app.components.preferences(
-        this._defaultStore, 250, 300,
-        this._defaultStore.getColors().getSettingsView().getBackground(), this._defaultStore.getColors().getSettingsView().getFont());
+        this._appModel, 250, 300,
+        this._appModel.getColors().getSettingsView().getBackground(), this._appModel.getColors().getSettingsView().getFont());
 
       preferencesDlg.open();
       preferencesDlg.center();
-
-      preferencesDlg.addListener(("close"), function(e) {
-        console.log('Closed, do not save');
-      }, this);
     },
   }
 });

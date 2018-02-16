@@ -72,8 +72,6 @@ qx.Class.define("app.components.preferences",
       if (defaultListItem) {
         localeBox.setSelection([defaultListItem]);
       }
-      //var localeController = new qx.data.controller.List(null, localeBox);
-      //localeController.setModel(this._model.getLocaleCode());
       form.add(localeBox, this.tr("Language"));
 
 
@@ -81,11 +79,17 @@ qx.Class.define("app.components.preferences",
       var userBox = new qx.ui.form.SelectBox();
       userBox.setTextColor("black");
       var userController = new qx.data.controller.List(null, userBox);
-      userController.setDelegate({bindItem: function(controller, item, index) {
-        controller.bindProperty("Name", "label", null, item, index);
-        controller.bindProperty("ID", "model", null, item, index);
-      }});
+      userController.setDelegate( {
+        bindItem: function(controller, item, index) {
+          controller.bindProperty("Name", "label", null, item, index);
+          controller.bindProperty("ID", "model", null, item, index);
+        }
+      });
       userController.setModel(this._model.getUsers());
+      userBox.addListener("changeSelection", function(e) {
+        var userId = e.getData()[0].getModel();
+        this._model.setActiveUser(userId);
+      }, this);
       form.add(userBox, this.tr("User"));
 
 
@@ -95,33 +99,27 @@ qx.Class.define("app.components.preferences",
     _createButtons : function(options_form)
     {
       const btnWidth = 120;
-      //var buttons_bar = new qx.ui.container.Composite(new qx.ui.layout.HBox(10));
-
-      //buttons_bar.add(new qx.ui.core.Spacer(40));
 
       var cancelBtn = new qx.ui.form.Button(this.tr("Cancel"));
       cancelBtn.setWidth(btnWidth);
       cancelBtn.setTextColor("black");
       cancelBtn.addListener("execute", function(e) {
-        this._CloseWindow();
+        this._CloseWindow(0);
       }, this);
-      //buttons_bar.add(cancelBtn);
       options_form.addButton(cancelBtn);
 
-      var saveBtn = new qx.ui.form.Button(this.tr("Save"));
+      var saveBtn = new qx.ui.form.Button(this.tr("Accept"));
       saveBtn.setWidth(btnWidth);
       saveBtn.setTextColor("black");
       saveBtn.addListener("execute", function(e) {
-
+        this._CloseWindow(1);
       }, this);
-      //buttons_bar.add(saveBtn);
       options_form.addButton(saveBtn);
-
-      //return buttons_bar;
     },
 
-    _CloseWindow : function()
+    _CloseWindow : function(code)
     {
+      this._closeStatus = code;
       this.close();
     },
   }
