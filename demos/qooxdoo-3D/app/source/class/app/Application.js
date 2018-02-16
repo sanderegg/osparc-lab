@@ -164,8 +164,6 @@ qx.Class.define("app.Application",
     },
 
     _initSignals : function() {
-      const activeUserName = this._getActiveUserName();
-
       // Menu bar
       {
         this._menuBar.addListener("fileNewPressed", function(e) {
@@ -180,7 +178,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("importEntities", activeUserName);
+          this._socket.emit("importEntities", this._getActiveUserName());
         }, this);
 
         this._menuBar.addListener("fileSaveEntitiesPressed", function(e) {
@@ -195,7 +193,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("importScene", activeUserName);
+          this._socket.emit("importScene", this._getActiveUserName());
         }, this);
 
         this._menuBar.addListener("fileSaveScenePressed", function(e) {
