@@ -78,13 +78,13 @@ msgstr ""
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: app.components.preferences:106
+#: app.components.preferences:103
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: app.components.preferences:115
-msgid "Save"
-msgstr "Speichern"
+#: app.components.preferences:111
+msgid "Accept"
+msgstr "Akzeptieren"
 
 #: app.components.preferences:75
 msgid "Language"
