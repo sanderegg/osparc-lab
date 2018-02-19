@@ -286,7 +286,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("exportEntities", [activeUserName, e.getData()]);
+          this._socket.emit("exportEntities", [this._getActiveUserName(), e.getData()]);
         }, this);
 
         this._threeView.addListener(("sceneToBeExported"), function(e) {
@@ -297,7 +297,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
-          this._socket.emit("exportScene", [activeUserName, e.getData()]);
+          this._socket.emit("exportScene", [this._getActiveUserName(), e.getData()]);
         }, this);
       }
     },
