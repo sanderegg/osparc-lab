@@ -1,3 +1,8 @@
+const NO_TOOL = 0;
+const TOOL_ACTIVE = 1;
+const ENTITY_PICKING = 2;
+const FACE_PICKING = 3;
+
 qx.Class.define("app.components.threeView",
 {
   extend: qx.ui.container.Composite,
@@ -34,7 +39,8 @@ qx.Class.define("app.components.threeView",
           this._threeDViewer.getContentElement().getDomElement().appendChild(this._threeWrapper.GetDomElement());
 
           this._threeWrapper.SetBackgroundColor(backgroundColor);
-          this._threeWrapper.SetCameraPosition(18, 0, 25);
+          //this._threeWrapper.SetCameraPosition(18, 0, 25);
+          this._threeWrapper.SetCameraPosition(18, 25, 0);
           this._threeWrapper.SetSize(this.getWidth(), this.getHeight());
 
           document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
@@ -72,7 +78,7 @@ qx.Class.define("app.components.threeView",
     _transformControls: [],
     _entities: [],
     _intersected: null,
-    _selectionMode: 0,
+    _selectionMode: NO_TOOL,
 
     _render : function()
     {
@@ -89,36 +95,49 @@ qx.Class.define("app.components.threeView",
 
     _onDocumentMouseDown : function( event ) {
       event.preventDefault();
-      if (this._selectionMode === 0 ||
+      if (this._selectionMode === NO_TOOL ||
         //hacky
         event.target.nodeName != 'CANVAS') {
         //this.fireDataEvent("entitySelected", null);
         return;
       }
 
-      const highlightedColor = 0x000000;
-
       var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
       var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      if (this._selectionMode === TOOL_ACTIVE)
+      {
+        var myEntities = this._entities;
+        var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
+        instersection_plane.name = "invisible plane";
+        myEntities.push(instersection_plane);
+        var intersects = this._threeWrapper.IntersectEntities(myEntities, posX, posY);
+        if (intersects.length > 0)
+        {
+          var intersect = intersects[0];
+          console.log(intersect.point);
+        }
+      }
+
       var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
       if (intersects.length > 0)
       {
         if(this._intersected != null) {
-          if (this._selectionMode === 1) {
+          if (this._selectionMode === ENTITY_PICKING) {
             this._intersected.object.material.opacity = 0.6;
-          } else if (this._selectionMode === 2) {
+          } else if (this._selectionMode === FACE_PICKING) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }
         }
         this._intersected = intersects[0];
 
-        if (this._selectionMode === 1) {
+        if (this._selectionMode === ENTITY_PICKING) {
           this.fireDataEvent("entitySelected", this._intersected.object.uuid);
           this._intersected.currentHex = this._intersected.object.material.color.getHex();
           this._intersected.object.material.opacity = 0.9;
-        } else if (this._selectionMode === 2) {
+        } else if (this._selectionMode === FACE_PICKING) {
           this.fireDataEvent("entitySelected", null);
           this._intersected.currentHex = this._intersected.face.color.getHex();
+          const highlightedColor = 0x000000;
           this._intersected.face.color.setHex(highlightedColor);
         }
 
@@ -127,9 +146,9 @@ qx.Class.define("app.components.threeView",
       } else {
     		if (this._intersected) {
           this.fireDataEvent("entitySelected", null);
-          if (this._selectionMode === 1) {
+          if (this._selectionMode === ENTITY_PICKING) {
             this._intersected.object.material.opacity = 0.6;
-          } else if (this._selectionMode === 2) {
+          } else if (this._selectionMode === FACE_PICKING) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }
           this._intersected.object.geometry.__dirtyColors = true;
@@ -204,6 +223,16 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
+    StartSplineTool : function()
+    {
+      this.SetSelectionMode(TOOL_ACTIVE);
+    },
+
+    StopSplineTool : function()
+    {
+      this.SetSelectionMode(NO_TOOL);
+    },
+
     StartMoveTool : function( selObjId )
     {
       for (var i = 0; i < this._entities.length; i++) {
@@ -232,7 +261,7 @@ qx.Class.define("app.components.threeView",
 
     SetSelectionMode : function( mode )
     {
-      if (mode === 2) {
+      if (mode === FACE_PICKING) {
         this._showEdges(true);
         this._highlightAll();
       } else {

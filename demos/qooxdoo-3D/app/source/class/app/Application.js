@@ -229,6 +229,16 @@ qx.Class.define("app.Application",
           this._threeView.AddEntity(entityTypeName, 3);
         }, this);
 
+        this._availableServicesBar.addListener("newSplineRequested", function(e) {
+          this._threeView.SetSelectionMode(0);
+          var enableSplineTool = e.getData();
+          if (enableSplineTool) {
+            this._threeView.StartSplineTool();
+          } else {
+            this._threeView.StopSplineTool();
+          }
+        }, this);
+
         this._availableServicesBar.addListener("moveToolRequested", function(e) {
           this._threeView.SetSelectionMode(0);
           var enableMoveTool = e.getData();

@@ -29,11 +29,13 @@ qx.Class.define("app.components.availableServices",
     "newBasicEntityRequested": "qx.event.type.Data",
     "selectionModeChanged": "qx.event.type.Data",
     "moveToolRequested": "qx.event.type.Data",
+    "newSplineRequested": "qx.event.type.Data",
   },
 
   members: {
     _menubar: null,
     _moveBtn: null,
+    _splineBtn: null,
 
     getAvailableServicesBar : function(width, backgroundColor)
     {
@@ -58,12 +60,12 @@ qx.Class.define("app.components.availableServices",
 
         var sel_ent_btn = new qx.ui.toolbar.RadioButton(this.tr("Select entity"));
         sel_ent_btn.addListener("execute", function(e) {
-          this.fireDataEvent("selectionModeChanged", 1);
+          this.fireDataEvent("selectionModeChanged", 2);
         }, this);
 
         var sel_face_btn = new qx.ui.toolbar.RadioButton(this.tr("Select face"));
         sel_face_btn.addListener("execute", function(e) {
-          this.fireDataEvent("selectionModeChanged", 2);
+          this.fireDataEvent("selectionModeChanged", 3);
         }, this);
 
         menuPart.add(rotate_btn);
@@ -99,9 +101,13 @@ qx.Class.define("app.components.availableServices",
         var dodeca_btn = new qx.ui.toolbar.Button(this.tr("Add Dodecahedron"));
         dodeca_btn.addListener("execute", this._onAddDodecaRequested.bind(this));
 
+        this._splineBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Spline"));
+        this._splineBtn.addListener("execute", this._onAddSplineRequested.bind(this));
+
         menuPart.add(sphere_btn);
         menuPart.add(block_btn);
         menuPart.add(dodeca_btn);
+        menuPart.add(this._splineBtn);
       }
 
       return frame;
@@ -121,6 +127,10 @@ qx.Class.define("app.components.availableServices",
 
     _onAddDodecaRequested : function() {
       this.fireDataEvent("newBasicEntityRequested", "Dodecahedron");
+    },
+
+    _onAddSplineRequested : function() {
+      this.fireDataEvent("newSplineRequested", this._splineBtn.getValue());
     },
 
     _onMoveToolRequested : function() {
