@@ -37,6 +37,7 @@ qx.Class.define("app.wrappers.threeWrapper",
 
       this._camera = new THREE.PerspectiveCamera();
       this._camera.far = 10000;
+      this._camera.up.set(0,0,1);
       this._scene.add(this._camera);
 
       this._addPointLight1();
@@ -281,6 +282,18 @@ qx.Class.define("app.wrappers.threeWrapper",
       return geometry;
     },
 
+    CreateInvisiblePlane : function()
+    {
+      var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(500, 500, 8, 8),
+        new THREE.MeshBasicMaterial({
+          color: 0x248f24,
+          alphaTest: 0,
+          visible: false
+        }
+      ));
+      return plane;
+    },
+
     CreateTransformControls : function()
     {
       return (new THREE.TransformControls(this._camera, this._renderer.domElement));
@@ -313,6 +326,9 @@ qx.Class.define("app.wrappers.threeWrapper",
       const center_line = new THREE.Color(0x666666);
       const grid_color = new THREE.Color(0x555555);
       var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line, grid_color );
+      gridHelper.geometry.rotateX( Math.PI / 2 );
+      var vector = new THREE.Vector3( 0, 0, 1 );
+      gridHelper.lookAt( vector );
       gridHelper.name = "GridHelper";
       this._scene.add(gridHelper);
     },
