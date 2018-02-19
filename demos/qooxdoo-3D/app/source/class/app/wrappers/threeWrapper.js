@@ -284,14 +284,23 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     CreateInvisiblePlane : function()
     {
-      var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(500, 500, 8, 8),
+      var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(5000, 5000),
         new THREE.MeshBasicMaterial({
-          color: 0x248f24,
           alphaTest: 0,
           visible: false
         }
       ));
       return plane;
+    },
+
+    CreatePoint : function(xPos, yPos, zPos)
+    {
+      var pointGeometry = new THREE.Geometry();
+      var pointPos = new THREE.Vector3(xPos, yPos, zPos);
+      pointGeometry.vertices.push(pointPos);
+      var pointMaterial = new THREE.PointsMaterial( { color: 0x888888 } );
+      var point = new THREE.Points( pointGeometry, pointMaterial );
+      return point;
     },
 
     CreateTransformControls : function()
@@ -326,6 +335,8 @@ qx.Class.define("app.wrappers.threeWrapper",
       const center_line = new THREE.Color(0x666666);
       const grid_color = new THREE.Color(0x555555);
       var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line, grid_color );
+      // Z up:
+      //https://stackoverflow.com/questions/44630265/how-can-i-set-z-up-coordinate-system-in-three-js
       gridHelper.geometry.rotateX( Math.PI / 2 );
       var vector = new THREE.Vector3( 0, 0, 1 );
       gridHelper.lookAt( vector );

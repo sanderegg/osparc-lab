@@ -40,7 +40,7 @@ qx.Class.define("app.components.threeView",
 
           this._threeWrapper.SetBackgroundColor(backgroundColor);
           //this._threeWrapper.SetCameraPosition(18, 0, 25);
-          this._threeWrapper.SetCameraPosition(18, 25, 0);
+          this._threeWrapper.SetCameraPosition(18, 25, 0); // Z up
           this._threeWrapper.SetSize(this.getWidth(), this.getHeight());
 
           document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
@@ -106,16 +106,23 @@ qx.Class.define("app.components.threeView",
       var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
       if (this._selectionMode === TOOL_ACTIVE)
       {
-        var myEntities = this._entities;
         var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
         instersection_plane.name = "invisible plane";
-        myEntities.push(instersection_plane);
-        var intersects = this._threeWrapper.IntersectEntities(myEntities, posX, posY);
+        this._entities.push(instersection_plane);
+        var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
         if (intersects.length > 0)
         {
           var intersect = intersects[0];
           console.log(intersect.point);
+          var instersectionPoint = this._threeWrapper.CreatePoint(
+            intersect.point.x,
+            intersect.point.y,
+            intersect.point.z
+          );
+          instersectionPoint.name = "Point";
+          this.AddEntityToScene(instersectionPoint);
         }
+        this._entities.pop();
       }
 
       var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
