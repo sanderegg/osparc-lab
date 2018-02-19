@@ -38,31 +38,31 @@ msgstr ""
 msgid "Load ViP"
 msgstr ""
 
-#: app.components.availableServices:93
+#: app.components.availableServices:95
 msgid "Add Sphere"
 msgstr ""
 
-#: app.components.availableServices:96
+#: app.components.availableServices:98
 msgid "Add Box"
 msgstr ""
 
-#: app.components.availableServices:99
+#: app.components.availableServices:101
 msgid "Add Dodecahedron"
 msgstr ""
 
-#: app.components.availableServices:82
+#: app.components.availableServices:84
 msgid "Move"
 msgstr ""
 
-#: app.components.availableServices:54
+#: app.components.availableServices:56
 msgid "Disabled"
 msgstr ""
 
-#: app.components.availableServices:59
+#: app.components.availableServices:61
 msgid "Select entity"
 msgstr ""
 
-#: app.components.availableServices:64
+#: app.components.availableServices:66
 msgid "Select face"
 msgstr ""
 
@@ -96,4 +96,16 @@ msgstr ""
 
 #: app.components.userMenu:15
 msgid "Hello, "
+msgstr ""
+
+#: app.components.propertiesView:9
+msgid "Properties"
+msgstr ""
+
+#: app.components.availableServices:104
+msgid "Add Spline"
+msgstr ""
+
+#: qx.ui.form.validation.Manager:37
+msgid "This field is required"
 msgstr ""
