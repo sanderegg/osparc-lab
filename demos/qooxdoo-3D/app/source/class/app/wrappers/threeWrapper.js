@@ -282,6 +282,17 @@ qx.Class.define("app.wrappers.threeWrapper",
       return geometry;
     },
 
+    CreateSpline : function(listOfPoints)
+    {
+      var points = [];
+      for (var i = 0; i < listOfPoints.length; i++) {
+        points.push(new THREE.Vector3( listOfPoints[i][0], listOfPoints[i][1], listOfPoints[i][2] ));
+
+      }
+      var geometry = new THREE.CatmullRomCurve3(points);
+      return geometry;
+    },
+
     CreateInvisiblePlane : function()
     {
       var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(5000, 5000),
