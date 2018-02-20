@@ -221,8 +221,7 @@ qx.Class.define("app.components.threeView",
       for (var i = 0; i < this._entities.length; i++) {
         if (this._entities[i].uuid === uuid) {
           if (i > -1) {
-            var el = this._entities.splice(i, 1);
-            //delete el;
+            this._entities.splice(i, 1);
           }
           break;
         }
@@ -238,9 +237,7 @@ qx.Class.define("app.components.threeView",
       this._activeTool = myTool;
       this.SetSelectionMode(TOOL_ACTIVE);
 
-      var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
-      instersection_plane.name = "InvisiblePlaneForSnapping";
-      this._entities.push(instersection_plane);
+      this._addInvisiblePlane();
     },
 
     StopTool : function()
@@ -248,6 +245,18 @@ qx.Class.define("app.components.threeView",
       this._activeTool = null;
       this.SetSelectionMode(NO_TOOL);
 
+      this._removeInvisiblePlane();
+    },
+
+    _addInvisiblePlane : function()
+    {
+      var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
+      instersection_plane.name = "InvisiblePlaneForSnapping";
+      this._entities.push(instersection_plane);
+    },
+
+    _removeInvisiblePlane : function()
+    {
       for (var i = 0; i < this._entities.length; i++) {
         if (this._entities[i].name === "InvisiblePlaneForSnapping") {
           this._entities.splice(i, 1);

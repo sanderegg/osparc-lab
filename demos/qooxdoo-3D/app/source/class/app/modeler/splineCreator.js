@@ -19,12 +19,14 @@ qx.Class.define("app.modeler.splineCreator", {
       if (intersects.length > 0)
       {
         var intersect = intersects[0];
-        this._threeViewer._threeWrapper.CreateSpline(this._pointList);
         this._pointList.push([intersect.point.x, intersect.point.y, intersect.point.z]);
+
         if (this._pointList.length>1) {
-          this._threeViewer._threeWrapper.CreateSpline(this._pointList);
+          this._threeViewer.RemoveEntity(this._spline);
+          this._spline = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
+          this._spline.name = "Spline";
+          this._threeViewer.AddEntityToScene(this._spline);
         }
-        //this._threeViewer.AddEntityToScene(instersectionPoint);
       }
 
       return true;
