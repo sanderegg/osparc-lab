@@ -40,10 +40,10 @@ qx.Class.define("app.components.threeView",
 
           this._threeWrapper.SetBackgroundColor(backgroundColor);
           //this._threeWrapper.SetCameraPosition(18, 0, 25);
-          this._threeWrapper.SetCameraPosition(18, 25, 0); // Z up
+          this._threeWrapper.SetCameraPosition(21, 21, 9); // Z up
           this._threeWrapper.SetSize(this.getWidth(), this.getHeight());
 
-          document.addEventListener( 'mousedown', this._onDocumentMouseDown.bind(this), false );
+          document.addEventListener( 'mousedown', this._onMouseDown.bind(this), false );
           this._render();
 
         }, this);
@@ -79,6 +79,7 @@ qx.Class.define("app.components.threeView",
     _entities: [],
     _intersected: null,
     _selectionMode: NO_TOOL,
+    _activeTool: null,
 
     _render : function()
     {
@@ -93,7 +94,7 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
-    _onDocumentMouseDown : function( event ) {
+    _onMouseDown : function( event ) {
       event.preventDefault();
       if (this._selectionMode === NO_TOOL ||
         //hacky
@@ -104,25 +105,11 @@ qx.Class.define("app.components.threeView",
 
       var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
       var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
-      if (this._selectionMode === TOOL_ACTIVE)
+
+      if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
-        var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
-        instersection_plane.name = "invisible plane";
-        this._entities.push(instersection_plane);
         var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
-        if (intersects.length > 0)
-        {
-          var intersect = intersects[0];
-          console.log(intersect.point);
-          var instersectionPoint = this._threeWrapper.CreatePoint(
-            intersect.point.x,
-            intersect.point.y,
-            intersect.point.z
-          );
-          instersectionPoint.name = "Point";
-          this.AddEntityToScene(instersectionPoint);
-        }
-        this._entities.pop();
+        this._activeTool.OnMouseDown(event, intersects);
       }
 
       var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
@@ -207,14 +194,30 @@ qx.Class.define("app.components.threeView",
     RemoveAll : function()
     {
       for (var i = this._entities.length-1; i >= 0 ; i--) {
-        this.RemoveEntity(this._entities[i].uuid);
+        this.RemoveEntity(this._entities[i]);
       }
     },
 
-    RemoveEntity : function(uuid)
+    RemoveEntity : function(entity)
     {
-      this._threeWrapper.RemoveFromSceneById(uuid);
+      var uuid = null;
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i] === entity) {
+          uuid = this._entities[i].uuid;
+          this._entities.splice(i, 1);
+          break;
+        }
+      }
 
+      if (uuid) {
+        this._threeWrapper.RemoveFromSceneById(uuid);
+        this.fireDataEvent("entityRemoved", uuid);
+        this._render();
+      }
+    },
+
+    RemoveEntityByID : function(uuid)
+    {
       for (var i = 0; i < this._entities.length; i++) {
         if (this._entities[i].uuid === uuid) {
           if (i > -1) {
@@ -225,19 +228,32 @@ qx.Class.define("app.components.threeView",
         }
       }
 
+      this._threeWrapper.RemoveFromSceneById(uuid);
       this.fireDataEvent("entityRemoved", uuid);
-
       this._render();
     },
 
-    StartSplineTool : function()
+    StartTool : function(myTool)
     {
+      this._activeTool = myTool;
       this.SetSelectionMode(TOOL_ACTIVE);
+
+      var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
+      instersection_plane.name = "InvisiblePlaneForSnapping";
+      this._entities.push(instersection_plane);
     },
 
-    StopSplineTool : function()
+    StopTool : function()
     {
+      this._activeTool = null;
       this.SetSelectionMode(NO_TOOL);
+
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i].name === "InvisiblePlaneForSnapping") {
+          this._entities.splice(i, 1);
+          break;
+        }
+      }
     },
 
     StartMoveTool : function( selObjId )

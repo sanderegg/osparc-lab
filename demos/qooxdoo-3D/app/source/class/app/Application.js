@@ -230,12 +230,13 @@ qx.Class.define("app.Application",
         }, this);
 
         this._availableServicesBar.addListener("newSplineRequested", function(e) {
-          this._threeView.SetSelectionMode(0);
+          //this._threeView.SetSelectionMode(0);
           var enableSplineTool = e.getData();
           if (enableSplineTool) {
-            this._threeView.StartSplineTool();
+            var splineCreator = new app.modeler.splineCreator(this._threeView);
+            this._threeView.StartTool(splineCreator);
           } else {
-            this._threeView.StopSplineTool();
+            this._threeView.StopTool();
           }
         }, this);
 
@@ -259,7 +260,7 @@ qx.Class.define("app.Application",
       {
         this._entityList.addListener("removeEntityRequested", function(e) {
           var entityId = e.getData();
-          if (this._threeView.RemoveEntity(entityId));
+          if (this._threeView.RemoveEntityByID(entityId));
             this._entityList.RemoveEntity(entityId);
         }, this);
 
