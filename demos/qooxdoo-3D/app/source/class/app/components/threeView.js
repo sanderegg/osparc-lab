@@ -238,27 +238,25 @@ qx.Class.define("app.components.threeView",
     StartTool : function(myTool)
     {
       this._activeTool = myTool;
+      this._activeTool.StartTool();
       this.SetSelectionMode(TOOL_ACTIVE);
-
-      this._addInvisiblePlane();
     },
 
     StopTool : function()
     {
+      this._activeTool.StopTool();
       this._activeTool = null;
       this.SetSelectionMode(NO_TOOL);
-
-      this._removeInvisiblePlane();
     },
 
-    _addInvisiblePlane : function()
+    AddInvisiblePlane : function()
     {
       var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
       instersection_plane.name = "InvisiblePlaneForSnapping";
       this._entities.push(instersection_plane);
     },
 
-    _removeInvisiblePlane : function()
+    RemoveInvisiblePlane : function()
     {
       for (var i = 0; i < this._entities.length; i++) {
         if (this._entities[i].name === "InvisiblePlaneForSnapping") {
