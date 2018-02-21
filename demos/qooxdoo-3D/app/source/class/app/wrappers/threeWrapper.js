@@ -284,13 +284,25 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     CreateSpline : function(listOfPoints)
     {
-      var curve_points = [];
-      for (var i = 0; i < listOfPoints.length; i++) {
-        curve_points.push(new THREE.Vector3( listOfPoints[i][0], listOfPoints[i][1], listOfPoints[i][2] ));
-
-      }
+      var curve_points = this._arrayToThreePoints(listOfPoints);
       var curve = new THREE.CatmullRomCurve3(curve_points);
       var points = curve.getPoints( listOfPoints.length * 10 );
+      return this.CreateLine(points);
+    },
+
+    _arrayToThreePoints : function(listOfPoints)
+    {
+      console.log(listOfPoints);
+      var three_points = [];
+      for (var i = 0; i < listOfPoints.length; i++) {
+        three_points.push(new THREE.Vector3( listOfPoints[i].x, listOfPoints[i].y, listOfPoints[i].z ));
+      }
+      console.log(three_points);
+      return three_points;
+    },
+
+    CreateLine : function(points)
+    {
       var geometry = new THREE.BufferGeometry().setFromPoints( points );
       var material = new THREE.LineBasicMaterial( { color : 0xffffff } );
       var curveObject = new THREE.Line( geometry, material );

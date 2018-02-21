@@ -6,6 +6,10 @@ qx.Class.define("app.modeler.splineCreator", {
     this._threeViewer = threeViewer;
   },
 
+  events : {
+    "newSplineS4LRequested": "qx.event.type.Data",
+  },
+
   members : {
     _threeViewer: null,
     _pointList: [],
@@ -26,7 +30,7 @@ qx.Class.define("app.modeler.splineCreator", {
       if (intersects.length > 0)
       {
         var intersect = intersects[0];
-        var hoverPointList = this._pointList.concat([[intersect.point.x, intersect.point.y, intersect.point.z]]);
+        var hoverPointList = this._pointList.concat([intersect.point]);
         if (hoverPointList.length>1)
         {
           this._threeViewer._threeWrapper.RemoveFromScene(this._spline_temp);
@@ -43,7 +47,7 @@ qx.Class.define("app.modeler.splineCreator", {
       if (intersects.length > 0)
       {
         var intersect = intersects[0];
-        this._pointList.push([intersect.point.x, intersect.point.y, intersect.point.z]);
+        this._pointList.push(intersect.point);
 
         if (this._pointList.length>1)
         {
@@ -65,6 +69,7 @@ qx.Class.define("app.modeler.splineCreator", {
 
     _consolidateSpline : function()
     {
+      this.fireDataEvent("newSplineS4LRequested", this._pointList);
       var spline = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
       spline.name = "Spline";
       this._threeViewer.AddEntityToScene(spline);

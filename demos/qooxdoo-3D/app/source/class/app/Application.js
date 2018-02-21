@@ -235,6 +235,9 @@ qx.Class.define("app.Application",
           if (enableSplineTool) {
             var splineCreator = new app.modeler.splineCreator(this._threeView);
             this._threeView.StartTool(splineCreator);
+            splineCreator.addListener("newSplineS4LRequested", function(e) {
+
+            }, this);
           } else {
             this._threeView.StopTool();
           }
