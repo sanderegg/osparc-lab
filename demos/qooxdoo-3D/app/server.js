@@ -32,7 +32,7 @@ var thrAppSharedService  = require('./thrift/ApplicationJSNode/gen-nodejs/Shared
 var thrAppProcessFactory = require('./thrift/ApplicationJSNode/gen-nodejs/ProcessFactory');
 
 const S4L_IP = '172.16.9.89';
-const S4L_APP_PORT = 10091;
+const S4L_APP_PORT = 9095;
 
 var transport = thrift.TBufferedTransport;
 var protocol = thrift.TBinaryProtocol;
@@ -41,7 +41,7 @@ var connection_0 = thrift.createConnection(S4L_IP, S4L_APP_PORT, {
   protocol : protocol
 });
 connection_0.on('error', function(err) {
-  console.log('Thrift connection to appication failed:');
+  console.log('Thrift connection to Appication failed:');
   console.log(err);
 });
 
@@ -50,6 +50,26 @@ var applicationClient = thrift.createClient(thrApplication, connection_0);
 //var applicationClient = multiplexer.createClient('All the same', thrApplication, connection);
 applicationClient.GetApiVersion( function(err, response) {
   console.log('Application API version', response);
+});
+
+
+var thrModeler           = require('./thrift/ModelerJSNode/gen-nodejs/Modeler');
+var thrModelerTypes      = require('./thrift/ModelerJSNode/gen-nodejs/modeler_types');
+
+const S4L_MODELER_PORT = 9096;
+
+var connection_1 = thrift.createConnection(S4L_IP, S4L_MODELER_PORT, {
+  transport: transport,
+  protocol : protocol
+});
+connection_1.on('error', function(err) {
+  console.log('Thrift connection to Modeler failed:');
+  console.log(err);
+});
+
+var modelerClient = thrift.createClient(thrModeler, connection_1);
+modelerClient.GetEntities( function(err, response) {
+  console.log('Entities', response);
 });
 
 
