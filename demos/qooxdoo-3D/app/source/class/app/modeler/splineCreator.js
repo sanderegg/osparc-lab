@@ -6,13 +6,10 @@ qx.Class.define("app.modeler.splineCreator", {
     this._threeViewer = threeViewer;
   },
 
-  events : {
-  },
-
   members : {
     _threeViewer: null,
     _pointList: [],
-    _spline: null,
+    _spline_temp: null,
 
     OnMouseDown : function(event, intersects)
     {
@@ -22,10 +19,17 @@ qx.Class.define("app.modeler.splineCreator", {
         this._pointList.push([intersect.point.x, intersect.point.y, intersect.point.z]);
 
         if (this._pointList.length>1) {
-          this._threeViewer.RemoveEntity(this._spline);
-          this._spline = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
-          this._spline.name = "Spline";
-          this._threeViewer.AddEntityToScene(this._spline);
+          this._threeViewer._threeWrapper.RemoveFromScene(this._spline_temp)
+          if (event.button === 0) {
+            this._spline_temp = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
+            this._spline_temp.name = "Spline_temp";
+            this._threeViewer._threeWrapper.AddEntityToScene(this._spline_temp);
+          } else if (event.button === 2) {
+            var spline = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
+            spline.name = "Spline";
+            this._threeViewer.AddEntityToScene(spline);
+            this._pointList = [];
+          }
         }
       }
 

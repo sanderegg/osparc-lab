@@ -109,7 +109,10 @@ qx.Class.define("app.components.threeView",
       if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
         var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
-        this._activeTool.OnMouseDown(event, intersects);
+        var attended = this._activeTool.OnMouseDown(event, intersects);
+        if (attended) {
+          return;
+        }
       }
 
       var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
