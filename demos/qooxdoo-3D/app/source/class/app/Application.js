@@ -236,7 +236,13 @@ qx.Class.define("app.Application",
             var splineCreator = new app.modeler.splineCreator(this._threeView);
             this._threeView.StartTool(splineCreator);
             splineCreator.addListener("newSplineS4LRequested", function(e) {
-
+              var pointList = e.getData();
+              this._socket.on("newSplineS4LRequested", function(val) {
+                if (val.type === "newSplineS4LRequested") {
+                  console.log('Create Spline from this', val.value);
+                }
+              }, this);
+              this._socket.emit("newSplineS4LRequested", pointList);
             }, this);
           } else {
             this._threeView.StopTool();

@@ -292,12 +292,10 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     _arrayToThreePoints : function(listOfPoints)
     {
-      console.log(listOfPoints);
       var three_points = [];
       for (var i = 0; i < listOfPoints.length; i++) {
         three_points.push(new THREE.Vector3( listOfPoints[i].x, listOfPoints[i].y, listOfPoints[i].z ));
       }
-      console.log(three_points);
       return three_points;
     },
 

@@ -100,6 +100,14 @@ io.on('connection', function(socket_client) {
   socket_client.on('importViP', function(ViP_model) {
     importViP(socket_client, ViP_model);
   });
+
+
+  socket_client.on('newSplineS4LRequested', function(pointList) {
+    console.log(pointList);
+    modelerClient.GetEntities( function(err, response) {
+      console.log('Entities', response);
+    });
+  });
 });
 
 
