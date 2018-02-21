@@ -23,37 +23,67 @@ app.get('/', function (request, response) {
 server.listen(PORT);
 
 
+var thrift = require('thrift');
+
+var thrApplication       = require('./thrift/ApplicationJSNode/gen-nodejs/Application.js');
+var thrApplicationTypes  = require('./thrift/ApplicationJSNode/gen-nodejs/application_types');
+var thrAppLogger         = require('./thrift/ApplicationJSNode/gen-nodejs/Logger');
+var thrAppSharedService  = require('./thrift/ApplicationJSNode/gen-nodejs/SharedService');
+var thrAppProcessFactory = require('./thrift/ApplicationJSNode/gen-nodejs/ProcessFactory');
+
+const S4L_IP = '172.16.9.89';
+const S4L_APP_PORT = 10091;
+
+var transport = thrift.TBufferedTransport;
+var protocol = thrift.TBinaryProtocol;
+var connection_0 = thrift.createConnection(S4L_IP, S4L_APP_PORT, {
+  transport: transport,
+  protocol : protocol
+});
+connection_0.on('error', function(err) {
+  console.log('Thrift connection to appication failed:');
+  console.log(err);
+});
+
+var applicationClient = thrift.createClient(thrApplication, connection_0);
+//var multiplexer = new thrift.Multiplexer();
+//var applicationClient = multiplexer.createClient('All the same', thrApplication, connection);
+applicationClient.GetApiVersion( function(err, response) {
+  console.log('Application API version', response);
+});
+
+
 var io = require('socket.io')(server);
-io.on('connection', function(client) {
+io.on('connection', function(socket_client) {
   console.log('Client connected...');
 
-  client.on('importEntities', function(active_user) {
-    importEntities(client, active_user);
+  socket_client.on('importEntities', function(active_user) {
+    importEntities(socket_client, active_user);
   });
 
-  client.on('exportEntities', function(args) {
+  socket_client.on('exportEntities', function(args) {
     var active_user = args[0];
     var entities_json = args[1];
-    exportEntities(client, active_user, entities_json);
+    exportEntities(socket_client, active_user, entities_json);
   });
 
-  client.on('importScene', function(active_user) {
-    importScene(client, active_user);
+  socket_client.on('importScene', function(active_user) {
+    importScene(socket_client, active_user);
   });
 
-  client.on('exportScene', function(args) {
+  socket_client.on('exportScene', function(args) {
     var active_user = args[0];
     var scene_json = args[1];
-    exportScene(client, active_user, scene_json);
+    exportScene(socket_client, active_user, scene_json);
   });
 
-  client.on('importViP', function(ViP_model) {
-    importViP(client, ViP_model);
+  socket_client.on('importViP', function(ViP_model) {
+    importViP(socket_client, ViP_model);
   });
 });
 
 
-function importEntities(client, active_user) {
+function importEntities(socket_client, active_user) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
   console.log('import Entities from: ', models_dir);
   var fs = require("fs");
@@ -68,13 +98,13 @@ function importEntities(client, active_user) {
         modelJson.value = data.toString();
         modelJson.type = 'importEntities';
         console.log("sending file: ", modelJson.modelName);
-        client.emit('importEntities', modelJson);
+        socket_client.emit('importEntities', modelJson);
       });
     }
   });
 };
 
-function exportEntities(client, active_user, entities_json) {
+function exportEntities(socket_client, active_user, entities_json) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
   var fs = require('fs');
   var response = {};
@@ -92,10 +122,10 @@ function exportEntities(client, active_user, entities_json) {
       }
     });
   }
-  client.emit('exportEntities', response);
+  socket_client.emit('exportEntities', response);
 };
 
-function importScene(client, active_user) {
+function importScene(socket_client, active_user) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
   console.log('import Scene from: ', models_dir);
   var fs = require("fs");
@@ -110,13 +140,13 @@ function importScene(client, active_user) {
         modelJson.value = data.toString();
         modelJson.type = 'importScene';
         console.log("sending file: ", modelJson.modelName);
-        client.emit('importScene', modelJson);
+        socket_client.emit('importScene', modelJson);
       });
     }
   });
 };
 
-function exportScene(client, active_user, scene_json) {
+function exportScene(socket_client, active_user, scene_json) {
   const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.json';
   console.log('export Scene to: ', models_dir);
   var content = JSON.stringify(scene_json);
@@ -131,14 +161,14 @@ function exportScene(client, active_user, scene_json) {
       console.log(models_dir, " file was saved!");
       response.value = true;
     }
-    client.emit('exportScene', response);
+    socket_client.emit('exportScene', response);
     if (err) {
       throw err;
     }
   });
 };
 
-function importViP(client, ViP_model) {
+function importViP(socket_client, ViP_model) {
   models_dir = APP_PATH + MODELS_PATH + 'ViP/' + ViP_model;
   console.log('sending files: ', models_dir);
   var fs = require("fs");
@@ -152,7 +182,7 @@ function importViP(client, ViP_model) {
         modelJson.modelName = file;
         modelJson.value = data.toString();
         modelJson.type = 'importViP';
-        client.emit('importViP', modelJson);
+        socket_client.emit('importViP', modelJson);
       });
     }
   });
