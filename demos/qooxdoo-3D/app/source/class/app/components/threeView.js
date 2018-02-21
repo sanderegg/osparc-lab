@@ -44,6 +44,7 @@ qx.Class.define("app.components.threeView",
           this._threeWrapper.SetSize(this.getWidth(), this.getHeight());
 
           document.addEventListener( 'mousedown', this._onMouseDown.bind(this), false );
+          document.addEventListener( 'mousemove', this._onMouseHover.bind(this), false );
           this._render();
 
         }, this);
@@ -92,6 +93,28 @@ qx.Class.define("app.components.threeView",
         this._transformControls[i].update();
       }
       this._render();
+    },
+
+    _onMouseHover : function( event ) {
+      event.preventDefault();
+      if (this._selectionMode === NO_TOOL ||
+        //hacky
+        event.target.nodeName != 'CANVAS') {
+        //this.fireDataEvent("entitySelected", null);
+        return;
+      }
+
+      var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
+      var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+      if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
+      {
+        var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
+        var attended = this._activeTool.OnMouseHover(event, intersects);
+        if (attended) {
+          return;
+        }
+      }
     },
 
     _onMouseDown : function( event ) {
