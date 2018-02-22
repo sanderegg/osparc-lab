@@ -103,9 +103,14 @@ io.on('connection', function(socket_client) {
 
 
   socket_client.on('newSplineS4LRequested', function(pointList) {
-    console.log(pointList);
-    modelerClient.GetEntities( function(err, response) {
-      console.log('Entities', response);
+    var transform4x4 = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
+    var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
+    var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
+    modelerClient.AddSpline( spline, function(err, response) {
+      console.log('Spline added', response);
+      modelerClient.GetEntities( function(err2, response2) {
+        console.log('Entities', response2);
+      });
     });
   });
 });
