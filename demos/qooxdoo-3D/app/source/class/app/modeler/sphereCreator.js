@@ -61,6 +61,9 @@ qx.Class.define("app.modeler.sphereCreator", {
         }
 
         if (this._radius === null) {
+          if (this._sphere_temp) {
+            this._threeViewer._threeWrapper.RemoveFromScene(this._sphere_temp);
+          }
           this._radius = Math.hypot(intersect.point.x-this._centerPoint.x, intersect.point.y-this._centerPoint.y);
           this._consolidateSphere();
           return true;
