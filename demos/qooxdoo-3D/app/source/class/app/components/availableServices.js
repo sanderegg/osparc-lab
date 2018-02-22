@@ -29,12 +29,18 @@ qx.Class.define("app.components.availableServices",
     "newBasicEntityRequested": "qx.event.type.Data",
     "selectionModeChanged": "qx.event.type.Data",
     "moveToolRequested": "qx.event.type.Data",
+    "newSphereRequested": "qx.event.type.Data",
+    "newBlockRequested": "qx.event.type.Data",
+    "newDodecaRequested": "qx.event.type.Data",
     "newSplineRequested": "qx.event.type.Data",
   },
 
   members: {
     _menubar: null,
     _moveBtn: null,
+    _sphereBtn: null,
+    _blockBtn: null,
+    _dodecaBtn: null,
     _splineBtn: null,
 
     getAvailableServicesBar : function(width, backgroundColor)
@@ -92,21 +98,21 @@ qx.Class.define("app.components.availableServices",
         var menuPart = new qx.ui.toolbar.Part;
         toolbar.add(menuPart);
 
-        var sphere_btn = new qx.ui.toolbar.Button(this.tr("Add Sphere"));
-        sphere_btn.addListener("execute", this._onAddSphereRequested, this);
+        this._sphereBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Sphere"));
+        this._sphereBtn.addListener("execute", this._onAddSphereRequested, this);
 
-        var block_btn = new qx.ui.toolbar.Button(this.tr("Add Box"));
-        block_btn.addListener("execute", this._onAddBlockRequested.bind(this));
+        this._blockBtn = new qx.ui.toolbar.Button(this.tr("Add Box"));
+        this._blockBtn.addListener("execute", this._onAddBlockRequested.bind(this));
 
-        var dodeca_btn = new qx.ui.toolbar.Button(this.tr("Add Dodecahedron"));
-        dodeca_btn.addListener("execute", this._onAddDodecaRequested.bind(this));
+        this._dodecaBtn = new qx.ui.toolbar.Button(this.tr("Add Dodecahedron"));
+        this._dodecaBtn.addListener("execute", this._onAddDodecaRequested.bind(this));
 
         this._splineBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Spline"));
         this._splineBtn.addListener("execute", this._onAddSplineRequested.bind(this));
 
-        menuPart.add(sphere_btn);
-        menuPart.add(block_btn);
-        menuPart.add(dodeca_btn);
+        menuPart.add(this._sphereBtn);
+        menuPart.add(this._blockBtn);
+        menuPart.add(this._dodecaBtn);
         menuPart.add(this._splineBtn);
       }
 
@@ -118,7 +124,7 @@ qx.Class.define("app.components.availableServices",
     },
 
     _onAddSphereRequested : function() {
-      this.fireDataEvent("newBasicEntityRequested", "Sphere");
+      this.fireDataEvent("newSphereRequested", this._sphereBtn.getValue());
     },
 
     _onAddBlockRequested : function() {

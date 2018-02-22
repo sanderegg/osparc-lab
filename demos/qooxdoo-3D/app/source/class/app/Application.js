@@ -229,6 +229,16 @@ qx.Class.define("app.Application",
           this._threeView.AddEntity(entityTypeName, 3);
         }, this);
 
+        this._availableServicesBar.addListener("newSphereRequested", function(e) {
+          var enableSphereTool = e.getData();
+          if (enableSphereTool) {
+            var sphereCreator = new app.modeler.sphereCreator(this._threeView);
+            this._threeView.StartTool(sphereCreator);
+          } else {
+            this._threeView.StopTool();
+          }
+        }, this);
+
         this._availableServicesBar.addListener("newSplineRequested", function(e) {
           //this._threeView.SetSelectionMode(0);
           var enableSplineTool = e.getData();
