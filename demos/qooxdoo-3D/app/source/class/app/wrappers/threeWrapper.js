@@ -307,14 +307,34 @@ qx.Class.define("app.wrappers.threeWrapper",
       return curveObject;
     },
 
-    CreateInvisiblePlane : function()
+    CreateInvisiblePlane : function(fixed_axe = 2, fixed_position = 0)
     {
-      var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(5000, 5000),
-        new THREE.MeshBasicMaterial({
-          alphaTest: 0,
-          visible: false
-        }
-      ));
+      var plane = null;
+      var planeMaterial = new THREE.MeshBasicMaterial({
+        alphaTest: 0,
+        visible: false
+      });
+      switch (fixed_axe) {
+        case 0:
+          plane = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(fixed_position, 5000, 5000),
+            planeMaterial
+          );
+          break;
+        case 1:
+          plane = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(5000, fixed_position, 5000),
+            planeMaterial
+          );
+          break;
+        default:
+          plane = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(5000, 5000, fixed_position),
+            planeMaterial
+          );
+          break;
+      }
+
       return plane;
     },
 

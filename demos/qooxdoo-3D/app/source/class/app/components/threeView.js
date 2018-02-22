@@ -272,9 +272,9 @@ qx.Class.define("app.components.threeView",
       this.SetSelectionMode(NO_TOOL);
     },
 
-    AddInvisiblePlane : function()
+    AddInvisiblePlane : function(fixed_axe = 2, fixed_position = 0)
     {
-      var instersection_plane = this._threeWrapper.CreateInvisiblePlane();
+      var instersection_plane = this._threeWrapper.CreateInvisiblePlane(fixed_axe, fixed_position);
       instersection_plane.name = "InvisiblePlaneForSnapping";
       this._entities.push(instersection_plane);
     },

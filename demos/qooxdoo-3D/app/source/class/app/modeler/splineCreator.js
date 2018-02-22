@@ -17,7 +17,9 @@ qx.Class.define("app.modeler.splineCreator", {
 
     StartTool : function()
     {
-      this._threeViewer.AddInvisiblePlane();
+      const fixed_axe = 2;
+      const fixed_pos = 0;
+      this._threeViewer.AddInvisiblePlane(fixed_axe, fixed_pos);
     },
 
     StopTool : function()
