@@ -235,13 +235,17 @@ qx.Class.define("app.Application",
           if (enableSplineTool) {
             var splineCreator = new app.modeler.splineCreator(this._threeView);
             this._threeView.StartTool(splineCreator);
-            splineCreator.addListener("newSplineS4LRequested", function(e) {
+            splineCreator.addListenerOnce("newSplineS4LRequested", function(e) {
               var pointList = e.getData();
-              this._socket.on("newSplineS4LRequested", function(val) {
-                if (val.type === "newSplineS4LRequested") {
-                  console.log('Create Spline from this', val.value);
-                }
-              }, this);
+              if (!this._socket.slotExists("newSplineS4LRequested")) {
+                this._socket.on("newSplineS4LRequested", function(val) {
+                  if (val.type === "newSplineS4LRequested") {
+                    var spline = this._threeView._threeWrapper.CreateSpline(val.value);
+                    spline.name = "Spline_S4L";
+                    this._threeView.AddEntityToScene(spline);
+                  }
+                }, this);
+              }
               this._socket.emit("newSplineS4LRequested", pointList);
             }, this);
           } else {

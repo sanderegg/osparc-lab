@@ -107,9 +107,12 @@ io.on('connection', function(socket_client) {
     var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
     var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
     modelerClient.AddSpline( spline, function(err, response) {
-      console.log('Spline added', response);
-      modelerClient.GetEntities( function(err2, response2) {
-        console.log('Entities', response2);
+      modelerClient.GetEntityWire( response, function(err2, response2) {
+        var listOfPoints = {
+          type: 'newSplineS4LRequested',
+          value: response2
+        };
+        socket_client.emit('newSplineS4LRequested', listOfPoints);
       });
     });
   });
