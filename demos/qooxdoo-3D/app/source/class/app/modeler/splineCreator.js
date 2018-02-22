@@ -76,6 +76,7 @@ qx.Class.define("app.modeler.splineCreator", {
       spline.name = "Spline";
       this._threeViewer.AddEntityToScene(spline);
       this._pointList = [];
+      this._threeViewer.StopTool();
     },
   },
 });

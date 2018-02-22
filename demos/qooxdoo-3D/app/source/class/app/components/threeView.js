@@ -267,7 +267,9 @@ qx.Class.define("app.components.threeView",
 
     StopTool : function()
     {
-      this._activeTool.StopTool();
+      if (this._activeTool) {
+        this._activeTool.StopTool();
+      }
       this._activeTool = null;
       this.SetSelectionMode(NO_TOOL);
     },
