@@ -526,6 +526,90 @@ Modeler_AddMeshes_result.prototype.write = function(output) {
   return;
 };
 
+var Modeler_AddSpline_args = function(args) {
+  this.Line = null;
+  if (args) {
+    if (args.Line !== undefined && args.Line !== null) {
+      console.log('AddSpline_args:', args);
+      this.Line = new ttypes.EntityLine(args.Line);
+      console.log('AddSpline_this:', this.Line);
+    }
+  }
+};
+Modeler_AddSpline_args.prototype = {};
+Modeler_AddSpline_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.Line = new ttypes.EntityLine();
+        this.Line.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_AddSpline_args.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_AddSpline_args');
+  if (this.Line !== null && this.Line !== undefined) {
+    output.writeFieldBegin('Line', Thrift.Type.STRUCT, 1);
+    this.Line.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var Modeler_AddSpline_result = function(args) {
+};
+Modeler_AddSpline_result.prototype = {};
+Modeler_AddSpline_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_AddSpline_result.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_AddSpline_result');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 var Modeler_AddSplines_args = function(args) {
   this.Lines = null;
   if (args) {
@@ -1114,6 +1198,52 @@ ModelerClient.prototype.recv_AddMeshes = function(input,mtype,rseqid) {
 
   callback(null);
 };
+ModelerClient.prototype.AddSpline = function(Line, callback) {
+  this._seqid = this.new_seqid();
+  if (callback === undefined) {
+    var _defer = Q.defer();
+    this._reqs[this.seqid()] = function(error, result) {
+      if (error) {
+        _defer.reject(error);
+      } else {
+        _defer.resolve(result);
+      }
+    };
+    this.send_AddSpline(Line);
+    return _defer.promise;
+  } else {
+    this._reqs[this.seqid()] = callback;
+    this.send_AddSpline(Line);
+  }
+};
+
+ModelerClient.prototype.send_AddSpline = function(Line) {
+  var output = new this.pClass(this.output);
+  output.writeMessageBegin('AddSpline', Thrift.MessageType.CALL, this.seqid());
+  var params = {
+    Line: Line
+  };
+  var args = new Modeler_AddSpline_args(params);
+  args.write(output);
+  output.writeMessageEnd();
+  return this.output.flush();
+};
+
+ModelerClient.prototype.recv_AddSpline = function(input,mtype,rseqid) {
+  var callback = this._reqs[rseqid] || function() {};
+  delete this._reqs[rseqid];
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(input);
+    input.readMessageEnd();
+    return callback(x);
+  }
+  var result = new Modeler_AddSpline_result();
+  result.read(input);
+  input.readMessageEnd();
+
+  callback(null);
+};
 ModelerClient.prototype.AddSplines = function(Lines, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
@@ -1449,6 +1579,42 @@ ModelerProcessor.prototype.process_AddMeshes = function(seqid, input, output) {
       } else {
         result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("AddMeshes", Thrift.MessageType.EXCEPTION, seqid);
+      }
+      result_obj.write(output);
+      output.writeMessageEnd();
+      output.flush();
+    });
+  }
+};
+ModelerProcessor.prototype.process_AddSpline = function(seqid, input, output) {
+  var args = new Modeler_AddSpline_args();
+  args.read(input);
+  input.readMessageEnd();
+  if (this._handler.AddSpline.length === 1) {
+    Q.fcall(this._handler.AddSpline.bind(this._handler), args.Line)
+      .then(function(result) {
+        var result_obj = new Modeler_AddSpline_result({success: result});
+        output.writeMessageBegin("AddSpline", Thrift.MessageType.REPLY, seqid);
+        result_obj.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      }, function (err) {
+        var result;
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("AddSpline", Thrift.MessageType.EXCEPTION, seqid);
+        result.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      });
+  } else {
+    this._handler.AddSpline(args.Line, function (err, result) {
+      var result_obj;
+      if ((err === null || typeof err === 'undefined')) {
+        result_obj = new Modeler_AddSpline_result((err !== null || typeof err === 'undefined') ? err : {success: result});
+        output.writeMessageBegin("AddSpline", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("AddSpline", Thrift.MessageType.EXCEPTION, seqid);
       }
       result_obj.write(output);
       output.writeMessageEnd();

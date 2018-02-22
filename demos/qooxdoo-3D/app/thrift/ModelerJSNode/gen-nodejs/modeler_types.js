@@ -728,15 +728,18 @@ EntityMesh.prototype.write = function(output) {
 };
 
 var EntityLine = module.exports.EntityLine = function(args) {
+  console.log('EntityLine_args:', args);
   this.vertices = null;
   this.transform4x4 = null;
   this.material = null;
   if (args) {
     if (args.vertices !== undefined && args.vertices !== null) {
       this.vertices = Thrift.copyList(args.vertices, [ttypes.Vertex]);
+      console.log('EntityLine_verices_this:', this.vertices);
     }
     if (args.transform4x4 !== undefined && args.transform4x4 !== null) {
       this.transform4x4 = Thrift.copyList(args.transform4x4, [null]);
+      console.log('EntityLine_transform4x4_this:', this.transform4x4);
     }
     if (args.material !== undefined && args.material !== null) {
       this.material = new ttypes.Material(args.material);
@@ -854,4 +857,3 @@ EntityLine.prototype.write = function(output) {
   output.writeStructEnd();
   return;
 };
-
