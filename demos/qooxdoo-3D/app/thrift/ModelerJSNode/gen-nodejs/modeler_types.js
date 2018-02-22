@@ -728,18 +728,15 @@ EntityMesh.prototype.write = function(output) {
 };
 
 var EntityLine = module.exports.EntityLine = function(args) {
-  console.log('EntityLine_args:', args);
   this.vertices = null;
   this.transform4x4 = null;
   this.material = null;
   if (args) {
     if (args.vertices !== undefined && args.vertices !== null) {
       this.vertices = Thrift.copyList(args.vertices, [ttypes.Vertex]);
-      console.log('EntityLine_verices_this:', this.vertices);
     }
     if (args.transform4x4 !== undefined && args.transform4x4 !== null) {
       this.transform4x4 = Thrift.copyList(args.transform4x4, [null]);
-      console.log('EntityLine_transform4x4_this:', this.transform4x4);
     }
     if (args.material !== undefined && args.material !== null) {
       this.material = new ttypes.Material(args.material);
@@ -857,3 +854,60 @@ EntityLine.prototype.write = function(output) {
   output.writeStructEnd();
   return;
 };
+
+var ModelerException = module.exports.ModelerException = function(args) {
+  Thrift.TException.call(this, "ModelerException");
+  this.name = "ModelerException";
+  this.message = null;
+  if (args) {
+    if (args.message !== undefined && args.message !== null) {
+      this.message = args.message;
+    }
+  }
+};
+Thrift.inherits(ModelerException, Thrift.TException);
+ModelerException.prototype.name = 'ModelerException';
+ModelerException.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.message = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+ModelerException.prototype.write = function(output) {
+  output.writeStructBegin('ModelerException');
+  if (this.message !== null && this.message !== undefined) {
+    output.writeFieldBegin('message', Thrift.Type.STRING, 1);
+    output.writeString(this.message);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+

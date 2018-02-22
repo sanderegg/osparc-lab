@@ -499,6 +499,12 @@ Modeler_AddMeshes_args.prototype.write = function(output) {
 };
 
 var Modeler_AddMeshes_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [null]);
+    }
+  }
 };
 Modeler_AddMeshes_result.prototype = {};
 Modeler_AddMeshes_result.prototype.read = function(input) {
@@ -512,7 +518,34 @@ Modeler_AddMeshes_result.prototype.read = function(input) {
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    input.skip(ftype);
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size96 = 0;
+        var _rtmp3100;
+        this.success = [];
+        var _etype99 = 0;
+        _rtmp3100 = input.readListBegin();
+        _etype99 = _rtmp3100.etype;
+        _size96 = _rtmp3100.size;
+        for (var _i101 = 0; _i101 < _size96; ++_i101)
+        {
+          var elem102 = null;
+          elem102 = input.readString();
+          this.success.push(elem102);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -521,6 +554,20 @@ Modeler_AddMeshes_result.prototype.read = function(input) {
 
 Modeler_AddMeshes_result.prototype.write = function(output) {
   output.writeStructBegin('Modeler_AddMeshes_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRING, this.success.length);
+    for (var iter103 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter103))
+      {
+        iter103 = this.success[iter103];
+        output.writeString(iter103);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -530,9 +577,7 @@ var Modeler_AddSpline_args = function(args) {
   this.Line = null;
   if (args) {
     if (args.Line !== undefined && args.Line !== null) {
-      console.log('AddSpline_args:', args);
       this.Line = new ttypes.EntityLine(args.Line);
-      console.log('AddSpline_this:', this.Line);
     }
   }
 };
@@ -583,6 +628,12 @@ Modeler_AddSpline_args.prototype.write = function(output) {
 };
 
 var Modeler_AddSpline_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = args.success;
+    }
+  }
 };
 Modeler_AddSpline_result.prototype = {};
 Modeler_AddSpline_result.prototype.read = function(input) {
@@ -596,7 +647,21 @@ Modeler_AddSpline_result.prototype.read = function(input) {
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    input.skip(ftype);
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.STRING) {
+        this.success = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -605,6 +670,11 @@ Modeler_AddSpline_result.prototype.read = function(input) {
 
 Modeler_AddSpline_result.prototype.write = function(output) {
   output.writeStructBegin('Modeler_AddSpline_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.STRING, 0);
+    output.writeString(this.success);
+    output.writeFieldEnd();
+  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -634,19 +704,19 @@ Modeler_AddSplines_args.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.LIST) {
-        var _size96 = 0;
-        var _rtmp3100;
+        var _size104 = 0;
+        var _rtmp3108;
         this.Lines = [];
-        var _etype99 = 0;
-        _rtmp3100 = input.readListBegin();
-        _etype99 = _rtmp3100.etype;
-        _size96 = _rtmp3100.size;
-        for (var _i101 = 0; _i101 < _size96; ++_i101)
+        var _etype107 = 0;
+        _rtmp3108 = input.readListBegin();
+        _etype107 = _rtmp3108.etype;
+        _size104 = _rtmp3108.size;
+        for (var _i109 = 0; _i109 < _size104; ++_i109)
         {
-          var elem102 = null;
-          elem102 = new ttypes.EntityLine();
-          elem102.read(input);
-          this.Lines.push(elem102);
+          var elem110 = null;
+          elem110 = new ttypes.EntityLine();
+          elem110.read(input);
+          this.Lines.push(elem110);
         }
         input.readListEnd();
       } else {
@@ -670,12 +740,12 @@ Modeler_AddSplines_args.prototype.write = function(output) {
   if (this.Lines !== null && this.Lines !== undefined) {
     output.writeFieldBegin('Lines', Thrift.Type.LIST, 1);
     output.writeListBegin(Thrift.Type.STRUCT, this.Lines.length);
-    for (var iter103 in this.Lines)
+    for (var iter111 in this.Lines)
     {
-      if (this.Lines.hasOwnProperty(iter103))
+      if (this.Lines.hasOwnProperty(iter111))
       {
-        iter103 = this.Lines[iter103];
-        iter103.write(output);
+        iter111 = this.Lines[iter111];
+        iter111.write(output);
       }
     }
     output.writeListEnd();
@@ -687,6 +757,12 @@ Modeler_AddSplines_args.prototype.write = function(output) {
 };
 
 var Modeler_AddSplines_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [null]);
+    }
+  }
 };
 Modeler_AddSplines_result.prototype = {};
 Modeler_AddSplines_result.prototype.read = function(input) {
@@ -700,7 +776,34 @@ Modeler_AddSplines_result.prototype.read = function(input) {
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    input.skip(ftype);
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size112 = 0;
+        var _rtmp3116;
+        this.success = [];
+        var _etype115 = 0;
+        _rtmp3116 = input.readListBegin();
+        _etype115 = _rtmp3116.etype;
+        _size112 = _rtmp3116.size;
+        for (var _i117 = 0; _i117 < _size112; ++_i117)
+        {
+          var elem118 = null;
+          elem118 = input.readString();
+          this.success.push(elem118);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
     input.readFieldEnd();
   }
   input.readStructEnd();
@@ -709,6 +812,20 @@ Modeler_AddSplines_result.prototype.read = function(input) {
 
 Modeler_AddSplines_result.prototype.write = function(output) {
   output.writeStructBegin('Modeler_AddSplines_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRING, this.success.length);
+    for (var iter119 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter119))
+      {
+        iter119 = this.success[iter119];
+        output.writeString(iter119);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -791,19 +908,19 @@ Modeler_GetEntityWire_result.prototype.read = function(input) {
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size104 = 0;
-        var _rtmp3108;
+        var _size120 = 0;
+        var _rtmp3124;
         this.success = [];
-        var _etype107 = 0;
-        _rtmp3108 = input.readListBegin();
-        _etype107 = _rtmp3108.etype;
-        _size104 = _rtmp3108.size;
-        for (var _i109 = 0; _i109 < _size104; ++_i109)
+        var _etype123 = 0;
+        _rtmp3124 = input.readListBegin();
+        _etype123 = _rtmp3124.etype;
+        _size120 = _rtmp3124.size;
+        for (var _i125 = 0; _i125 < _size120; ++_i125)
         {
-          var elem110 = null;
-          elem110 = new ttypes.Vertex();
-          elem110.read(input);
-          this.success.push(elem110);
+          var elem126 = null;
+          elem126 = new ttypes.Vertex();
+          elem126.read(input);
+          this.success.push(elem126);
         }
         input.readListEnd();
       } else {
@@ -827,12 +944,12 @@ Modeler_GetEntityWire_result.prototype.write = function(output) {
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter111 in this.success)
+    for (var iter127 in this.success)
     {
-      if (this.success.hasOwnProperty(iter111))
+      if (this.success.hasOwnProperty(iter127))
       {
-        iter111 = this.success[iter111];
-        iter111.write(output);
+        iter127 = this.success[iter127];
+        iter127.write(output);
       }
     }
     output.writeListEnd();
@@ -1196,7 +1313,10 @@ ModelerClient.prototype.recv_AddMeshes = function(input,mtype,rseqid) {
   result.read(input);
   input.readMessageEnd();
 
-  callback(null);
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('AddMeshes failed: unknown result');
 };
 ModelerClient.prototype.AddSpline = function(Line, callback) {
   this._seqid = this.new_seqid();
@@ -1242,7 +1362,10 @@ ModelerClient.prototype.recv_AddSpline = function(input,mtype,rseqid) {
   result.read(input);
   input.readMessageEnd();
 
-  callback(null);
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('AddSpline failed: unknown result');
 };
 ModelerClient.prototype.AddSplines = function(Lines, callback) {
   this._seqid = this.new_seqid();
@@ -1288,7 +1411,10 @@ ModelerClient.prototype.recv_AddSplines = function(input,mtype,rseqid) {
   result.read(input);
   input.readMessageEnd();
 
-  callback(null);
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('AddSplines failed: unknown result');
 };
 ModelerClient.prototype.GetEntityWire = function(uuid, callback) {
   this._seqid = this.new_seqid();
