@@ -53,9 +53,9 @@ qx.Class.define("app.modeler.splineCreator", {
 
         if (this._pointList.length>1)
         {
-          this._threeViewer._threeWrapper.RemoveFromScene(this._spline_temp);
           if (event.button === 0)
           {
+            this._threeViewer._threeWrapper.RemoveFromScene(this._spline_temp);
             this._spline_temp = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
             this._threeViewer._threeWrapper.AddEntityToScene(this._spline_temp);
           }
@@ -71,6 +71,11 @@ qx.Class.define("app.modeler.splineCreator", {
 
     _consolidateSpline : function()
     {
+      if (this._spline_temp) {
+        this._threeViewer._threeWrapper.RemoveFromScene(this._spline_temp);
+        this._spline_temp = null;
+      }
+
       this.fireDataEvent("newSplineS4LRequested", this._pointList);
       var spline = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
       spline.name = "Spline";

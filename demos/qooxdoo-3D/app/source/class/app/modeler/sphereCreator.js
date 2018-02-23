@@ -64,9 +64,6 @@ qx.Class.define("app.modeler.sphereCreator", {
         }
 
         if (this._radius === null) {
-          if (this._sphere_temp) {
-            this._threeViewer._threeWrapper.RemoveFromScene(this._sphere_temp);
-          }
           this._radius = Math.hypot(intersect.point.x-this._centerPoint.x, intersect.point.y-this._centerPoint.y);
           this._consolidateSphere();
           return true;
@@ -78,13 +75,19 @@ qx.Class.define("app.modeler.sphereCreator", {
 
     _consolidateSphere : function()
     {
-      this.fireDataEvent("newSphereS4LRequested", this._pointList);
+      if (this._sphere_temp) {
+        this._threeViewer._threeWrapper.RemoveFromScene(this._sphere_temp);
+        this._sphere_temp = null;
+      }
+
+      //this.fireDataEvent("newSphereS4LRequested", this._radius, this._centerPoint);
       var geometry = this._threeViewer._threeWrapper.CreateSphere(this._radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
-      var material = this._threeViewer._threeWrapper.CreateNewMaterial();
-      var entity = this._threeViewer._threeWrapper.CreateEntity(geometry, material);
+      if (this._sphere_material === null) {
+        this._sphere_material = this._threeViewer._threeWrapper.CreateNewMaterial();
+      }
+      var entity = this._threeViewer._threeWrapper.CreateEntity(geometry, this._sphere_material);
       entity.name = "Sphere";
       this._threeViewer.AddEntityToScene(entity);
-      this._pointList = [];
       this._threeViewer.StopTool();
     },
   },
