@@ -11,6 +11,11 @@ var Q = thrift.Q;
 
 
 var ttypes = module.exports = {};
+ttypes.BooleanOperationType = {
+  'UNITE' : 0,
+  'INTERSECT' : 1,
+  'SUBTRACT' : 2
+};
 var Entity = module.exports.Entity = function(args) {
   this.name = null;
   this.uuid = null;
