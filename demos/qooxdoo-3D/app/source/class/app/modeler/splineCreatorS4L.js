@@ -3,7 +3,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
 
   construct : function(threeViewer)
   {
-    this._threeViewer = threeViewer;
+    this._threeView = threeViewer;
   },
 
   events : {
@@ -11,7 +11,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
   },
 
   members : {
-    _threeViewer: null,
+    _threeView: null,
     _pointList: [],
     _spline_temp: null,
     _uuid_temp: '',
@@ -20,7 +20,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
     {
       const fixed_axe = 2;
       const fixed_pos = 0;
-      this._threeViewer.AddInvisiblePlane(fixed_axe, fixed_pos);
+      this._threeView.AddInvisiblePlane(fixed_axe, fixed_pos);
       this._pointList = [];
       this._spline_temp = null;
       this._uuid_temp = '';
@@ -28,7 +28,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
 
     StopTool : function()
     {
-      this._threeViewer.RemoveInvisiblePlane();
+      this._threeView.RemoveInvisiblePlane();
     },
 
     OnMouseHover : function(event, intersects)
@@ -77,7 +77,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
 
     SplineFromS4L : function(response)
     {
-      var spline = this._threeViewer._threeWrapper.CreateSpline(response.value);
+      var spline = this._threeView._threeWrapper.CreateSpline(response.value);
       spline.name = "Spline_S4L";
       spline.uuid = response.uuid;
 
@@ -86,12 +86,12 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
       }
 
       if (this._spline_temp) {
-        this._threeViewer._threeWrapper.RemoveFromScene(this._spline_temp);
+        this._threeView._threeWrapper.RemoveFromScene(this._spline_temp);
       }
 
       if (this._uuid_temp === spline.uuid) {
         this._spline_temp = spline;
-        this._threeViewer._threeWrapper.AddEntityToScene(this._spline_temp);
+        this._threeView._threeWrapper.AddEntityToScene(this._spline_temp);
       } else {
         this._consolidateSpline(spline);
       }
@@ -100,11 +100,11 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
     _consolidateSpline : function(spline)
     {
       spline.name = "Spline_S4L";
-      this._threeViewer.AddEntityToScene(spline);
+      this._threeView.AddEntityToScene(spline);
       //this._spline_temp = null;
       this._uuid_temp = '';
       //this._pointList = [];
-      this._threeViewer.StopTool();
+      this._threeView.StopTool();
     },
   },
 });
