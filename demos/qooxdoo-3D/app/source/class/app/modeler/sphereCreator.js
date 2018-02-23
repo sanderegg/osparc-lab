@@ -16,6 +16,7 @@ qx.Class.define("app.modeler.sphereCreator", {
     _nextStep: 0,
     _centerPoint: null,
     _radius: null,
+    _sphere_material: null,
     _sphere_temp: null,
 
     StartTool : function()
@@ -39,9 +40,11 @@ qx.Class.define("app.modeler.sphereCreator", {
         if (this._sphere_temp) {
           this._threeViewer._threeWrapper.RemoveFromScene(this._sphere_temp);
         }
-        var geometry = this._threeViewer._threeWrapper.CreateSphere(temp_radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
-        var material = this._threeViewer._threeWrapper.CreateNewMaterial();
-        this._sphere_temp = this._threeViewer._threeWrapper.CreateEntity(geometry, material);
+        var sphereGeometry = this._threeViewer._threeWrapper.CreateSphere(temp_radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
+        if (this._sphere_material === null) {
+          this._sphere_material = this._threeViewer._threeWrapper.CreateNewMaterial();
+        }
+        this._sphere_temp = this._threeViewer._threeWrapper.CreateEntity(sphereGeometry, this._sphere_material);
         this._threeViewer._threeWrapper.AddEntityToScene(this._sphere_temp);
       }
 
