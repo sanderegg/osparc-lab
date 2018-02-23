@@ -41,7 +41,6 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
           var intersect = intersects[0];
           var hoverPointList = this._pointList.concat([intersect.point]);
           if (hoverPointList.length>1) {
-            console.log('sending hov', this._uuid_temp);
             this.fireDataEvent("newSplineS4LRequested", [hoverPointList, this._uuid_temp]);
           }
         }
