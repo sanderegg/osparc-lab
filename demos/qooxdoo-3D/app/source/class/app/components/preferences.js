@@ -99,6 +99,16 @@ qx.Class.define("app.components.preferences",
       form.add(userBox, this.tr("User"));
 
 
+      var useExternalModeler = this._model.getUseExternalModeler();
+      var useExternalModelerBox = new qx.ui.form.CheckBox();
+      useExternalModelerBox.setValue(Boolean(useExternalModeler));
+      useExternalModelerBox.addListener("changeValue", function(e) {
+        var useExternal = e.getData();
+        this._model.setUseExternalModeler(useExternal);
+      }, this);
+      form.add(useExternalModelerBox, this.tr("Use external modeler"));
+
+
       return form;
     },
 

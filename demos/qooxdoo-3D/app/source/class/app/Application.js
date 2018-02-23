@@ -154,6 +154,7 @@ qx.Class.define("app.Application",
             "ID": 2,
           },
         ],
+        "UseExternalModeler" : 1,
       };
       return myDefaultData;
     },
@@ -243,21 +244,32 @@ qx.Class.define("app.Application",
           //this._threeView.SetSelectionMode(0);
           var enableSplineTool = e.getData();
           if (enableSplineTool) {
-            var splineCreator = new app.modeler.splineCreator(this._threeView);
-            this._threeView.StartTool(splineCreator);
-            splineCreator.addListenerOnce("newSplineS4LRequested", function(e) {
-              var pointList = e.getData();
-              if (!this._socket.slotExists("newSplineS4LRequested")) {
-                this._socket.on("newSplineS4LRequested", function(val) {
-                  if (val.type === "newSplineS4LRequested") {
-                    var spline = this._threeView._threeWrapper.CreateSpline(val.value);
-                    spline.name = "Spline_S4L";
-                    this._threeView.AddEntityToScene(spline);
-                  }
-                }, this);
-              }
-              this._socket.emit("newSplineS4LRequested", pointList);
-            }, this);
+            var useExternalModeler = this._appModel.getUseExternalModeler();
+            if (!useExternalModeler)
+            {
+              var splineCreator = new app.modeler.splineCreator(this._threeView);
+              this._threeView.StartTool(splineCreator);
+            }
+            else
+            {
+              var splineCreator = new app.modeler.splineCreatorS4L(this._threeView);
+              this._threeView.StartTool(splineCreator);
+              splineCreator.addListenerOnce("newSplineS4LRequested", function(e) {
+                var pointList = e.getData()[0];
+                var uuid = e.getData()[1];
+                if (!this._socket.slotExists("newSplineS4LRequested")) {
+                  this._socket.on("newSplineS4LRequested", function(val) {
+                    if (val.type === "newSplineS4LRequested") {
+                      var spline = this._threeView._threeWrapper.CreateSpline(val.value);
+                      spline.name = "Spline_S4L";
+                      spline.uuid = val.uuid;
+                      splineCreator.SplineFromS4L(spline);
+                    }
+                  }, this);
+                }
+                this._socket.emit("newSplineS4LRequested", [pointList, uuid]);
+              }, this);
+            }
           } else {
             this._threeView.StopTool();
           }

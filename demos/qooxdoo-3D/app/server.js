@@ -69,7 +69,7 @@ connection_1.on('error', function(err) {
 
 var modelerClient = thrift.createClient(thrModeler, connection_1);
 modelerClient.GetEntities( function(err, response) {
-  console.log('Entities', response);
+  console.log('Entities');
 });
 
 
@@ -102,16 +102,18 @@ io.on('connection', function(socket_client) {
   });
 
 
-  socket_client.on('newSplineS4LRequested', function(pointList, uuid) {
+  socket_client.on('newSplineS4LRequested', function(pointList_uuid) {
+    var pointList = pointList_uuid[0];
+    var uuid = pointList_uuid[1];
     var transform4x4 = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
     var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
     var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
     modelerClient.CreateSpline( spline, uuid, function(err, response) {
-      console.log('CreateSplineresponse', response);
       modelerClient.GetEntityWire( response, function(err2, response2) {
         var listOfPoints = {
           type: 'newSplineS4LRequested',
-          value: response2
+          value: response2,
+          uuid: response
         };
         socket_client.emit('newSplineS4LRequested', listOfPoints);
       });

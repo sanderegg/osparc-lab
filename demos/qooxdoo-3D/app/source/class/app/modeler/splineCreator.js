@@ -6,10 +6,6 @@ qx.Class.define("app.modeler.splineCreator", {
     this._threeViewer = threeViewer;
   },
 
-  events : {
-    "newSplineS4LRequested": "qx.event.type.Data",
-  },
-
   members : {
     _threeViewer: null,
     _pointList: [],
@@ -77,7 +73,6 @@ qx.Class.define("app.modeler.splineCreator", {
         this._spline_temp = null;
       }
 
-      this.fireDataEvent("newSplineS4LRequested", this._pointList);
       var spline = this._threeViewer._threeWrapper.CreateSpline(this._pointList);
       spline.name = "Spline";
       this._threeViewer.AddEntityToScene(spline);
