@@ -260,10 +260,7 @@ qx.Class.define("app.Application",
                 if (!this._socket.slotExists("newSplineS4LRequested")) {
                   this._socket.on("newSplineS4LRequested", function(val) {
                     if (val.type === "newSplineS4LRequested") {
-                      var spline = this._threeView._threeWrapper.CreateSpline(val.value);
-                      spline.name = "Spline_S4L";
-                      spline.uuid = val.uuid;
-                      splineCreator.SplineFromS4L(spline);
+                      splineCreator.SplineFromS4L(val);
                     }
                   }, this);
                 }
