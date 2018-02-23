@@ -20,6 +20,7 @@ qx.Class.define("app.modeler.splineCreator", {
       const fixed_axe = 2;
       const fixed_pos = 0;
       this._threeViewer.AddInvisiblePlane(fixed_axe, fixed_pos);
+      this._pointList = [];
     },
 
     StopTool : function()
