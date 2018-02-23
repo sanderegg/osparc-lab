@@ -309,7 +309,7 @@ qx.Class.define("app.wrappers.threeWrapper",
       geom.computeFaceNormals();
 
       return geom;
-    }
+    },
 
     _arrayToThreePoints : function(listOfPoints)
     {
