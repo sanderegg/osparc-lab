@@ -6,10 +6,6 @@ qx.Class.define("app.modeler.sphereCreator", {
     this._threeViewer = threeViewer;
   },
 
-  events : {
-    "newSphereS4LRequested": "qx.event.type.Data",
-  },
-
   members : {
     _threeViewer: null,
     _steps: { centerPoint: 0, radius: 1 },
@@ -80,7 +76,6 @@ qx.Class.define("app.modeler.sphereCreator", {
         this._sphere_temp = null;
       }
 
-      //this.fireDataEvent("newSphereS4LRequested", this._radius, this._centerPoint);
       var geometry = this._threeViewer._threeWrapper.CreateSphere(this._radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
       if (this._sphere_material === null) {
         this._sphere_material = this._threeViewer._threeWrapper.CreateNewMaterial();
