@@ -242,6 +242,12 @@ qx.Class.define("app.wrappers.threeWrapper",
       return material;
     },
 
+    CreateMeshNormalMaterial : function()
+    {
+      var material = new THREE.MeshNormalMaterial();
+      return material;
+    },
+
     CreateEntity : function(geometry, material)
     {
       var entity = new THREE.Mesh(geometry, material);
@@ -289,6 +295,21 @@ qx.Class.define("app.wrappers.threeWrapper",
       var points = curve.getPoints( listOfPoints.length * 10 );
       return this.CreateLine(points);
     },
+
+    CreateGeometryFromS4L : function(entityMesh)
+    {
+      var geom = new THREE.Geometry();
+      for (var i = 0; i < entityMesh.vertices.length; i+=3) {
+        var v1 = new THREE.Vector3( entityMesh.vertices[i+0], entityMesh.vertices[i+1], entityMesh.vertices[i+2] );
+        geom.vertices.push(v1);
+      }
+      for (var i = 0; i < entityMesh.triangles.length; i+=3) {
+        geom.faces.push( new THREE.Face3( entityMesh.triangles[i+0], entityMesh.triangles[i+1], entityMesh.triangles[i+2] ) );
+      }
+      geom.computeFaceNormals();
+
+      return geom;
+    }
 
     _arrayToThreePoints : function(listOfPoints)
     {
