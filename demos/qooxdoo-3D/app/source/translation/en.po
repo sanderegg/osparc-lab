@@ -38,31 +38,31 @@ msgstr ""
 msgid "Load ViP"
 msgstr ""
 
-#: app.components.availableServices:95
+#: app.components.availableServices:101
 msgid "Add Sphere"
 msgstr ""
 
-#: app.components.availableServices:98
+#: app.components.availableServices:104
 msgid "Add Box"
 msgstr ""
 
-#: app.components.availableServices:101
+#: app.components.availableServices:107
 msgid "Add Dodecahedron"
 msgstr ""
 
-#: app.components.availableServices:84
+#: app.components.availableServices:90
 msgid "Move"
 msgstr ""
 
-#: app.components.availableServices:56
+#: app.components.availableServices:62
 msgid "Disabled"
 msgstr ""
 
-#: app.components.availableServices:61
+#: app.components.availableServices:67
 msgid "Select entity"
 msgstr ""
 
-#: app.components.availableServices:66
+#: app.components.availableServices:72
 msgid "Select face"
 msgstr ""
 
@@ -78,11 +78,11 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
-#: app.components.preferences:109
+#: app.components.preferences:119
 msgid "Cancel"
 msgstr ""
 
-#: app.components.preferences:117
+#: app.components.preferences:127
 msgid "Accept"
 msgstr ""
 
@@ -102,10 +102,14 @@ msgstr ""
 msgid "Properties"
 msgstr ""
 
-#: app.components.availableServices:104
+#: app.components.availableServices:110
 msgid "Add Spline"
 msgstr ""
 
 #: qx.ui.form.validation.Manager:37
 msgid "This field is required"
+msgstr ""
+
+#: app.components.preferences:109
+msgid "Use external modeler"
 msgstr ""
