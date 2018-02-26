@@ -199,6 +199,135 @@ Modeler_GetEntities_result.prototype.write = function(output) {
   return;
 };
 
+var Modeler_GetFilteredEntities_args = function(args) {
+  this.filterType = null;
+  if (args) {
+    if (args.filterType !== undefined && args.filterType !== null) {
+      this.filterType = args.filterType;
+    }
+  }
+};
+Modeler_GetFilteredEntities_args.prototype = {};
+Modeler_GetFilteredEntities_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.filterType = input.readI32();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_GetFilteredEntities_args.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_GetFilteredEntities_args');
+  if (this.filterType !== null && this.filterType !== undefined) {
+    output.writeFieldBegin('filterType', Thrift.Type.I32, 1);
+    output.writeI32(this.filterType);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var Modeler_GetFilteredEntities_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [ttypes.Entity]);
+    }
+  }
+};
+Modeler_GetFilteredEntities_result.prototype = {};
+Modeler_GetFilteredEntities_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size80 = 0;
+        var _rtmp384;
+        this.success = [];
+        var _etype83 = 0;
+        _rtmp384 = input.readListBegin();
+        _etype83 = _rtmp384.etype;
+        _size80 = _rtmp384.size;
+        for (var _i85 = 0; _i85 < _size80; ++_i85)
+        {
+          var elem86 = null;
+          elem86 = new ttypes.Entity();
+          elem86.read(input);
+          this.success.push(elem86);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_GetFilteredEntities_result.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_GetFilteredEntities_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
+    for (var iter87 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter87))
+      {
+        iter87 = this.success[iter87];
+        iter87.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 var Modeler_RemoveEntity_args = function(args) {
   this.uuid = null;
   if (args) {
@@ -787,154 +916,12 @@ Modeler_CreateSolidBlock_result.prototype.write = function(output) {
   return;
 };
 
-var Modeler_GetEntityMeshes_args = function(args) {
-  this.uuid = null;
-  this.get_normals = false;
-  if (args) {
-    if (args.uuid !== undefined && args.uuid !== null) {
-      this.uuid = args.uuid;
-    }
-    if (args.get_normals !== undefined && args.get_normals !== null) {
-      this.get_normals = args.get_normals;
-    }
-  }
-};
-Modeler_GetEntityMeshes_args.prototype = {};
-Modeler_GetEntityMeshes_args.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true)
-  {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-      if (ftype == Thrift.Type.STRING) {
-        this.uuid = input.readString();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 2:
-      if (ftype == Thrift.Type.BOOL) {
-        this.get_normals = input.readBool();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-Modeler_GetEntityMeshes_args.prototype.write = function(output) {
-  output.writeStructBegin('Modeler_GetEntityMeshes_args');
-  if (this.uuid !== null && this.uuid !== undefined) {
-    output.writeFieldBegin('uuid', Thrift.Type.STRING, 1);
-    output.writeString(this.uuid);
-    output.writeFieldEnd();
-  }
-  if (this.get_normals !== null && this.get_normals !== undefined) {
-    output.writeFieldBegin('get_normals', Thrift.Type.BOOL, 2);
-    output.writeBool(this.get_normals);
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
-var Modeler_GetEntityMeshes_result = function(args) {
-  this.success = null;
-  if (args) {
-    if (args.success !== undefined && args.success !== null) {
-      this.success = Thrift.copyList(args.success, [ttypes.EntityMesh]);
-    }
-  }
-};
-Modeler_GetEntityMeshes_result.prototype = {};
-Modeler_GetEntityMeshes_result.prototype.read = function(input) {
-  input.readStructBegin();
-  while (true)
-  {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
-    if (ftype == Thrift.Type.STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-      if (ftype == Thrift.Type.LIST) {
-        var _size80 = 0;
-        var _rtmp384;
-        this.success = [];
-        var _etype83 = 0;
-        _rtmp384 = input.readListBegin();
-        _etype83 = _rtmp384.etype;
-        _size80 = _rtmp384.size;
-        for (var _i85 = 0; _i85 < _size80; ++_i85)
-        {
-          var elem86 = null;
-          elem86 = new ttypes.EntityMesh();
-          elem86.read(input);
-          this.success.push(elem86);
-        }
-        input.readListEnd();
-      } else {
-        input.skip(ftype);
-      }
-      break;
-      case 0:
-        input.skip(ftype);
-        break;
-      default:
-        input.skip(ftype);
-    }
-    input.readFieldEnd();
-  }
-  input.readStructEnd();
-  return;
-};
-
-Modeler_GetEntityMeshes_result.prototype.write = function(output) {
-  output.writeStructBegin('Modeler_GetEntityMeshes_result');
-  if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
-    output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter87 in this.success)
-    {
-      if (this.success.hasOwnProperty(iter87))
-      {
-        iter87 = this.success[iter87];
-        iter87.write(output);
-      }
-    }
-    output.writeListEnd();
-    output.writeFieldEnd();
-  }
-  output.writeFieldStop();
-  output.writeStructEnd();
-  return;
-};
-
 var Modeler_CreateMesh_args = function(args) {
-  this.meshe = null;
+  this.mesh = null;
   this.uuid = '';
   if (args) {
-    if (args.meshe !== undefined && args.meshe !== null) {
-      this.meshe = new ttypes.EntityMesh(args.meshe);
+    if (args.mesh !== undefined && args.mesh !== null) {
+      this.mesh = new ttypes.EntityMesh(args.mesh);
     }
     if (args.uuid !== undefined && args.uuid !== null) {
       this.uuid = args.uuid;
@@ -957,8 +944,8 @@ Modeler_CreateMesh_args.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.STRUCT) {
-        this.meshe = new ttypes.EntityMesh();
-        this.meshe.read(input);
+        this.mesh = new ttypes.EntityMesh();
+        this.mesh.read(input);
       } else {
         input.skip(ftype);
       }
@@ -981,9 +968,9 @@ Modeler_CreateMesh_args.prototype.read = function(input) {
 
 Modeler_CreateMesh_args.prototype.write = function(output) {
   output.writeStructBegin('Modeler_CreateMesh_args');
-  if (this.meshe !== null && this.meshe !== undefined) {
-    output.writeFieldBegin('meshe', Thrift.Type.STRUCT, 1);
-    this.meshe.write(output);
+  if (this.mesh !== null && this.mesh !== undefined) {
+    output.writeFieldBegin('mesh', Thrift.Type.STRUCT, 1);
+    this.mesh.write(output);
     output.writeFieldEnd();
   }
   if (this.uuid !== null && this.uuid !== undefined) {
@@ -1169,6 +1156,148 @@ Modeler_CreateSpline_result.prototype.write = function(output) {
   return;
 };
 
+var Modeler_GetEntityMeshes_args = function(args) {
+  this.uuid = null;
+  this.get_normals = false;
+  if (args) {
+    if (args.uuid !== undefined && args.uuid !== null) {
+      this.uuid = args.uuid;
+    }
+    if (args.get_normals !== undefined && args.get_normals !== null) {
+      this.get_normals = args.get_normals;
+    }
+  }
+};
+Modeler_GetEntityMeshes_args.prototype = {};
+Modeler_GetEntityMeshes_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.uuid = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.BOOL) {
+        this.get_normals = input.readBool();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_GetEntityMeshes_args.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_GetEntityMeshes_args');
+  if (this.uuid !== null && this.uuid !== undefined) {
+    output.writeFieldBegin('uuid', Thrift.Type.STRING, 1);
+    output.writeString(this.uuid);
+    output.writeFieldEnd();
+  }
+  if (this.get_normals !== null && this.get_normals !== undefined) {
+    output.writeFieldBegin('get_normals', Thrift.Type.BOOL, 2);
+    output.writeBool(this.get_normals);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var Modeler_GetEntityMeshes_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [ttypes.EntityMesh]);
+    }
+  }
+};
+Modeler_GetEntityMeshes_result.prototype = {};
+Modeler_GetEntityMeshes_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size88 = 0;
+        var _rtmp392;
+        this.success = [];
+        var _etype91 = 0;
+        _rtmp392 = input.readListBegin();
+        _etype91 = _rtmp392.etype;
+        _size88 = _rtmp392.size;
+        for (var _i93 = 0; _i93 < _size88; ++_i93)
+        {
+          var elem94 = null;
+          elem94 = new ttypes.EntityMesh();
+          elem94.read(input);
+          this.success.push(elem94);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_GetEntityMeshes_result.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_GetEntityMeshes_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
+    for (var iter95 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter95))
+      {
+        iter95 = this.success[iter95];
+        iter95.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 var Modeler_GetEntityWire_args = function(args) {
   this.uuid = null;
   if (args) {
@@ -1246,19 +1375,19 @@ Modeler_GetEntityWire_result.prototype.read = function(input) {
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size88 = 0;
-        var _rtmp392;
+        var _size96 = 0;
+        var _rtmp3100;
         this.success = [];
-        var _etype91 = 0;
-        _rtmp392 = input.readListBegin();
-        _etype91 = _rtmp392.etype;
-        _size88 = _rtmp392.size;
-        for (var _i93 = 0; _i93 < _size88; ++_i93)
+        var _etype99 = 0;
+        _rtmp3100 = input.readListBegin();
+        _etype99 = _rtmp3100.etype;
+        _size96 = _rtmp3100.size;
+        for (var _i101 = 0; _i101 < _size96; ++_i101)
         {
-          var elem94 = null;
-          elem94 = new ttypes.Vertex();
-          elem94.read(input);
-          this.success.push(elem94);
+          var elem102 = null;
+          elem102 = new ttypes.Vertex();
+          elem102.read(input);
+          this.success.push(elem102);
         }
         input.readListEnd();
       } else {
@@ -1282,12 +1411,12 @@ Modeler_GetEntityWire_result.prototype.write = function(output) {
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter95 in this.success)
+    for (var iter103 in this.success)
     {
-      if (this.success.hasOwnProperty(iter95))
+      if (this.success.hasOwnProperty(iter103))
       {
-        iter95 = this.success[iter95];
-        iter95.write(output);
+        iter103 = this.success[iter103];
+        iter103.write(output);
       }
     }
     output.writeListEnd();
@@ -1298,24 +1427,20 @@ Modeler_GetEntityWire_result.prototype.write = function(output) {
   return;
 };
 
-var Modeler_CutEntity_args = function(args) {
-  this.uuid = null;
-  this.point_on_plane = null;
-  this.normal = null;
+var Modeler_TransformOperation_args = function(args) {
+  this.list_of_uuids = null;
+  this.transform4x4 = null;
   if (args) {
-    if (args.uuid !== undefined && args.uuid !== null) {
-      this.uuid = args.uuid;
+    if (args.list_of_uuids !== undefined && args.list_of_uuids !== null) {
+      this.list_of_uuids = Thrift.copyList(args.list_of_uuids, [null]);
     }
-    if (args.point_on_plane !== undefined && args.point_on_plane !== null) {
-      this.point_on_plane = new ttypes.Vertex(args.point_on_plane);
-    }
-    if (args.normal !== undefined && args.normal !== null) {
-      this.normal = new ttypes.Vector(args.normal);
+    if (args.transform4x4 !== undefined && args.transform4x4 !== null) {
+      this.transform4x4 = Thrift.copyList(args.transform4x4, [null]);
     }
   }
 };
-Modeler_CutEntity_args.prototype = {};
-Modeler_CutEntity_args.prototype.read = function(input) {
+Modeler_TransformOperation_args.prototype = {};
+Modeler_TransformOperation_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -1329,8 +1454,163 @@ Modeler_CutEntity_args.prototype.read = function(input) {
     switch (fid)
     {
       case 1:
-      if (ftype == Thrift.Type.STRING) {
-        this.uuid = input.readString();
+      if (ftype == Thrift.Type.LIST) {
+        var _size104 = 0;
+        var _rtmp3108;
+        this.list_of_uuids = [];
+        var _etype107 = 0;
+        _rtmp3108 = input.readListBegin();
+        _etype107 = _rtmp3108.etype;
+        _size104 = _rtmp3108.size;
+        for (var _i109 = 0; _i109 < _size104; ++_i109)
+        {
+          var elem110 = null;
+          elem110 = input.readString();
+          this.list_of_uuids.push(elem110);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.LIST) {
+        var _size111 = 0;
+        var _rtmp3115;
+        this.transform4x4 = [];
+        var _etype114 = 0;
+        _rtmp3115 = input.readListBegin();
+        _etype114 = _rtmp3115.etype;
+        _size111 = _rtmp3115.size;
+        for (var _i116 = 0; _i116 < _size111; ++_i116)
+        {
+          var elem117 = null;
+          elem117 = input.readDouble();
+          this.transform4x4.push(elem117);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_TransformOperation_args.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_TransformOperation_args');
+  if (this.list_of_uuids !== null && this.list_of_uuids !== undefined) {
+    output.writeFieldBegin('list_of_uuids', Thrift.Type.LIST, 1);
+    output.writeListBegin(Thrift.Type.STRING, this.list_of_uuids.length);
+    for (var iter118 in this.list_of_uuids)
+    {
+      if (this.list_of_uuids.hasOwnProperty(iter118))
+      {
+        iter118 = this.list_of_uuids[iter118];
+        output.writeString(iter118);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.transform4x4 !== null && this.transform4x4 !== undefined) {
+    output.writeFieldBegin('transform4x4', Thrift.Type.LIST, 2);
+    output.writeListBegin(Thrift.Type.DOUBLE, this.transform4x4.length);
+    for (var iter119 in this.transform4x4)
+    {
+      if (this.transform4x4.hasOwnProperty(iter119))
+      {
+        iter119 = this.transform4x4[iter119];
+        output.writeDouble(iter119);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var Modeler_TransformOperation_result = function(args) {
+};
+Modeler_TransformOperation_result.prototype = {};
+Modeler_TransformOperation_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Modeler_TransformOperation_result.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_TransformOperation_result');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var Modeler_CutOperation_args = function(args) {
+  this.list_of_uuids = null;
+  this.point_on_plane = null;
+  this.normal = null;
+  if (args) {
+    if (args.list_of_uuids !== undefined && args.list_of_uuids !== null) {
+      this.list_of_uuids = Thrift.copyList(args.list_of_uuids, [null]);
+    }
+    if (args.point_on_plane !== undefined && args.point_on_plane !== null) {
+      this.point_on_plane = new ttypes.Vertex(args.point_on_plane);
+    }
+    if (args.normal !== undefined && args.normal !== null) {
+      this.normal = new ttypes.Vector(args.normal);
+    }
+  }
+};
+Modeler_CutOperation_args.prototype = {};
+Modeler_CutOperation_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.LIST) {
+        var _size120 = 0;
+        var _rtmp3124;
+        this.list_of_uuids = [];
+        var _etype123 = 0;
+        _rtmp3124 = input.readListBegin();
+        _etype123 = _rtmp3124.etype;
+        _size120 = _rtmp3124.size;
+        for (var _i125 = 0; _i125 < _size120; ++_i125)
+        {
+          var elem126 = null;
+          elem126 = input.readString();
+          this.list_of_uuids.push(elem126);
+        }
+        input.readListEnd();
       } else {
         input.skip(ftype);
       }
@@ -1360,11 +1640,20 @@ Modeler_CutEntity_args.prototype.read = function(input) {
   return;
 };
 
-Modeler_CutEntity_args.prototype.write = function(output) {
-  output.writeStructBegin('Modeler_CutEntity_args');
-  if (this.uuid !== null && this.uuid !== undefined) {
-    output.writeFieldBegin('uuid', Thrift.Type.STRING, 1);
-    output.writeString(this.uuid);
+Modeler_CutOperation_args.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_CutOperation_args');
+  if (this.list_of_uuids !== null && this.list_of_uuids !== undefined) {
+    output.writeFieldBegin('list_of_uuids', Thrift.Type.LIST, 1);
+    output.writeListBegin(Thrift.Type.STRING, this.list_of_uuids.length);
+    for (var iter127 in this.list_of_uuids)
+    {
+      if (this.list_of_uuids.hasOwnProperty(iter127))
+      {
+        iter127 = this.list_of_uuids[iter127];
+        output.writeString(iter127);
+      }
+    }
+    output.writeListEnd();
     output.writeFieldEnd();
   }
   if (this.point_on_plane !== null && this.point_on_plane !== undefined) {
@@ -1382,10 +1671,16 @@ Modeler_CutEntity_args.prototype.write = function(output) {
   return;
 };
 
-var Modeler_CutEntity_result = function(args) {
+var Modeler_CutOperation_result = function(args) {
+  this.success = null;
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = args.success;
+    }
+  }
 };
-Modeler_CutEntity_result.prototype = {};
-Modeler_CutEntity_result.prototype.read = function(input) {
+Modeler_CutOperation_result.prototype = {};
+Modeler_CutOperation_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -1396,15 +1691,34 @@ Modeler_CutEntity_result.prototype.read = function(input) {
     if (ftype == Thrift.Type.STOP) {
       break;
     }
-    input.skip(ftype);
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.STRING) {
+        this.success = input.readString();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
     input.readFieldEnd();
   }
   input.readStructEnd();
   return;
 };
 
-Modeler_CutEntity_result.prototype.write = function(output) {
-  output.writeStructBegin('Modeler_CutEntity_result');
+Modeler_CutOperation_result.prototype.write = function(output) {
+  output.writeStructBegin('Modeler_CutOperation_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.STRING, 0);
+    output.writeString(this.success);
+    output.writeFieldEnd();
+  }
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -1438,18 +1752,18 @@ Modeler_BooleanOperation_args.prototype.read = function(input) {
     {
       case 1:
       if (ftype == Thrift.Type.LIST) {
-        var _size96 = 0;
-        var _rtmp3100;
+        var _size128 = 0;
+        var _rtmp3132;
         this.list_of_uuids = [];
-        var _etype99 = 0;
-        _rtmp3100 = input.readListBegin();
-        _etype99 = _rtmp3100.etype;
-        _size96 = _rtmp3100.size;
-        for (var _i101 = 0; _i101 < _size96; ++_i101)
+        var _etype131 = 0;
+        _rtmp3132 = input.readListBegin();
+        _etype131 = _rtmp3132.etype;
+        _size128 = _rtmp3132.size;
+        for (var _i133 = 0; _i133 < _size128; ++_i133)
         {
-          var elem102 = null;
-          elem102 = input.readString();
-          this.list_of_uuids.push(elem102);
+          var elem134 = null;
+          elem134 = input.readString();
+          this.list_of_uuids.push(elem134);
         }
         input.readListEnd();
       } else {
@@ -1477,12 +1791,12 @@ Modeler_BooleanOperation_args.prototype.write = function(output) {
   if (this.list_of_uuids !== null && this.list_of_uuids !== undefined) {
     output.writeFieldBegin('list_of_uuids', Thrift.Type.LIST, 1);
     output.writeListBegin(Thrift.Type.STRING, this.list_of_uuids.length);
-    for (var iter103 in this.list_of_uuids)
+    for (var iter135 in this.list_of_uuids)
     {
-      if (this.list_of_uuids.hasOwnProperty(iter103))
+      if (this.list_of_uuids.hasOwnProperty(iter135))
       {
-        iter103 = this.list_of_uuids[iter103];
-        output.writeString(iter103);
+        iter135 = this.list_of_uuids[iter135];
+        output.writeString(iter135);
       }
     }
     output.writeListEnd();
@@ -1651,6 +1965,55 @@ ModelerClient.prototype.recv_GetEntities = function(input,mtype,rseqid) {
     return callback(null, result.success);
   }
   return callback('GetEntities failed: unknown result');
+};
+ModelerClient.prototype.GetFilteredEntities = function(filterType, callback) {
+  this._seqid = this.new_seqid();
+  if (callback === undefined) {
+    var _defer = Q.defer();
+    this._reqs[this.seqid()] = function(error, result) {
+      if (error) {
+        _defer.reject(error);
+      } else {
+        _defer.resolve(result);
+      }
+    };
+    this.send_GetFilteredEntities(filterType);
+    return _defer.promise;
+  } else {
+    this._reqs[this.seqid()] = callback;
+    this.send_GetFilteredEntities(filterType);
+  }
+};
+
+ModelerClient.prototype.send_GetFilteredEntities = function(filterType) {
+  var output = new this.pClass(this.output);
+  output.writeMessageBegin('GetFilteredEntities', Thrift.MessageType.CALL, this.seqid());
+  var params = {
+    filterType: filterType
+  };
+  var args = new Modeler_GetFilteredEntities_args(params);
+  args.write(output);
+  output.writeMessageEnd();
+  return this.output.flush();
+};
+
+ModelerClient.prototype.recv_GetFilteredEntities = function(input,mtype,rseqid) {
+  var callback = this._reqs[rseqid] || function() {};
+  delete this._reqs[rseqid];
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(input);
+    input.readMessageEnd();
+    return callback(x);
+  }
+  var result = new Modeler_GetFilteredEntities_result();
+  result.read(input);
+  input.readMessageEnd();
+
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('GetFilteredEntities failed: unknown result');
 };
 ModelerClient.prototype.RemoveEntity = function(uuid, callback) {
   this._seqid = this.new_seqid();
@@ -1898,7 +2261,7 @@ ModelerClient.prototype.recv_CreateSolidBlock = function(input,mtype,rseqid) {
   }
   return callback('CreateSolidBlock failed: unknown result');
 };
-ModelerClient.prototype.GetEntityMeshes = function(uuid, get_normals, callback) {
+ModelerClient.prototype.CreateMesh = function(mesh, uuid, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
     var _defer = Q.defer();
@@ -1909,69 +2272,19 @@ ModelerClient.prototype.GetEntityMeshes = function(uuid, get_normals, callback) 
         _defer.resolve(result);
       }
     };
-    this.send_GetEntityMeshes(uuid, get_normals);
+    this.send_CreateMesh(mesh, uuid);
     return _defer.promise;
   } else {
     this._reqs[this.seqid()] = callback;
-    this.send_GetEntityMeshes(uuid, get_normals);
+    this.send_CreateMesh(mesh, uuid);
   }
 };
 
-ModelerClient.prototype.send_GetEntityMeshes = function(uuid, get_normals) {
-  var output = new this.pClass(this.output);
-  output.writeMessageBegin('GetEntityMeshes', Thrift.MessageType.CALL, this.seqid());
-  var params = {
-    uuid: uuid,
-    get_normals: get_normals
-  };
-  var args = new Modeler_GetEntityMeshes_args(params);
-  args.write(output);
-  output.writeMessageEnd();
-  return this.output.flush();
-};
-
-ModelerClient.prototype.recv_GetEntityMeshes = function(input,mtype,rseqid) {
-  var callback = this._reqs[rseqid] || function() {};
-  delete this._reqs[rseqid];
-  if (mtype == Thrift.MessageType.EXCEPTION) {
-    var x = new Thrift.TApplicationException();
-    x.read(input);
-    input.readMessageEnd();
-    return callback(x);
-  }
-  var result = new Modeler_GetEntityMeshes_result();
-  result.read(input);
-  input.readMessageEnd();
-
-  if (null !== result.success) {
-    return callback(null, result.success);
-  }
-  return callback('GetEntityMeshes failed: unknown result');
-};
-ModelerClient.prototype.CreateMesh = function(meshe, uuid, callback) {
-  this._seqid = this.new_seqid();
-  if (callback === undefined) {
-    var _defer = Q.defer();
-    this._reqs[this.seqid()] = function(error, result) {
-      if (error) {
-        _defer.reject(error);
-      } else {
-        _defer.resolve(result);
-      }
-    };
-    this.send_CreateMesh(meshe, uuid);
-    return _defer.promise;
-  } else {
-    this._reqs[this.seqid()] = callback;
-    this.send_CreateMesh(meshe, uuid);
-  }
-};
-
-ModelerClient.prototype.send_CreateMesh = function(meshe, uuid) {
+ModelerClient.prototype.send_CreateMesh = function(mesh, uuid) {
   var output = new this.pClass(this.output);
   output.writeMessageBegin('CreateMesh', Thrift.MessageType.CALL, this.seqid());
   var params = {
-    meshe: meshe,
+    mesh: mesh,
     uuid: uuid
   };
   var args = new Modeler_CreateMesh_args(params);
@@ -2048,6 +2361,56 @@ ModelerClient.prototype.recv_CreateSpline = function(input,mtype,rseqid) {
   }
   return callback('CreateSpline failed: unknown result');
 };
+ModelerClient.prototype.GetEntityMeshes = function(uuid, get_normals, callback) {
+  this._seqid = this.new_seqid();
+  if (callback === undefined) {
+    var _defer = Q.defer();
+    this._reqs[this.seqid()] = function(error, result) {
+      if (error) {
+        _defer.reject(error);
+      } else {
+        _defer.resolve(result);
+      }
+    };
+    this.send_GetEntityMeshes(uuid, get_normals);
+    return _defer.promise;
+  } else {
+    this._reqs[this.seqid()] = callback;
+    this.send_GetEntityMeshes(uuid, get_normals);
+  }
+};
+
+ModelerClient.prototype.send_GetEntityMeshes = function(uuid, get_normals) {
+  var output = new this.pClass(this.output);
+  output.writeMessageBegin('GetEntityMeshes', Thrift.MessageType.CALL, this.seqid());
+  var params = {
+    uuid: uuid,
+    get_normals: get_normals
+  };
+  var args = new Modeler_GetEntityMeshes_args(params);
+  args.write(output);
+  output.writeMessageEnd();
+  return this.output.flush();
+};
+
+ModelerClient.prototype.recv_GetEntityMeshes = function(input,mtype,rseqid) {
+  var callback = this._reqs[rseqid] || function() {};
+  delete this._reqs[rseqid];
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(input);
+    input.readMessageEnd();
+    return callback(x);
+  }
+  var result = new Modeler_GetEntityMeshes_result();
+  result.read(input);
+  input.readMessageEnd();
+
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('GetEntityMeshes failed: unknown result');
+};
 ModelerClient.prototype.GetEntityWire = function(uuid, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
@@ -2097,7 +2460,7 @@ ModelerClient.prototype.recv_GetEntityWire = function(input,mtype,rseqid) {
   }
   return callback('GetEntityWire failed: unknown result');
 };
-ModelerClient.prototype.CutEntity = function(uuid, point_on_plane, normal, callback) {
+ModelerClient.prototype.TransformOperation = function(list_of_uuids, transform4x4, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
     var _defer = Q.defer();
@@ -2108,29 +2471,28 @@ ModelerClient.prototype.CutEntity = function(uuid, point_on_plane, normal, callb
         _defer.resolve(result);
       }
     };
-    this.send_CutEntity(uuid, point_on_plane, normal);
+    this.send_TransformOperation(list_of_uuids, transform4x4);
     return _defer.promise;
   } else {
     this._reqs[this.seqid()] = callback;
-    this.send_CutEntity(uuid, point_on_plane, normal);
+    this.send_TransformOperation(list_of_uuids, transform4x4);
   }
 };
 
-ModelerClient.prototype.send_CutEntity = function(uuid, point_on_plane, normal) {
+ModelerClient.prototype.send_TransformOperation = function(list_of_uuids, transform4x4) {
   var output = new this.pClass(this.output);
-  output.writeMessageBegin('CutEntity', Thrift.MessageType.CALL, this.seqid());
+  output.writeMessageBegin('TransformOperation', Thrift.MessageType.CALL, this.seqid());
   var params = {
-    uuid: uuid,
-    point_on_plane: point_on_plane,
-    normal: normal
+    list_of_uuids: list_of_uuids,
+    transform4x4: transform4x4
   };
-  var args = new Modeler_CutEntity_args(params);
+  var args = new Modeler_TransformOperation_args(params);
   args.write(output);
   output.writeMessageEnd();
   return this.output.flush();
 };
 
-ModelerClient.prototype.recv_CutEntity = function(input,mtype,rseqid) {
+ModelerClient.prototype.recv_TransformOperation = function(input,mtype,rseqid) {
   var callback = this._reqs[rseqid] || function() {};
   delete this._reqs[rseqid];
   if (mtype == Thrift.MessageType.EXCEPTION) {
@@ -2139,11 +2501,62 @@ ModelerClient.prototype.recv_CutEntity = function(input,mtype,rseqid) {
     input.readMessageEnd();
     return callback(x);
   }
-  var result = new Modeler_CutEntity_result();
+  var result = new Modeler_TransformOperation_result();
   result.read(input);
   input.readMessageEnd();
 
   callback(null);
+};
+ModelerClient.prototype.CutOperation = function(list_of_uuids, point_on_plane, normal, callback) {
+  this._seqid = this.new_seqid();
+  if (callback === undefined) {
+    var _defer = Q.defer();
+    this._reqs[this.seqid()] = function(error, result) {
+      if (error) {
+        _defer.reject(error);
+      } else {
+        _defer.resolve(result);
+      }
+    };
+    this.send_CutOperation(list_of_uuids, point_on_plane, normal);
+    return _defer.promise;
+  } else {
+    this._reqs[this.seqid()] = callback;
+    this.send_CutOperation(list_of_uuids, point_on_plane, normal);
+  }
+};
+
+ModelerClient.prototype.send_CutOperation = function(list_of_uuids, point_on_plane, normal) {
+  var output = new this.pClass(this.output);
+  output.writeMessageBegin('CutOperation', Thrift.MessageType.CALL, this.seqid());
+  var params = {
+    list_of_uuids: list_of_uuids,
+    point_on_plane: point_on_plane,
+    normal: normal
+  };
+  var args = new Modeler_CutOperation_args(params);
+  args.write(output);
+  output.writeMessageEnd();
+  return this.output.flush();
+};
+
+ModelerClient.prototype.recv_CutOperation = function(input,mtype,rseqid) {
+  var callback = this._reqs[rseqid] || function() {};
+  delete this._reqs[rseqid];
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(input);
+    input.readMessageEnd();
+    return callback(x);
+  }
+  var result = new Modeler_CutOperation_result();
+  result.read(input);
+  input.readMessageEnd();
+
+  if (null !== result.success) {
+    return callback(null, result.success);
+  }
+  return callback('CutOperation failed: unknown result');
 };
 ModelerClient.prototype.BooleanOperation = function(list_of_uuids, type, callback) {
   this._seqid = this.new_seqid();
@@ -2279,6 +2692,42 @@ ModelerProcessor.prototype.process_GetEntities = function(seqid, input, output) 
       } else {
         result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("GetEntities", Thrift.MessageType.EXCEPTION, seqid);
+      }
+      result_obj.write(output);
+      output.writeMessageEnd();
+      output.flush();
+    });
+  }
+};
+ModelerProcessor.prototype.process_GetFilteredEntities = function(seqid, input, output) {
+  var args = new Modeler_GetFilteredEntities_args();
+  args.read(input);
+  input.readMessageEnd();
+  if (this._handler.GetFilteredEntities.length === 1) {
+    Q.fcall(this._handler.GetFilteredEntities.bind(this._handler), args.filterType)
+      .then(function(result) {
+        var result_obj = new Modeler_GetFilteredEntities_result({success: result});
+        output.writeMessageBegin("GetFilteredEntities", Thrift.MessageType.REPLY, seqid);
+        result_obj.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      }, function (err) {
+        var result;
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("GetFilteredEntities", Thrift.MessageType.EXCEPTION, seqid);
+        result.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      });
+  } else {
+    this._handler.GetFilteredEntities(args.filterType, function (err, result) {
+      var result_obj;
+      if ((err === null || typeof err === 'undefined')) {
+        result_obj = new Modeler_GetFilteredEntities_result((err !== null || typeof err === 'undefined') ? err : {success: result});
+        output.writeMessageBegin("GetFilteredEntities", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("GetFilteredEntities", Thrift.MessageType.EXCEPTION, seqid);
       }
       result_obj.write(output);
       output.writeMessageEnd();
@@ -2466,48 +2915,12 @@ ModelerProcessor.prototype.process_CreateSolidBlock = function(seqid, input, out
     });
   }
 };
-ModelerProcessor.prototype.process_GetEntityMeshes = function(seqid, input, output) {
-  var args = new Modeler_GetEntityMeshes_args();
-  args.read(input);
-  input.readMessageEnd();
-  if (this._handler.GetEntityMeshes.length === 2) {
-    Q.fcall(this._handler.GetEntityMeshes.bind(this._handler), args.uuid, args.get_normals)
-      .then(function(result) {
-        var result_obj = new Modeler_GetEntityMeshes_result({success: result});
-        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.REPLY, seqid);
-        result_obj.write(output);
-        output.writeMessageEnd();
-        output.flush();
-      }, function (err) {
-        var result;
-        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.EXCEPTION, seqid);
-        result.write(output);
-        output.writeMessageEnd();
-        output.flush();
-      });
-  } else {
-    this._handler.GetEntityMeshes(args.uuid, args.get_normals, function (err, result) {
-      var result_obj;
-      if ((err === null || typeof err === 'undefined')) {
-        result_obj = new Modeler_GetEntityMeshes_result((err !== null || typeof err === 'undefined') ? err : {success: result});
-        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.REPLY, seqid);
-      } else {
-        result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.EXCEPTION, seqid);
-      }
-      result_obj.write(output);
-      output.writeMessageEnd();
-      output.flush();
-    });
-  }
-};
 ModelerProcessor.prototype.process_CreateMesh = function(seqid, input, output) {
   var args = new Modeler_CreateMesh_args();
   args.read(input);
   input.readMessageEnd();
   if (this._handler.CreateMesh.length === 2) {
-    Q.fcall(this._handler.CreateMesh.bind(this._handler), args.meshe, args.uuid)
+    Q.fcall(this._handler.CreateMesh.bind(this._handler), args.mesh, args.uuid)
       .then(function(result) {
         var result_obj = new Modeler_CreateMesh_result({success: result});
         output.writeMessageBegin("CreateMesh", Thrift.MessageType.REPLY, seqid);
@@ -2523,7 +2936,7 @@ ModelerProcessor.prototype.process_CreateMesh = function(seqid, input, output) {
         output.flush();
       });
   } else {
-    this._handler.CreateMesh(args.meshe, args.uuid, function (err, result) {
+    this._handler.CreateMesh(args.mesh, args.uuid, function (err, result) {
       var result_obj;
       if ((err === null || typeof err === 'undefined')) {
         result_obj = new Modeler_CreateMesh_result((err !== null || typeof err === 'undefined') ? err : {success: result});
@@ -2574,6 +2987,42 @@ ModelerProcessor.prototype.process_CreateSpline = function(seqid, input, output)
     });
   }
 };
+ModelerProcessor.prototype.process_GetEntityMeshes = function(seqid, input, output) {
+  var args = new Modeler_GetEntityMeshes_args();
+  args.read(input);
+  input.readMessageEnd();
+  if (this._handler.GetEntityMeshes.length === 2) {
+    Q.fcall(this._handler.GetEntityMeshes.bind(this._handler), args.uuid, args.get_normals)
+      .then(function(result) {
+        var result_obj = new Modeler_GetEntityMeshes_result({success: result});
+        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.REPLY, seqid);
+        result_obj.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      }, function (err) {
+        var result;
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.EXCEPTION, seqid);
+        result.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      });
+  } else {
+    this._handler.GetEntityMeshes(args.uuid, args.get_normals, function (err, result) {
+      var result_obj;
+      if ((err === null || typeof err === 'undefined')) {
+        result_obj = new Modeler_GetEntityMeshes_result((err !== null || typeof err === 'undefined') ? err : {success: result});
+        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("GetEntityMeshes", Thrift.MessageType.EXCEPTION, seqid);
+      }
+      result_obj.write(output);
+      output.writeMessageEnd();
+      output.flush();
+    });
+  }
+};
 ModelerProcessor.prototype.process_GetEntityWire = function(seqid, input, output) {
   var args = new Modeler_GetEntityWire_args();
   args.read(input);
@@ -2610,35 +3059,71 @@ ModelerProcessor.prototype.process_GetEntityWire = function(seqid, input, output
     });
   }
 };
-ModelerProcessor.prototype.process_CutEntity = function(seqid, input, output) {
-  var args = new Modeler_CutEntity_args();
+ModelerProcessor.prototype.process_TransformOperation = function(seqid, input, output) {
+  var args = new Modeler_TransformOperation_args();
   args.read(input);
   input.readMessageEnd();
-  if (this._handler.CutEntity.length === 3) {
-    Q.fcall(this._handler.CutEntity.bind(this._handler), args.uuid, args.point_on_plane, args.normal)
+  if (this._handler.TransformOperation.length === 2) {
+    Q.fcall(this._handler.TransformOperation.bind(this._handler), args.list_of_uuids, args.transform4x4)
       .then(function(result) {
-        var result_obj = new Modeler_CutEntity_result({success: result});
-        output.writeMessageBegin("CutEntity", Thrift.MessageType.REPLY, seqid);
+        var result_obj = new Modeler_TransformOperation_result({success: result});
+        output.writeMessageBegin("TransformOperation", Thrift.MessageType.REPLY, seqid);
         result_obj.write(output);
         output.writeMessageEnd();
         output.flush();
       }, function (err) {
         var result;
         result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("CutEntity", Thrift.MessageType.EXCEPTION, seqid);
+        output.writeMessageBegin("TransformOperation", Thrift.MessageType.EXCEPTION, seqid);
         result.write(output);
         output.writeMessageEnd();
         output.flush();
       });
   } else {
-    this._handler.CutEntity(args.uuid, args.point_on_plane, args.normal, function (err, result) {
+    this._handler.TransformOperation(args.list_of_uuids, args.transform4x4, function (err, result) {
       var result_obj;
       if ((err === null || typeof err === 'undefined')) {
-        result_obj = new Modeler_CutEntity_result((err !== null || typeof err === 'undefined') ? err : {success: result});
-        output.writeMessageBegin("CutEntity", Thrift.MessageType.REPLY, seqid);
+        result_obj = new Modeler_TransformOperation_result((err !== null || typeof err === 'undefined') ? err : {success: result});
+        output.writeMessageBegin("TransformOperation", Thrift.MessageType.REPLY, seqid);
       } else {
         result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-        output.writeMessageBegin("CutEntity", Thrift.MessageType.EXCEPTION, seqid);
+        output.writeMessageBegin("TransformOperation", Thrift.MessageType.EXCEPTION, seqid);
+      }
+      result_obj.write(output);
+      output.writeMessageEnd();
+      output.flush();
+    });
+  }
+};
+ModelerProcessor.prototype.process_CutOperation = function(seqid, input, output) {
+  var args = new Modeler_CutOperation_args();
+  args.read(input);
+  input.readMessageEnd();
+  if (this._handler.CutOperation.length === 3) {
+    Q.fcall(this._handler.CutOperation.bind(this._handler), args.list_of_uuids, args.point_on_plane, args.normal)
+      .then(function(result) {
+        var result_obj = new Modeler_CutOperation_result({success: result});
+        output.writeMessageBegin("CutOperation", Thrift.MessageType.REPLY, seqid);
+        result_obj.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      }, function (err) {
+        var result;
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("CutOperation", Thrift.MessageType.EXCEPTION, seqid);
+        result.write(output);
+        output.writeMessageEnd();
+        output.flush();
+      });
+  } else {
+    this._handler.CutOperation(args.list_of_uuids, args.point_on_plane, args.normal, function (err, result) {
+      var result_obj;
+      if ((err === null || typeof err === 'undefined')) {
+        result_obj = new Modeler_CutOperation_result((err !== null || typeof err === 'undefined') ? err : {success: result});
+        output.writeMessageBegin("CutOperation", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result_obj = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("CutOperation", Thrift.MessageType.EXCEPTION, seqid);
       }
       result_obj.write(output);
       output.writeMessageEnd();

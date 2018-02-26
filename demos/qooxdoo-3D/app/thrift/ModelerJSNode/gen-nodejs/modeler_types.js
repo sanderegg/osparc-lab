@@ -11,10 +11,19 @@ var Q = thrift.Q;
 
 
 var ttypes = module.exports = {};
+ttypes.MeshFileFormat = {
+  'OBJ' : 0
+};
 ttypes.BooleanOperationType = {
   'UNITE' : 0,
   'INTERSECT' : 1,
   'SUBTRACT' : 2
+};
+ttypes.EntityFilterType = {
+  'ALL' : 0,
+  'MESH' : 1,
+  'BODY' : 2,
+  'BODY_AND_MESH' : 3
 };
 var Entity = module.exports.Entity = function(args) {
   this.name = null;
@@ -725,6 +734,72 @@ EntityMesh.prototype.write = function(output) {
       }
     }
     output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+var EncodedMesh = module.exports.EncodedMesh = function(args) {
+  this.fileType = null;
+  this.data = null;
+  if (args) {
+    if (args.fileType !== undefined && args.fileType !== null) {
+      this.fileType = args.fileType;
+    }
+    if (args.data !== undefined && args.data !== null) {
+      this.data = args.data;
+    }
+  }
+};
+EncodedMesh.prototype = {};
+EncodedMesh.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.fileType = input.readI32();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.data = input.readBinary();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+EncodedMesh.prototype.write = function(output) {
+  output.writeStructBegin('EncodedMesh');
+  if (this.fileType !== null && this.fileType !== undefined) {
+    output.writeFieldBegin('fileType', Thrift.Type.I32, 1);
+    output.writeI32(this.fileType);
+    output.writeFieldEnd();
+  }
+  if (this.data !== null && this.data !== undefined) {
+    output.writeFieldBegin('data', Thrift.Type.STRING, 2);
+    output.writeBinary(this.data);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
