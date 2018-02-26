@@ -40,8 +40,9 @@ qx.Class.define("app.wrappers.threeWrapper",
       this._camera.up.set(0,0,1);
       this._scene.add(this._camera);
 
-      this._addPointLight1();
-      this._addPointLight2();
+      this._addCameraLight();
+      //this._addPointLight1();
+      //this._addPointLight2();
       this._addGridHelper();
       this._addAxesHelper();
 
@@ -221,16 +222,21 @@ qx.Class.define("app.wrappers.threeWrapper",
       this._renderer.setSize(width, height);
     },
 
-    CreateNewMaterial : function()
+    CreateNewMaterial : function(red = null, green = null, blue = null)
     {
-      //var randColor = qx.util.ColorUtil.randomColor();
-      var rCh = Math.floor((Math.random() * 170) + 80);
-      var gCh = Math.floor((Math.random() * 170) + 80);
-      var bCh = Math.floor((Math.random() * 170) + 80);
-      var randColor = 'rgb('+rCh+','+gCh+','+bCh+')';
+      var color;
+      if (red === null || green  === null || blue === null) {
+        //var randColor = qx.util.ColorUtil.randomColor();
+        var rCh = Math.floor((Math.random() * 170) + 80);
+        var gCh = Math.floor((Math.random() * 170) + 80);
+        var bCh = Math.floor((Math.random() * 170) + 80);
+        color = 'rgb('+rCh+','+gCh+','+bCh+')';
+      } else {
+        color = 'rgb('+Math.round(255*red)+','+Math.round(255*green)+','+Math.round(255*blue)+')';
+      }
 
       var material = new THREE.MeshPhongMaterial({
-        color: randColor,
+        color: color,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
@@ -381,6 +387,13 @@ qx.Class.define("app.wrappers.threeWrapper",
     CreateTransformControls : function()
     {
       return (new THREE.TransformControls(this._camera, this._renderer.domElement));
+    },
+
+    _addCameraLight : function(camera)
+    {
+      var pointLight = new THREE.PointLight( 0xffffff );
+      pointLight.position.set(1,1,2);
+      this._camera.add(pointLight);
     },
 
     _addPointLight1 : function()
