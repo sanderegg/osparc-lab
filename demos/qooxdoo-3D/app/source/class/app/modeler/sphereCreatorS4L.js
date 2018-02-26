@@ -4,6 +4,8 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
   construct : function(threeViewer)
   {
     this._threeView = threeViewer;
+    this._my_uuid = this.uuidv4();
+    console.log('new id', this._my_uuid);
   },
 
   events : {
@@ -19,6 +21,15 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
     _sphere_material: null,
     _sphere_temp: null,
     _uuid_temp: '',
+    _my_uuid: '',
+
+    uuidv4 : function ()
+    {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    },
 
     StartTool : function()
     {
@@ -42,17 +53,6 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
           var intersect = intersects[0];
           var temp_radius = Math.hypot(intersect.point.x-this._centerPoint.x, intersect.point.y-this._centerPoint.y);
           this.fireDataEvent("newSphereS4LRequested", [temp_radius, this._centerPoint, this._uuid_temp]);
-          /*
-          if (this._sphere_temp) {
-            this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
-          }
-          var sphereGeometry = this._threeView._threeWrapper.CreateSphere(temp_radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
-          if (this._sphere_material === null) {
-            this._sphere_material = this._threeView._threeWrapper.CreateNewMaterial();
-          }
-          this._sphere_temp = this._threeView._threeWrapper.CreateEntity(sphereGeometry, this._sphere_material);
-          this._threeView._threeWrapper.AddEntityToScene(this._sphere_temp);
-          */
         }
       }
       return true;
@@ -68,13 +68,14 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
           this._centerPoint = intersect.point;
           this._nextStep = this._steps.radius;
           var dummyRadius = 0.0001;
-          this.fireDataEvent("newSphereS4LRequested", [dummyRadius, this._centerPoint, '']);
+          this._uuid_temp = this.uuidv4();
+          this.fireDataEvent("newSphereS4LRequested", [dummyRadius, this._centerPoint, this._uuid_temp]);
           return true;
         }
 
         if (this._radius === null) {
           this._radius = Math.hypot(intersect.point.x-this._centerPoint.x, intersect.point.y-this._centerPoint.y);
-          this.fireDataEvent("newSphereS4LRequested", [this._radius, this._centerPoint, '']);
+          this.fireDataEvent("newSphereS4LRequested", [this._radius, this._centerPoint, this._my_uuid]);
           return true;
         }
       }
@@ -85,7 +86,9 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
     SphereFromS4L : function(response)
     {
       var sphereGeometry = this._threeView._threeWrapper.CreateGeometryFromS4L(response.value[0]);
-      var sphereMaterial = this._threeView._threeWrapper.CreateMeshNormalMaterial();
+      //var sphereMaterial = this._threeView._threeWrapper.CreateMeshNormalMaterial();
+      var color = response.value[0].material.diffuse;
+      var sphereMaterial = this._threeView._threeWrapper.CreateNewMaterial(color.r, color.g, color.b);
       var sphere = this._threeView._threeWrapper.CreateEntity(sphereGeometry, sphereMaterial);
 
       this._threeView._threeWrapper.ApplyTransformationMatrixToEntity(sphere, response.value[0].transform4x4)
@@ -93,20 +96,23 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
       sphere.name = "Sphere_S4L";
       sphere.uuid = response.uuid;
 
+      //console.log('temp', this._uuid_temp);
+      //console.log('defi', this._my_uuid);
+      //console.log('spId', sphere.uuid);
 
-      if (this._uuid_temp === '') {
-        this._uuid_temp = sphere.uuid;
-      }
+      //if (this._uuid_temp === '') {
+      //  this._uuid_temp = sphere.uuid;
+      //}
 
       if (this._sphere_temp) {
         this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
       }
 
-      if (this._uuid_temp === sphere.uuid) {
+      if (this._my_uuid === sphere.uuid) {
+        this._consolidateSphere(sphere);
+      } else {
         this._sphere_temp = sphere;
         this._threeView._threeWrapper.AddEntityToScene(this._sphere_temp);
-      } else {
-        this._consolidateSphere(sphere);
       }
     },
 
