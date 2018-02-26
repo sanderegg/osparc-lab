@@ -312,7 +312,10 @@ qx.Class.define("app.wrappers.threeWrapper",
       for (var i = 0; i < entityMesh.triangles.length; i+=3) {
         geom.faces.push( new THREE.Face3( entityMesh.triangles[i+0], entityMesh.triangles[i+1], entityMesh.triangles[i+2] ) );
       }
+
       geom.computeFaceNormals();
+      geom.mergeVertices();
+      geom.computeVertexNormals();
 
       return geom;
     },
