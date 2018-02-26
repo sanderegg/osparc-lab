@@ -33,9 +33,7 @@ qx.Class.define("app.components.availableServices",
     "newBlockRequested": "qx.event.type.Data",
     "newDodecaRequested": "qx.event.type.Data",
     "newSplineRequested": "qx.event.type.Data",
-    "booleanUniteRequested": "qx.event.type.Event",
-    "booleanIntersectRequested": "qx.event.type.Event",
-    "booleanSubstractRequested": "qx.event.type.Event",
+    "booleanOperationRequested": "qx.event.type.Data",
   },
 
   members: {
@@ -140,9 +138,9 @@ qx.Class.define("app.components.availableServices",
       var intersectButton = new qx.ui.menu.Button(this.tr("Intersect"));
       var substractButton = new qx.ui.menu.Button(this.tr("Substract"));
 
-      uniteButton.addListener("execute", this._onBooleanUniteRequested);
-      intersectButton.addListener("execute", this._onBooleanIntersectRequested);
-      substractButton.addListener("execute", this._onBooleanSubstractRequested);
+      uniteButton.addListener("execute", this._onBooleanUniteRequested.bind(this));
+      intersectButton.addListener("execute", this._onBooleanIntersectRequested.bind(this));
+      substractButton.addListener("execute", this._onBooleanSubstractRequested.bind(this));
 
       menu.add(uniteButton);
       menu.add(intersectButton);
@@ -176,15 +174,15 @@ qx.Class.define("app.components.availableServices",
     },
 
     _onBooleanUniteRequested : function() {
-      this.fireDataEvent("booleanUniteRequested");
+      this.fireDataEvent("booleanOperationRequested", 0);
     },
 
     _onBooleanIntersectRequested : function() {
-      this.fireDataEvent("booleanIntersectRequested");
+      this.fireDataEvent("booleanOperationRequested", 1);
     },
 
     _onBooleanSubstractRequested : function() {
-      this.fireDataEvent("booleanSubstractRequested");
+      this.fireDataEvent("booleanOperationRequested", 2);
     },
   }
 });

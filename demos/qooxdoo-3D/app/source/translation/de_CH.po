@@ -38,31 +38,31 @@ msgstr ""
 msgid "Load ViP"
 msgstr ""
 
-#: app.components.availableServices:65
+#: app.components.availableServices:63
 msgid "Disabled"
 msgstr ""
 
-#: app.components.availableServices:70
+#: app.components.availableServices:68
 msgid "Select entity"
 msgstr ""
 
-#: app.components.availableServices:75
+#: app.components.availableServices:73
 msgid "Select face"
 msgstr ""
 
-#: app.components.availableServices:93
+#: app.components.availableServices:91
 msgid "Move"
 msgstr ""
 
-#: app.components.availableServices:104
+#: app.components.availableServices:102
 msgid "Add Sphere"
 msgstr ""
 
-#: app.components.availableServices:107
+#: app.components.availableServices:105
 msgid "Add Box"
 msgstr ""
 
-#: app.components.availableServices:110
+#: app.components.availableServices:108
 msgid "Add Dodecahedron"
 msgstr ""
 
@@ -102,7 +102,7 @@ msgstr "Grüezi, "
 msgid "Properties"
 msgstr ""
 
-#: app.components.availableServices:113
+#: app.components.availableServices:111
 msgid "Add Spline"
 msgstr ""
 
@@ -114,14 +114,14 @@ msgstr ""
 msgid "Use external modeler"
 msgstr ""
 
-#: app.components.availableServices:139
+#: app.components.availableServices:137
 msgid "Unite"
 msgstr ""
 
-#: app.components.availableServices:140
+#: app.components.availableServices:138
 msgid "Intersect"
 msgstr ""
 
-#: app.components.availableServices:141
+#: app.components.availableServices:139
 msgid "Substract"
 msgstr ""
