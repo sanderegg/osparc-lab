@@ -206,7 +206,7 @@ qx.Class.define("app.Application",
           if (!this._socket.slotExists("importViP")) {
             this._socket.on("importViP", function(val) {
               if (val.type === "importViP") {
-                this._threeView.ImportEntityFromBuffer(val.value, val.modelName);
+                this._threeView.CreateEntityFromResponse(val.value, val.name, val.uuid);
               }
             }, this);
           }

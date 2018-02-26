@@ -332,6 +332,22 @@ qx.Class.define("app.components.threeView",
       this._render();
     },
 
+    CreateEntityFromResponse : function(response, name, uuid)
+    {
+      console.log(name);
+      var sphereGeometry = this._threeWrapper.CreateGeometryFromS4L(response[0]);
+      //var sphereMaterial = this._threeWrapper.CreateMeshNormalMaterial();
+      var color = response[0].material.diffuse;
+      var sphereMaterial = this._threeWrapper.CreateNewMaterial(color.r, color.g, color.b);
+      var entity = this._threeWrapper.CreateEntity(sphereGeometry, sphereMaterial);
+
+      this._threeWrapper.ApplyTransformationMatrixToEntity(entity, response[0].transform4x4)
+
+      entity.name = name;
+      entity.uuid = uuid;
+      this.AddEntityToScene(entity);
+    },
+
     _highlightAll : function()
     {
       for (var i = 0; i < this._entities.length; i++) {
