@@ -108,14 +108,31 @@ io.on('connection', function(socket_client) {
     var transform4x4 = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
     var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
     var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
-    modelerClient.CreateSpline( spline, uuid, function(err, response) {
-      modelerClient.GetEntityWire( response, function(err2, response2) {
+    modelerClient.CreateSpline( spline, uuid, function(err, response_uuid) {
+      modelerClient.GetEntityWire( response_uuid, function(err2, response2) {
         var listOfPoints = {
           type: 'newSplineS4LRequested',
           value: response2,
-          uuid: response
+          uuid: response_uuid
         };
         socket_client.emit('newSplineS4LRequested', listOfPoints);
+      });
+    });
+  });
+
+  socket_client.on('newSphereS4LRequested', function(radius_center_uuid) {
+    var radius = radius_center_uuid[0];
+    var center = radius_center_uuid[1];
+    var uuid = radius_center_uuid[2];
+    modelerClient.CreateSolidSphere( center, radius, uuid, function(err, response_uuid) {
+      const get_normals = false;
+      modelerClient.GetEntityMeshes( response_uuid, get_normals, function(err2, response2) {
+        var meshEntity = {
+          type: 'newSphereS4LRequested',
+          value: response2,
+          uuid: response_uuid
+        };
+        socket_client.emit('newSphereS4LRequested', meshEntity);
       });
     });
   });

@@ -233,8 +233,30 @@ qx.Class.define("app.Application",
         this._availableServicesBar.addListener("newSphereRequested", function(e) {
           var enableSphereTool = e.getData();
           if (enableSphereTool) {
-            var sphereCreator = new app.modeler.sphereCreator(this._threeView);
-            this._threeView.StartTool(sphereCreator);
+            var useExternalModeler = this._appModel.getUseExternalModeler();
+            if (!useExternalModeler)
+            {
+              var sphereCreator = new app.modeler.sphereCreator(this._threeView);
+              this._threeView.StartTool(sphereCreator);
+            }
+            else
+            {
+              var sphereCreator = new app.modeler.sphereCreatorS4L(this._threeView);
+              this._threeView.StartTool(sphereCreator);
+              sphereCreator.addListenerOnce("newSphereS4LRequested", function(e) {
+                var radius = e.getData()[0];
+                var center_point = e.getData()[1];
+                var uuid = e.getData()[2];
+                if (!this._socket.slotExists("newSphereS4LRequested")) {
+                  this._socket.on("newSphereS4LRequested", function(val) {
+                    if (val.type === "newSphereS4LRequested") {
+                      sphereCreator.SphereFromS4L(val);
+                    }
+                  }, this);
+                }
+                this._socket.emit("newSphereS4LRequested", [radius, center_point, uuid]);
+              }, this);
+            }
           } else {
             this._threeView.StopTool();
           }

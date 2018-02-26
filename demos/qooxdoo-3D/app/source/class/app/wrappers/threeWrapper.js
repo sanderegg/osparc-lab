@@ -311,6 +311,15 @@ qx.Class.define("app.wrappers.threeWrapper",
       return geom;
     },
 
+    ApplyTransformationMatrixToEntity : function(entity, transformation)
+    {
+      entity.matrixAutoUpdate = false;
+
+      var quaternion = new THREE.Matrix4();
+      quaternion.elements = transformation;
+      entity.matrix.fromArray(transformation);
+    },
+
     _arrayToThreePoints : function(listOfPoints)
     {
       var three_points = [];
