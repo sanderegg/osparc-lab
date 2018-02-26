@@ -308,6 +308,18 @@ qx.Class.define("app.Application",
             this._threeView.StopMoveTool();
           }
         }, this);
+
+        this._availableServicesBar.addListener("booleanOperationRequested", function(e) {
+          var operationType = e.getData();
+          if (this._threeView._entities.length>1) {
+            var entityMeshes = [];
+            for (var i = 0; i < 2; i++) {
+              var entityMesh = this._threeView._threeWrapper.FromEntityToEntityMesh(this._threeView._entities[i]);
+              entityMeshes.push(entityMesh);
+            }
+            this._socket.emit("newBooleanOperationRequested", [entityMeshes, operationType]);
+          }
+        }, this);
       }
 
       // Entity list

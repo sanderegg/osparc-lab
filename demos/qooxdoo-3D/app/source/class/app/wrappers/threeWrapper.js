@@ -322,13 +322,38 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     FromEntityToEntityMesh : function(entity)
     {
-      console.log(entity);
-      
+      var i, j, m;
+      var myVertices = [];
+			var vertices = entity.geometry.getAttribute('position');
+      var vertex = new THREE.Vector3();
+      for ( i = 0; i < vertices.count; i++ ) {
+        vertex.x = vertices.getX( i );
+        vertex.y = vertices.getY( i );
+        vertex.z = vertices.getZ( i );
+
+        //// transfrom the vertex to world space
+        //vertex.applyMatrix4( entity.matrixWorld );
+
+        myVertices.push(vertex.x);
+        myVertices.push(vertex.y);
+        myVertices.push(vertex.z);
+      }
+      console.log(myVertices);
+
+      var myFaces = [];
+      for ( i = 0; i < vertices.count; i += 3 ) {
+        for ( m = 0; m < 3; m ++ ) {
+          j = i + m + 1;
+          myFaces.push(j);
+        }
+      }
+      console.log(myFaces);
+
       var entityMesh = {
-        vertices: [],
-        triangles: [],
+        vertices: myVertices,
+        triangles: myFaces,
         normals: [],
-        transform4x4: [],
+        transform4x4: entity.matrix.elements,
         material: null,
         lines: [],
         points: [],

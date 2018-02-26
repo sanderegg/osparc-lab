@@ -136,6 +136,12 @@ io.on('connection', function(socket_client) {
       });
     });
   });
+
+  socket_client.on('newBooleanOperationRequested', function(entityMeshes_operationType) {
+    var entityMeshes = entityMeshes_operationType[0];
+    var operationType = entityMeshes_operationType[1];
+    booleanOperation(socket_client, entityMeshes, operationType);
+  });
 });
 
 
@@ -264,34 +270,23 @@ function importViP(socket_client, ViP_model) {
     });
   });
 
-function sendToMeshEntitiesToTheClient(socket_client, meshEntities) {
-  console.log(sendToMeshEntitiesToTheClient);
-  for (var i = 0; i < meshEntities.length; i++) {
-    socket_client.emit('importViP', meshEntities[i]);
-  }
-};
-
-
-  /*
-  models_dir = APP_PATH + MODELS_PATH + 'ViP/' + ViP_model;
-  console.log('sending files: ', models_dir);
-  var fs = require("fs");
-  fs.readdirSync(models_dir).forEach(file => {
-    if ('obj' === file.split('.').pop()) {
-      file_path = models_dir +'/'+ file;
-      fs.readFile(file_path, function (err, data) {
-        if (err)
-          throw err;
-        var modelJson = {};
-        modelJson.modelName = file;
-        modelJson.value = data.toString();
-        modelJson.type = 'importViP';
-        socket_client.emit('importViP', modelJson);
-      });
+  function sendToMeshEntitiesToTheClient(socket_client, meshEntities) {
+    console.log('sendToMeshEntitiesToTheClient');
+    for (var i = 0; i < meshEntities.length; i++) {
+      socket_client.emit('importViP', meshEntities[i]);
     }
-  });
-  */
+  };
 };
+
+function booleanOperation(socket_client, entityMeshes, operationType) {
+  applicationClient.NewDocument( function(err, response) {
+    // Add mesh1 -> get uuid1
+    // Add mesh2 -> get uuid2
+    // Call boolean with the 2 uuid and operation type
+    // Get mesh id -> get mesh
+    // send it back
+  }
+}
 
 
 console.log("server started on " + PORT + '/app');

@@ -74,7 +74,7 @@ msgstr ""
 msgid "Remove entity"
 msgstr ""
 
-#: app.components.preferences:9
+#: app.components.menuBar:124
 msgid "Preferences"
 msgstr ""
 
