@@ -33,6 +33,9 @@ qx.Class.define("app.components.availableServices",
     "newBlockRequested": "qx.event.type.Data",
     "newDodecaRequested": "qx.event.type.Data",
     "newSplineRequested": "qx.event.type.Data",
+    "booleanUniteRequested": "qx.event.type.Event",
+    "booleanIntersectRequested": "qx.event.type.Event",
+    "booleanSubstractRequested": "qx.event.type.Event",
   },
 
   members: {
@@ -116,7 +119,36 @@ qx.Class.define("app.components.availableServices",
         menuPart.add(this._splineBtn);
       }
 
+      // Boolean operations
+      {
+        var menuPart = new qx.ui.toolbar.Part;
+        toolbar.add(menuPart);
+
+        var booleanMenu = new qx.ui.toolbar.MenuButton("Boolean operations");
+        booleanMenu.setMenu(this._getBooleanMenu());
+        menuPart.add(booleanMenu);
+      }
+
       return frame;
+    },
+
+    _getBooleanMenu : function()
+    {
+      var menu = new qx.ui.menu.Menu;
+
+      var uniteButton = new qx.ui.menu.Button(this.tr("Unite"));
+      var intersectButton = new qx.ui.menu.Button(this.tr("Intersect"));
+      var substractButton = new qx.ui.menu.Button(this.tr("Substract"));
+
+      uniteButton.addListener("execute", this._onBooleanUniteRequested);
+      intersectButton.addListener("execute", this._onBooleanIntersectRequested);
+      substractButton.addListener("execute", this._onBooleanSubstractRequested);
+
+      menu.add(uniteButton);
+      menu.add(intersectButton);
+      menu.add(substractButton);
+
+      return menu;
     },
 
     OnEntitySelectedChanged : function(uuid) {
@@ -141,6 +173,18 @@ qx.Class.define("app.components.availableServices",
 
     _onMoveToolRequested : function() {
       this.fireDataEvent("moveToolRequested", this._moveBtn.getValue());
+    },
+
+    _onBooleanUniteRequested : function() {
+      this.fireDataEvent("booleanUniteRequested");
+    },
+
+    _onBooleanIntersectRequested : function() {
+      this.fireDataEvent("booleanIntersectRequested");
+    },
+
+    _onBooleanSubstractRequested : function() {
+      this.fireDataEvent("booleanSubstractRequested");
     },
   }
 });
