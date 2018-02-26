@@ -334,7 +334,6 @@ qx.Class.define("app.components.threeView",
 
     CreateEntityFromResponse : function(response, name, uuid)
     {
-      console.log(name);
       var sphereGeometry = this._threeWrapper.CreateGeometryFromS4L(response[0]);
       //var sphereMaterial = this._threeWrapper.CreateMeshNormalMaterial();
       var color = response[0].material.diffuse;

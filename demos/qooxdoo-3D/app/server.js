@@ -229,17 +229,19 @@ function importViP(socket_client, ViP_model) {
     var vipPath;
     switch (ViP_model) {
       case 'Thelonious':
-        vipPath = "D:/Thelonious_v3_20140519_selfinter3_S4Lbuilt68_simplify.smash_Results/9c9aea0d-8539-400f-98dd-715ae0b5df07_simplify.dat"
+        vipPath = "D:/sparc/thelonius_reduced.smash"
         break;
       default:
-        vipPath = "D:/Thelonious_v3_20140519_selfinter3_S4Lbuilt68_simplify.smash_Results/9c9aea0d-8539-400f-98dd-715ae0b5df07_simplify.dat"
+        vipPath = "D:/sparc/thelonius_reduced.smash"
         break;
     }
     modelerClient.ImportModel( vipPath, function(err2, response2) {
       console.log('Importing', ViP_model);
       modelerClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH, function(err3, response3) {
         console.log('Total meshes', response3.length);
-        for (let i = 0; i < response3.length; i++) {
+        let meshEntities = [];
+        let nMeshes = response3.length;
+        for (let i = 0; i <nMeshes ; i++) {
           let mesh_id = response3[i].uuid;
           let mesh_name = response3[i].name;
           const get_normals = false;
@@ -250,13 +252,26 @@ function importViP(socket_client, ViP_model) {
               uuid: mesh_id,
               name: mesh_name
             };
-            socket_client.emit('importViP', meshEntity);
+            meshEntities.push(meshEntity);
+            //socket_client.emit('importViP', meshEntity);
             console.log(i);
+            if (i === nMeshes-1) {
+              sendToMeshEntitiesToTheClient(socket_client, meshEntities);
+            }
           });
         }
       });
     });
   });
+
+function sendToMeshEntitiesToTheClient(socket_client, meshEntities) {
+  console.log(sendToMeshEntitiesToTheClient);
+  for (var i = 0; i < meshEntities.length; i++) {
+    socket_client.emit('importViP', meshEntities[i]);
+  }
+};
+
+
   /*
   models_dir = APP_PATH + MODELS_PATH + 'ViP/' + ViP_model;
   console.log('sending files: ', models_dir);
