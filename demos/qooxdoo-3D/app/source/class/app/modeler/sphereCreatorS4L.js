@@ -85,7 +85,7 @@ qx.Class.define("app.modeler.sphereCreatorS4L", {
 
     SphereFromS4L : function(response)
     {
-      var sphereGeometry = this._threeView._threeWrapper.CreateGeometryFromS4L(response.value[0]);
+      var sphereGeometry = this._threeView._threeWrapper.FromEntityMeshToEntity(response.value[0]);
       //var sphereMaterial = this._threeView._threeWrapper.CreateMeshNormalMaterial();
       var color = response.value[0].material.diffuse;
       var sphereMaterial = this._threeView._threeWrapper.CreateNewMaterial(color.r, color.g, color.b);

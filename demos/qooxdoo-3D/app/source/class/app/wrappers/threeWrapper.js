@@ -302,7 +302,7 @@ qx.Class.define("app.wrappers.threeWrapper",
       return this.CreateLine(points);
     },
 
-    CreateGeometryFromS4L : function(entityMesh)
+    FromEntityMeshToEntity : function(entityMesh)
     {
       var geom = new THREE.Geometry();
       for (var i = 0; i < entityMesh.vertices.length; i+=3) {
@@ -318,6 +318,23 @@ qx.Class.define("app.wrappers.threeWrapper",
       geom.computeVertexNormals();
 
       return geom;
+    },
+
+    FromEntityToEntityMesh : function(entity)
+    {
+      console.log(entity);
+      
+      var entityMesh = {
+        vertices: [],
+        triangles: [],
+        normals: [],
+        transform4x4: [],
+        material: null,
+        lines: [],
+        points: [],
+      };
+
+      return entityMesh;
     },
 
     ApplyTransformationMatrixToEntity : function(entity, transformation)
