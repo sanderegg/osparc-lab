@@ -31,7 +31,7 @@ qx.Class.define("app.components.menuBar",
     "fileSaveEntitiesPressed": "qx.event.type.Event",
     "fileLoadScenePressed": "qx.event.type.Event",
     "fileSaveScenePressed": "qx.event.type.Event",
-    "fileLoadViPPressed": "qx.event.type.Data",
+    "fileLoadModelPressed": "qx.event.type.Data",
     "editPreferencesPressed": "qx.event.type.Data",
   },
 
@@ -70,7 +70,7 @@ qx.Class.define("app.components.menuBar",
       var saveEntitiesButton = new qx.ui.menu.Button(this.tr("Save entities"), null, null);
       var loadSceneButton = new qx.ui.menu.Button(this.tr("Load scene"), null, null);
       var saveSceneButton = new qx.ui.menu.Button(this.tr("Save scene"), null, null);
-      var loadViPButton = new qx.ui.menu.Button(this.tr("Load ViP"), null, null, this.getViPList());
+      var loadModelsButton = new qx.ui.menu.Button(this.tr("Load Models"), null, null, this.getModelsList());
 
       newButton.addListener("execute", function(e) {
         this.fireDataEvent("fileNewPressed");
@@ -97,24 +97,32 @@ qx.Class.define("app.components.menuBar",
       fileMenu.add(saveEntitiesButton);
       fileMenu.add(loadSceneButton);
       fileMenu.add(saveSceneButton);
-      fileMenu.add(loadViPButton);
+      fileMenu.add(loadModelsButton);
 
       return fileMenu;
     },
 
-    getViPList : function()
+    getModelsList : function()
     {
-      var vipMenu = new qx.ui.menu.Menu;
+      var modelsMenu = new qx.ui.menu.Menu;
 
-      var theoButton = new qx.ui.menu.Button("Thelonious", null, null);
+      {
+        var theoButton = new qx.ui.menu.Button("Thelonious", null, null);
+        theoButton.addListener("execute", function(e) {
+          this.fireDataEvent("fileLoadModelPressed", "Thelonious");
+        }, this);
+        modelsMenu.add(theoButton);
+      }
 
-      theoButton.addListener("execute", function(e) {
-        this.fireDataEvent("fileLoadViPPressed", "Thelonious");
-      }, this);
+      {
+        var ratButton = new qx.ui.menu.Button("Rat", null, null);
+        ratButton.addListener("execute", function(e) {
+          this.fireDataEvent("fileLoadModelPressed", "Rat");
+        }, this);
+        modelsMenu.add(ratButton);
+      }
 
-      vipMenu.add(theoButton);
-
-      return vipMenu;
+      return modelsMenu;
     },
 
     getEditMenu : function()

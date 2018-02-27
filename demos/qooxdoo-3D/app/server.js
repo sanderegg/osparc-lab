@@ -97,8 +97,8 @@ io.on('connection', function(socket_client) {
     exportScene(socket_client, active_user, scene_json);
   });
 
-  socket_client.on('importViP', function(ViP_model) {
-    importViP(socket_client, ViP_model);
+  socket_client.on('importModel', function(model_name) {
+    importModel(socket_client, model_name);
   });
 
 
@@ -230,19 +230,22 @@ function exportScene(socket_client, active_user, scene_json) {
   });
 };
 
-function importViP(socket_client, ViP_model) {
+function importModel(socket_client, model_name) {
   applicationClient.NewDocument( function(err, response) {
-    var vipPath;
-    switch (ViP_model) {
+    var modelPath;
+    switch (model_name) {
       case 'Thelonious':
-        vipPath = "D:/sparc/thelonius_reduced.smash"
+        modelPath = "D:/sparc/thelonius_reduced.smash"
+        break;
+      case 'Rat':
+        modelPath = "D:/sparc/thelonius_reduced.smash"
         break;
       default:
-        vipPath = "D:/sparc/thelonius_reduced.smash"
+        modelPath = "D:/sparc/thelonius_reduced.smash"
         break;
     }
-    modelerClient.ImportModel( vipPath, function(err2, response2) {
-      console.log('Importing', ViP_model);
+    modelerClient.ImportModel( modelPath, function(err2, response2) {
+      console.log('Importing', model_name);
       modelerClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH, function(err3, response3) {
         console.log('Total meshes', response3.length);
         let meshEntities = [];
@@ -253,13 +256,13 @@ function importViP(socket_client, ViP_model) {
           const get_normals = false;
           modelerClient.GetEntityMeshes( mesh_id, get_normals, function(err4, response4) {
             var meshEntity = {
-              type: 'importViP',
+              type: 'importModel',
               value: response4,
               uuid: mesh_id,
               name: mesh_name
             };
             meshEntities.push(meshEntity);
-            //socket_client.emit('importViP', meshEntity);
+            //socket_client.emit('importModel', meshEntity);
             console.log(i);
             if (i === nMeshes-1) {
               sendToMeshEntitiesToTheClient(socket_client, meshEntities);
@@ -273,7 +276,7 @@ function importViP(socket_client, ViP_model) {
   function sendToMeshEntitiesToTheClient(socket_client, meshEntities) {
     console.log('sendToMeshEntitiesToTheClient');
     for (var i = 0; i < meshEntities.length; i++) {
-      socket_client.emit('importViP', meshEntities[i]);
+      socket_client.emit('importModel', meshEntities[i]);
     }
   };
 };

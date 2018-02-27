@@ -125,3 +125,7 @@ msgstr ""
 #: app.components.availableServices:139
 msgid "Substract"
 msgstr ""
+
+#: app.components.menuBar:73
+msgid "Load Models"
+msgstr ""

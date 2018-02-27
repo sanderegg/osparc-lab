@@ -201,16 +201,16 @@ qx.Class.define("app.Application",
           this._threeView.SerializeScene();
         }, this);
 
-        this._menuBar.addListener("fileLoadViPPressed", function(e) {
-          var selectedViP = e.getData();
-          if (!this._socket.slotExists("importViP")) {
-            this._socket.on("importViP", function(val) {
-              if (val.type === "importViP") {
+        this._menuBar.addListener("fileLoadModelPressed", function(e) {
+          var selectedModel = e.getData();
+          if (!this._socket.slotExists("importModel")) {
+            this._socket.on("importModel", function(val) {
+              if (val.type === "importModel") {
                 this._threeView.CreateEntityFromResponse(val.value, val.name, val.uuid);
               }
             }, this);
           }
-          this._socket.emit("importViP", selectedViP);
+          this._socket.emit("importModel", selectedModel);
         }, this);
 
         this._menuBar.addListener("editPreferencesPressed", function(e) {
