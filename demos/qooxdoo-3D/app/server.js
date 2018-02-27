@@ -238,10 +238,10 @@ function importModel(socket_client, model_name) {
         modelPath = "D:/sparc/thelonius_reduced.smash";
         break;
       case 'Rat':
-        modelPath = "D:/sparc/ratmodel_reduced.smash";
+        modelPath = "D:/sparc/ratmodel_simplified.smash";
         break;
       default:
-        modelPath = "D:/sparc/ratmodel_reduced.smash";
+        modelPath = "D:/sparc/ratmodel_simplified.smash";
         break;
     }
     modelerClient.ImportModel( modelPath, function(err2, response2) {
@@ -283,13 +283,31 @@ function importModel(socket_client, model_name) {
 
 function booleanOperation(socket_client, entityMeshes, operationType) {
   applicationClient.NewDocument( function(err, response) {
-    // Add mesh1 -> get uuid1
-    // Add mesh2 -> get uuid2
-    // Call boolean with the 2 uuid and operation type
-    // Get mesh id -> get mesh
-    // send it back
+    let mesh_uuids = [];
+    modelerClient.CreateMesh(entityMeshes[0], '', function(err2, response2) {
+      console.log('uuid1', response2);
+      mesh_uuids.push(response2);
+      modelerClient.CreateMesh(entityMeshes[1], '', function(err3, response3) {
+        console.log('uuid2', response3);
+        mesh_uuids.push(response3);
+        console.log('operationType', operationType);
+        modelerClient.BooleanOperation(mesh_uuids, operationType, function(err4, response4) {
+          console.log('uuid3', response4);
+          const get_normals = false;
+          modelerClient.GetEntityMeshes(response4, get_normals, function(err5, response5) {
+            var meshEntity = {
+              type: 'newBooleanOperationRequested',
+              value: response5,
+              uuid: response4,
+              name: 'myMesh'
+            };
+            socket_client.emit('newBooleanOperationRequested', meshEntity);
+          });
+        });
+      });
+    });
   });
-}
+};
 
 
 console.log("server started on " + PORT + '/app');

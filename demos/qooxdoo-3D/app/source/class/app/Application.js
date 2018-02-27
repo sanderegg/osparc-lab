@@ -317,6 +317,13 @@ qx.Class.define("app.Application",
               var entityMesh = this._threeView._threeWrapper.FromEntityToEntityMesh(this._threeView._entities[i]);
               entityMeshes.push(entityMesh);
             }
+            if (!this._socket.slotExists("newBooleanOperationRequested")) {
+              this._socket.on("newBooleanOperationRequested", function(val) {
+                if (val.type === "newBooleanOperationRequested") {
+                  this._threeView.CreateEntityFromResponse(val.value, val.name, val.uuid);
+                }
+              }, this);
+            }
             this._socket.emit("newBooleanOperationRequested", [entityMeshes, operationType]);
           }
         }, this);

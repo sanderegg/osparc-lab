@@ -314,40 +314,61 @@ qx.Class.define("app.wrappers.threeWrapper",
       }
 
       geom.computeFaceNormals();
-      //geom.mergeVertices();
-      //geom.computeVertexNormals();
+      const applySmoothing = true;
+      if (applySmoothing) {
+        geom.mergeVertices();
+        geom.computeVertexNormals();
+      }
 
       return geom;
     },
 
     FromEntityToEntityMesh : function(entity)
     {
-      var i, j, m;
+      var i, j, m = 0;
       var myVertices = [];
-			var vertices = entity.geometry.getAttribute('position');
-      var vertex = new THREE.Vector3();
-      for ( i = 0; i < vertices.count; i++ ) {
-        vertex.x = vertices.getX( i );
-        vertex.y = vertices.getY( i );
-        vertex.z = vertices.getZ( i );
+      if (entity.geometry.vertices) {
+        // Geometries
+        for ( i = 0; i < entity.geometry.vertices.length; i++ ) {
+          myVertices.push(entity.geometry.vertices[i].x);
+          myVertices.push(entity.geometry.vertices[i].y);
+          myVertices.push(entity.geometry.vertices[i].z);
+        }
+      } else {
+        // BufferGeometries
+        var vertices = entity.geometry.getAttribute('position');
+        var vertex = new THREE.Vector3();
+        for ( i = 0; i < vertices.count; i++ ) {
+          vertex.x = vertices.getX( i );
+          vertex.y = vertices.getY( i );
+          vertex.z = vertices.getZ( i );
 
-        //// transfrom the vertex to world space
-        //vertex.applyMatrix4( entity.matrixWorld );
+          //// transfrom the vertex to world space
+          //vertex.applyMatrix4( entity.matrixWorld );
 
-        myVertices.push(vertex.x);
-        myVertices.push(vertex.y);
-        myVertices.push(vertex.z);
-      }
-      console.log(myVertices);
-
-      var myFaces = [];
-      for ( i = 0; i < vertices.count; i += 3 ) {
-        for ( m = 0; m < 3; m ++ ) {
-          j = i + m + 1;
-          myFaces.push(j);
+          myVertices.push(vertex.x);
+          myVertices.push(vertex.y);
+          myVertices.push(vertex.z);
         }
       }
-      console.log(myFaces);
+
+      var myFaces = [];
+      if (entity.geometry.faces) {
+        // Geometries
+        for ( i = 0; i < entity.geometry.faces.length; i++ ) {
+          myFaces.push(entity.geometry.faces[i].a);
+          myFaces.push(entity.geometry.faces[i].b);
+          myFaces.push(entity.geometry.faces[i].c);
+        }
+      } else {
+        // BufferGeometries
+        for ( i = 0; i < vertices.count; i += 3 ) {
+          for ( m = 0; m < 3; m ++ ) {
+            j = i + m + 1;
+            myFaces.push(j);
+          }
+        }
+      }
 
       var entityMesh = {
         vertices: myVertices,
@@ -358,6 +379,10 @@ qx.Class.define("app.wrappers.threeWrapper",
         lines: [],
         points: [],
       };
+
+      console.log(entityMesh.vertices);
+      console.log(entityMesh.triangles);
+      console.log(entityMesh.transform4x4);
 
       return entityMesh;
     },
