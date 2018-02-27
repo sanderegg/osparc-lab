@@ -235,13 +235,13 @@ function importModel(socket_client, model_name) {
     var modelPath;
     switch (model_name) {
       case 'Thelonious':
-        modelPath = "D:/sparc/thelonius_reduced.smash"
+        modelPath = "D:/sparc/thelonius_reduced.smash";
         break;
       case 'Rat':
-        modelPath = "D:/sparc/thelonius_reduced.smash"
+        modelPath = "D:/sparc/ratmodel_reduced.smash";
         break;
       default:
-        modelPath = "D:/sparc/thelonius_reduced.smash"
+        modelPath = "D:/sparc/ratmodel_reduced.smash";
         break;
     }
     modelerClient.ImportModel( modelPath, function(err2, response2) {

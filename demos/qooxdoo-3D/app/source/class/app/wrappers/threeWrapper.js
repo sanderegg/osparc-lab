@@ -314,8 +314,8 @@ qx.Class.define("app.wrappers.threeWrapper",
       }
 
       geom.computeFaceNormals();
-      geom.mergeVertices();
-      geom.computeVertexNormals();
+      //geom.mergeVertices();
+      //geom.computeVertexNormals();
 
       return geom;
     },

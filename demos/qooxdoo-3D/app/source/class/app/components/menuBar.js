@@ -106,6 +106,7 @@ qx.Class.define("app.components.menuBar",
     {
       var modelsMenu = new qx.ui.menu.Menu;
 
+      /*
       {
         var theoButton = new qx.ui.menu.Button("Thelonious", null, null);
         theoButton.addListener("execute", function(e) {
@@ -113,6 +114,7 @@ qx.Class.define("app.components.menuBar",
         }, this);
         modelsMenu.add(theoButton);
       }
+      */
 
       {
         var ratButton = new qx.ui.menu.Button("Rat", null, null);
