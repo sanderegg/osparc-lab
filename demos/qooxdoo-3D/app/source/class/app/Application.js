@@ -154,7 +154,7 @@ qx.Class.define("app.Application",
             "ID": 2,
           },
         ],
-        "UseExternalModeler" : 1,
+        "UseExternalModeler" : 0,
       };
       return myDefaultData;
     },
