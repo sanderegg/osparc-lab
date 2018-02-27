@@ -285,7 +285,7 @@ function booleanOperation(socket_client, entityMeshes, operationType) {
     // Call boolean with the 2 uuid and operation type
     // Get mesh id -> get mesh
     // send it back
-  }
+  });
 }
 
 
