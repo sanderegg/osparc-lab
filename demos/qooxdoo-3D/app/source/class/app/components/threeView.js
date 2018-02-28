@@ -355,11 +355,11 @@ qx.Class.define("app.components.threeView",
       }
     },
 
-    HighlightEntity : function( id )
+    HighlightEntities : function( ids )
     {
       this._unhighlightAll();
       for (var i = 0; i < this._entities.length; i++) {
-        if (this._entities[i].uuid === id) {
+        if (ids.indexOf(this._entities[i].uuid) >= 0) {
           this._entities[i].material.opacity = 0.9;
         }
       }

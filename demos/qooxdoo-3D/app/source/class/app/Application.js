@@ -338,8 +338,8 @@ qx.Class.define("app.Application",
         }, this);
 
         this._entityList.addListener("selectionChanged", function(e) {
-          var entityId = e.getData();
-          this._threeView.HighlightEntity(entityId);
+          var entityIds = e.getData();
+          this._threeView.HighlightEntities(entityIds);
         }, this);
       }
 

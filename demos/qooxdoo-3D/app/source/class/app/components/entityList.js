@@ -29,7 +29,7 @@ qx.Class.define("app.components.entityList",
       backgroundColor: backgroundColor,
       textColor: fontColor
     });
-    this._tree.setSelectionMode("single");
+    this._tree.setSelectionMode("multi");
     this._tree.setWidth(width);
     this._tree.setHeight(height);
 
@@ -45,7 +45,7 @@ qx.Class.define("app.components.entityList",
       height: 30,
       textColor: 'black'
     });
-    remove_button.addListener("execute", this.RemoveEntityPressed.bind(this));
+    remove_button.addListener("execute", this._removeEntityPressed.bind(this));
 
     scroller.add(this._tree);
     this.add(remove_button);
@@ -61,11 +61,37 @@ qx.Class.define("app.components.entityList",
     _tree: null,
 
     _onSelectionChanged : function(e) {
-      if (e.getData().length > 0 && e.getData()[0].id) {
-        this.fireDataEvent("selectionChanged", e.getData()[0].id);
-      } else {
-        this.fireDataEvent("selectionChanged", null);
+      var selected_ids = [];
+      for (var i = 0; i < e.getData().length; i++) {
+        selected_ids.push(e.getData()[i].id);
       }
+      this.fireDataEvent("selectionChanged", selected_ids);
+    },
+
+    _removeEntityPressed : function() {
+      var selectedIds = this.GetSelectedEntityIds();
+      for (var i = 0; i < selectedIds.length; i++) {
+        this.fireDataEvent("removeEntityRequested", selectedIds[i]);
+      }
+    },
+
+    _getSelectedEntities : function() {
+      return this._tree.getSelection();
+    },
+
+    GetSelectedEntityId : function() {
+      if ( this._getSelectedEntities().length > 0 ) {
+        return this._getSelectedEntities()[0].id;
+      }
+      return null;
+    },
+
+    GetSelectedEntityIds : function() {
+      var selectedIds = [];
+      for (var i = 0; i < this._getSelectedEntities().length; i++) {
+        selectedIds.push(this._getSelectedEntities()[i].id);
+      }
+      return selectedIds;
     },
 
     AddEntity : function(id, name) {
@@ -83,12 +109,6 @@ qx.Class.define("app.components.entityList",
       }
     },
 
-    RemoveEntityPressed : function(uuid) {
-      if (this.GetSelectedEntityId()) {
-        this.fireDataEvent("removeEntityRequested", this.GetSelectedEntityId());
-      }
-    },
-
     OnEntitySelectedChanged : function(uuid) {
       if (uuid === null) {
         this._tree.resetSelection();
@@ -99,20 +119,6 @@ qx.Class.define("app.components.entityList",
           }
         }
       }
-    },
-
-    GetSelectedEntity : function() {
-      if ( this._tree.getSelection().length > 0 ) {
-        return this._tree.getSelection()[0];
-      }
-      return null;
-    },
-
-    GetSelectedEntityId : function() {
-      if ( this.GetSelectedEntity() ) {
-        return this.GetSelectedEntity().id;
-      }
-      return null;
     },
   }
 });
