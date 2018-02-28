@@ -246,16 +246,10 @@ qx.Class.define("app.components.threeView",
     {
       for (var i = 0; i < this._entities.length; i++) {
         if (this._entities[i].uuid === uuid) {
-          if (i > -1) {
-            this._entities.splice(i, 1);
-          }
-          break;
+          this.RemoveEntity(this._entities[i]);
+          return;
         }
       }
-
-      this._threeWrapper.RemoveFromSceneById(uuid);
-      this.fireDataEvent("entityRemoved", uuid);
-      this._render();
     },
 
     StartTool : function(myTool)
