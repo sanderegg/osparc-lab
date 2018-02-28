@@ -365,6 +365,7 @@ qx.Class.define("app.wrappers.threeWrapper",
         for ( i = 0; i < vertices.count; i += 3 ) {
           for ( m = 0; m < 3; m ++ ) {
             j = i + m + 1;
+            //j = i + m;
             myFaces.push(j);
           }
         }
