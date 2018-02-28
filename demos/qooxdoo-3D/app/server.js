@@ -282,6 +282,27 @@ function importModel(socket_client, model_name) {
 };
 
 function booleanOperation(socket_client, entityMeshes, operationType) {
+  const testBufferGeometries = false;
+  if (testBufferGeometries) {
+    applicationClient.NewDocument( function(err, response) {
+      let mesh_uuids = [];
+      modelerClient.CreateMesh(entityMeshes[0], '', function(err2, response2) {
+        console.log('uuid3', response2);
+        const get_normals = false;
+        modelerClient.GetEntityMeshes(response2, get_normals, function(err3, response3) {
+          var meshEntity = {
+            type: 'newBooleanOperationRequested',
+            value: response3,
+            uuid: response2,
+            name: 'myMesh'
+          };
+          socket_client.emit('newBooleanOperationRequested', meshEntity);
+        });
+      });
+    });
+    return;
+  }
+
   applicationClient.NewDocument( function(err, response) {
     let mesh_uuids = [];
     modelerClient.CreateMesh(entityMeshes[0], '', function(err2, response2) {
