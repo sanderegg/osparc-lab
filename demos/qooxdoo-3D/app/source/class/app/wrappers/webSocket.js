@@ -43,13 +43,13 @@ qx.Class.define("app.wrappers.webSocket", {
      */
     url: {
       nullable: false,
-      init: "http://" + window.location.hostname,
+      init: "http://".concat(window.location.hostname),
       check: "String"
     },
     /** The port used to connect */
     port: {
       nullable: false,
-      init: 8080,
+      init: Number(window.location.port),
       check: "Number"
     },
     /** The namespace (socket.io namespace), can be empty */

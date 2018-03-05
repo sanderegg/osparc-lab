@@ -6,7 +6,7 @@ const app = express();
 var server = require('http').createServer(app);
 var https = require('https');
 
-const PORT = 8080;
+const PORT = process.env.QXAPPSERVERPORT;
 const APP_PATH = 'source-output/app/'
 const MODELS_PATH = 'resource/models/';
 
