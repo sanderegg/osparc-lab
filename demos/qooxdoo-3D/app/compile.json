@@ -20,7 +20,7 @@
     {
       "class": "app.Application",
       "theme": "app.theme.Theme",
-      "name": "app"
+      "name": "oSPARC"
     }
   ],
 
