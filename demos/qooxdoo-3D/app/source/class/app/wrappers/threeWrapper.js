@@ -273,11 +273,44 @@ qx.Class.define("app.wrappers.threeWrapper",
       return wireframe;
     },
 
-    CreateSphere : function(scale=3, transX=0, transY=0, transZ=0)
+    CreateSphere : function(scale=3, transX=0, transY=0, transZ=0, widthSegments=32, heightSegments=16)
     {
-      var geometry = new THREE.SphereGeometry(scale, 32, 16);
+      var geometry = new THREE.SphereGeometry(scale, widthSegments, heightSegments);
       geometry.translate(transX, transY, transZ);
       return geometry;
+    },
+
+    CreatePoint : function(position)
+    {
+      var sphere_geo = this.CreateSphere(0.07, position.x, position.y, position.z, 8, 8);
+      var sphere = new THREE.Mesh(sphere_geo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      return sphere;
+      /*
+      var starsGeometry = new THREE.Geometry();
+      for ( var i = 0; i < 2; i ++ ) {
+        var pos = new THREE.Vector3();
+        pos.x = position.x + i;
+        pos.y = position.y + i;
+        pos.z = position.z + i;
+        starsGeometry.vertices.push( pos );
+      }
+      var starsMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        //sizeAttenuation: false,
+        //size: 0.5
+      });
+      var sphere = new THREE.Points( starsGeometry, starsMaterial );
+      return sphere;
+      */
+      /*
+      var geometry = new THREE.BufferGeometry();
+      geometry.addAttribute( 'position', position ) );
+      geometry.addAttribute( 'color', 0xff0000 );
+      geometry.computeBoundingSphere();
+      var material = new THREE.PointsMaterial( { size: 15, vertexColors: THREE.VertexColors } );
+      var point = new THREE.Points( geometry, material );
+      return point;
+      */
     },
 
     CreateBox : function(scale=3, transX=0, transY=0, transZ=0)
@@ -443,16 +476,6 @@ qx.Class.define("app.wrappers.threeWrapper",
       }
 
       return plane;
-    },
-
-    CreatePoint : function(xPos, yPos, zPos)
-    {
-      var pointGeometry = new THREE.Geometry();
-      var pointPos = new THREE.Vector3(xPos, yPos, zPos);
-      pointGeometry.vertices.push(pointPos);
-      var pointMaterial = new THREE.PointsMaterial( { color: 0x888888 } );
-      var point = new THREE.Points( pointGeometry, pointMaterial );
-      return point;
     },
 
     CreateTransformControls : function()
