@@ -1,5 +1,6 @@
 /**
- * @asset(resource/three/*)
+ * @asset(oSparc/*)
+ * @asset(three/*)
  * @ignore(THREE)
  */
 
@@ -313,10 +314,13 @@ qx.Class.define("app.wrappers.threeWrapper",
       */
     },
 
-    CreateBox : function(scale=3, transX=0, transY=0, transZ=0)
+    CreateBox : function(point0, point1, point2=null)
     {
-      var geometry = new THREE.BoxGeometry(scale, scale, scale, 4, 4, 4);
-      geometry.translate(transX, transY, transZ);
+      var width = point1.x - point0.x;
+      var height = point1.y - point0.y;
+      var depth = 0;
+      var geometry = new THREE.BoxGeometry(width, height, depth);
+      geometry.translate(point0.x, point0.y, point0.z);
       return geometry;
     },
 

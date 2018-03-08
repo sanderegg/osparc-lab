@@ -1,6 +1,7 @@
 /**
  * This class is a direct link with socketio.
- * @asset(resource/socketio/*)
+ * @asset(oSparc/*)
+ * @asset(socketio/socket.io.js)
  * @ignore(io)
  */
 

@@ -27,5 +27,16 @@
   "libraries": [
     "C:/Users/maiz/AppData/Roaming/npm/node_modules/qxcompiler/node_modules/qooxdoo-sdk/framework",
     "."
-  ]
+  ],
+  
+  "common" : {
+    "add-script" : [
+      {
+	    "uri" : "resource/socketio/socket.io.js"
+      },
+      {
+	    "uri" : "resource/three/*"
+      }
+    ]
+  }
 }
