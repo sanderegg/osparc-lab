@@ -13,6 +13,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
   members : {
     _threeView: null,
     _pointList: [],
+    _controlPoints: [],
     _spline_temp: null,
     _uuid_temp: '',
 
@@ -22,6 +23,7 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
       const fixed_pos = 0;
       this._threeView.AddInvisiblePlane(fixed_axe, fixed_pos);
       this._pointList = [];
+      this._controlPoints = [];
       this._spline_temp = null;
       this._uuid_temp = '';
     },
@@ -54,6 +56,10 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
       {
         var intersect = intersects[0];
         this._pointList.push(intersect.point);
+
+        var control_point = this._threeView._threeWrapper.CreatePoint(intersect.point);
+        this._threeView._threeWrapper.AddEntityToScene(control_point);
+        this._controlPoints.push(control_point);
 
         if (this._pointList.length === 1) {
           var dummy_point = JSON.parse(JSON.stringify(this._pointList[0]));
@@ -100,10 +106,16 @@ qx.Class.define("app.modeler.splineCreatorS4L", {
     _consolidateSpline : function(spline)
     {
       spline.name = "Spline_S4L";
+
+      for (var i = 0; i < this._controlPoints.length; i++) {
+        this._threeView._threeWrapper.RemoveFromScene(this._controlPoints[i]);
+        spline.add(this._controlPoints[i]);
+      }
       this._threeView.AddEntityToScene(spline);
       //this._spline_temp = null;
       this._uuid_temp = '';
-      //this._pointList = [];
+      this._pointList = [];
+      this._controlPoints = [];
       this._threeView.StopTool();
     },
   },
