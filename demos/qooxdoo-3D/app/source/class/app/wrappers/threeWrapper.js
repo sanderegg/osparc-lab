@@ -1,5 +1,4 @@
 /**
- * @asset(oSparc/*)
  * @asset(three/*)
  * @ignore(THREE)
  */
@@ -11,14 +10,14 @@ qx.Class.define("app.wrappers.threeWrapper",
   construct : function()
   {
     // initialize the script loading
-    var three_path = "resource/three/three.min.js";
-    var orbit_path = "resource/three/OrbitControls.js";
-    var transform_path = "resource/three/TransformControls.js";
-    var obj_loader_path = "resource/three/OBJLoader.js";
-    var obj_exporter_path = "resource/three/OBJExporter.js";
-    var gltf_loader_path = "resource/three/GLTFLoader.js";
-    var gltf_exporter_path = "resource/three/GLTFExporter.js";
-    var vtk_loader_path = "resource/three/VTKLoader.js";
+    var three_path = "three/three.min.js";
+    var orbit_path = "three/OrbitControls.js";
+    var transform_path = "three/TransformControls.js";
+    var obj_loader_path = "three/OBJLoader.js";
+    var obj_exporter_path = "three/OBJExporter.js";
+    var gltf_loader_path = "three/GLTFLoader.js";
+    var gltf_exporter_path = "three/GLTFExporter.js";
+    var vtk_loader_path = "three/VTKLoader.js";
     var dynLoader = new qx.util.DynamicScriptLoader([
       three_path,
       orbit_path,
