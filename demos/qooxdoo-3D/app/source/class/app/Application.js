@@ -328,9 +328,24 @@ qx.Class.define("app.Application",
           if (enableMoveTool) {
             var selObjId = this._entityList.GetSelectedEntityId();
             if (selObjId) {
-              this._threeView.StartMoveTool(selObjId);
+              this._threeView.StartMoveTool(selObjId, "translate");
             } else {
               this._availableServicesBar._moveBtn.setValue(false);
+            }
+          } else {
+            this._threeView.StopMoveTool();
+          }
+        }, this);
+
+        this._availableServicesBar.addListener("rotateToolRequested", function(e) {
+          this._threeView.SetSelectionMode(0);
+          var enableRotateTool = e.getData();
+          if (enableRotateTool) {
+            var selObjId = this._entityList.GetSelectedEntityId();
+            if (selObjId) {
+              this._threeView.StartMoveTool(selObjId, "rotate");
+            } else {
+              this._availableServicesBar._rotateBtn.setValue(false);
             }
           } else {
             this._threeView.StopMoveTool();

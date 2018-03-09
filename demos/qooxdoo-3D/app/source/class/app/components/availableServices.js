@@ -28,6 +28,7 @@ qx.Class.define("app.components.availableServices",
   events : {
     "selectionModeChanged": "qx.event.type.Data",
     "moveToolRequested": "qx.event.type.Data",
+    "rotateToolRequested": "qx.event.type.Data",
     "newSphereRequested": "qx.event.type.Data",
     "newBlockRequested": "qx.event.type.Data",
     "newCylinderRequested": "qx.event.type.Data",
@@ -39,6 +40,7 @@ qx.Class.define("app.components.availableServices",
   members: {
     _menubar: null,
     _moveBtn: null,
+    _rotateBtn: null,
     _sphereBtn: null,
     _blockBtn: null,
     _cylinderBtn: null,
@@ -61,8 +63,8 @@ qx.Class.define("app.components.availableServices",
         var menuPart = new qx.ui.toolbar.Part;
         toolbar.add(menuPart);
 
-        var rotate_btn = new qx.ui.toolbar.RadioButton(this.tr("Disabled"));
-        rotate_btn.addListener("execute", function(e) {
+        var disabled_btn = new qx.ui.toolbar.RadioButton(this.tr("Disabled"));
+        disabled_btn.addListener("execute", function(e) {
           this.fireDataEvent("selectionModeChanged", 0);
         }, this);
 
@@ -76,11 +78,11 @@ qx.Class.define("app.components.availableServices",
           this.fireDataEvent("selectionModeChanged", 3);
         }, this);
 
-        menuPart.add(rotate_btn);
+        menuPart.add(disabled_btn);
         menuPart.add(sel_ent_btn);
         menuPart.add(sel_face_btn);
 
-        var radioGroup = new qx.ui.form.RadioGroup(rotate_btn, sel_ent_btn, sel_face_btn);
+        var radioGroup = new qx.ui.form.RadioGroup(disabled_btn, sel_ent_btn, sel_face_btn);
         radioGroup.setAllowEmptySelection(true);
       }
 
@@ -92,7 +94,11 @@ qx.Class.define("app.components.availableServices",
         this._moveBtn = new qx.ui.toolbar.CheckBox(this.tr("Move"));
         this._moveBtn.addListener("execute", this._onMoveToolRequested.bind(this));
 
+        this._rotateBtn = new qx.ui.toolbar.CheckBox(this.tr("Rotate"));
+        this._rotateBtn.addListener("execute", this._onRotateToolRequested.bind(this));
+
         menuPart.add(this._moveBtn);
+        menuPart.add(this._rotateBtn);
       }
 
       // Create standard model
@@ -180,6 +186,10 @@ qx.Class.define("app.components.availableServices",
 
     _onMoveToolRequested : function() {
       this.fireDataEvent("moveToolRequested", this._moveBtn.getValue());
+    },
+
+    _onRotateToolRequested : function() {
+      this.fireDataEvent("rotateToolRequested", this._rotateBtn.getValue());
     },
 
     _onBooleanUniteRequested : function() {

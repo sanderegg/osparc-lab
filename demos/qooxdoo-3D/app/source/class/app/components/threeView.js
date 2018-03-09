@@ -256,13 +256,17 @@ qx.Class.define("app.components.threeView",
       }
     },
 
-    StartMoveTool : function( selObjId )
+    StartMoveTool : function( selObjId, mode )
     {
       for (var i = 0; i < this._entities.length; i++) {
         if (this._entities[i].uuid === selObjId) {
           var transformControl = this._threeWrapper.CreateTransformControls();
           transformControl.addEventListener('change', this._updateTransformControls.bind(this));
-          transformControl.setMode("translate");
+          if (mode === "rotate") {
+            transformControl.setMode("rotate");
+          } else {
+            transformControl.setMode("translate");
+          }
           transformControl.attach(this._entities[i]);
           this._transformControls.push(transformControl);
           this._threeWrapper.AddEntityToScene(transformControl);
