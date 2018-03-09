@@ -36,7 +36,7 @@ qx.Class.define("app.modeler.sphereCreator", {
         if (this._sphere_temp) {
           this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
         }
-        var sphereGeometry = this._threeView._threeWrapper.CreateSphere(temp_radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
+        var sphereGeometry = this._threeView._threeWrapper.CreateSphere(temp_radius, this._centerPoint);
         if (this._sphere_material === null) {
           this._sphere_material = this._threeView._threeWrapper.CreateNewMaterial();
         }
@@ -76,7 +76,7 @@ qx.Class.define("app.modeler.sphereCreator", {
         this._sphere_temp = null;
       }
 
-      var geometry = this._threeView._threeWrapper.CreateSphere(this._radius, this._centerPoint.x, this._centerPoint.y, this._centerPoint.z );
+      var geometry = this._threeView._threeWrapper.CreateSphere(this._radius, this._centerPoint);
       if (this._sphere_material === null) {
         this._sphere_material = this._threeView._threeWrapper.CreateNewMaterial();
       }

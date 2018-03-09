@@ -289,16 +289,16 @@ qx.Class.define("app.wrappers.threeWrapper",
       return wireframe;
     },
 
-    CreateSphere : function(scale=3, transX=0, transY=0, transZ=0, widthSegments=32, heightSegments=16)
+    CreateSphere : function(radius, center, widthSegments=32, heightSegments=16)
     {
-      var geometry = new THREE.SphereGeometry(scale, widthSegments, heightSegments);
-      geometry.translate(transX, transY, transZ);
+      var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+      geometry.translate(center.x, center.y, center.z);
       return geometry;
     },
 
     CreatePoint : function(position)
     {
-      var sphere_geo = this.CreateSphere(0.07, position.x, position.y, position.z, 8, 8);
+      var sphere_geo = this.CreateSphere(0.07, position, 8, 8);
       var sphere = new THREE.Mesh(sphere_geo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
       return sphere;
       /*
