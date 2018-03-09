@@ -224,15 +224,8 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     CreateNewPlaneMaterial : function(red, green, blue)
     {
-      var color;
-      if ( red === undefined || green === undefined || blue === undefined ) {
-        color = this._randomRGBColor();
-      } else {
-        color = 'rgb('+Math.round(255*red)+','+Math.round(255*green)+','+Math.round(255*blue)+')';
-      }
-
-      var material = new THREE.MeshBasicMaterial({
-        color: 0xff0000,
+      var material = new THREE.MeshPhongMaterial({
+        color: Math.random() * 0xffffff,
         side: THREE.DoubleSide
       });
       return material;
@@ -261,6 +254,8 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     _randomRGBColor : function()
     {
+      return Math.random() * 0xffffff;
+      
       var color;
       var rCh = Math.floor((Math.random() * 170) + 80);
       var gCh = Math.floor((Math.random() * 170) + 80);
