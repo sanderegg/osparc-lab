@@ -45,7 +45,6 @@ qx.Class.define("app.modeler.boxCreator", {
       if (intersects.length > 0 )
       {
         var intersect = intersects[0];
-        console.log(intersect.z);
         if (this._nextStep === this._steps.corner1)
         {
           this._removeTemps();
@@ -96,8 +95,6 @@ qx.Class.define("app.modeler.boxCreator", {
           this._nextStep = 3;
         }
       }
-
-      console.log(this._corner0Pos, this._corner1Pos, this._corner2Pos);
 
       return true;
     },

@@ -255,7 +255,7 @@ qx.Class.define("app.wrappers.threeWrapper",
     _randomRGBColor : function()
     {
       return Math.random() * 0xffffff;
-      
+
       var color;
       var rCh = Math.floor((Math.random() * 170) + 80);
       var gCh = Math.floor((Math.random() * 170) + 80);
@@ -345,8 +345,8 @@ qx.Class.define("app.wrappers.threeWrapper",
         var width = Math.abs(point1.x - point0.x);
         var height = Math.abs(point1.y - point0.y);
         var depth = Math.abs(point2.z - point1.z);
-        var originX = Math.min(point0.x, point2.x);
-        var originY = Math.min(point0.y, point2.y);
+        var originX = Math.min(point0.x, point1.x);
+        var originY = Math.min(point0.y, point1.y);
         var originZ = Math.min(point0.z, point2.z);
         var geometry = new THREE.BoxGeometry(width, height, depth);
         geometry.translate(originX + width/2, originY + height/2, originZ + depth/2);
