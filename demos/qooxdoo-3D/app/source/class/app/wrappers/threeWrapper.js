@@ -222,15 +222,27 @@ qx.Class.define("app.wrappers.threeWrapper",
       this._renderer.setSize(width, height);
     },
 
-    CreateNewMaterial : function(red = null, green = null, blue = null)
+    CreateNewPlaneMaterial : function(red, green, blue)
     {
       var color;
-      if (red === null || green  === null || blue === null) {
-        //var randColor = qx.util.ColorUtil.randomColor();
-        var rCh = Math.floor((Math.random() * 170) + 80);
-        var gCh = Math.floor((Math.random() * 170) + 80);
-        var bCh = Math.floor((Math.random() * 170) + 80);
-        color = 'rgb('+rCh+','+gCh+','+bCh+')';
+      if ( red === undefined || green === undefined || blue === undefined ) {
+        color = this._randomRGBColor();
+      } else {
+        color = 'rgb('+Math.round(255*red)+','+Math.round(255*green)+','+Math.round(255*blue)+')';
+      }
+
+      var material = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        side: THREE.DoubleSide
+      });
+      return material;
+    },
+
+    CreateNewMaterial : function(red, green, blue)
+    {
+      var color;
+      if ( red === undefined || green === undefined || blue === undefined ) {
+        color = this._randomRGBColor();
       } else {
         color = 'rgb('+Math.round(255*red)+','+Math.round(255*green)+','+Math.round(255*blue)+')';
       }
@@ -244,8 +256,17 @@ qx.Class.define("app.wrappers.threeWrapper",
         opacity: 0.6,
         vertexColors: THREE.FaceColors,
       });
-
       return material;
+    },
+
+    _randomRGBColor : function()
+    {
+      var color;
+      var rCh = Math.floor((Math.random() * 170) + 80);
+      var gCh = Math.floor((Math.random() * 170) + 80);
+      var bCh = Math.floor((Math.random() * 170) + 80);
+      color = 'rgb('+rCh+','+gCh+','+bCh+')';
+      return color;
     },
 
     CreateMeshNormalMaterial : function()
@@ -313,14 +334,29 @@ qx.Class.define("app.wrappers.threeWrapper",
       */
     },
 
-    CreateBox : function(point0, point1, point2=null)
+    CreateBox : function(point0, point1, point2)
     {
-      var width = point1.x - point0.x;
-      var height = point1.y - point0.y;
-      var depth = 0;
-      var geometry = new THREE.BoxGeometry(width, height, depth);
-      geometry.translate(point0.x, point0.y, point0.z);
-      return geometry;
+      if ( point2 === undefined ) {
+        var width = Math.abs(point1.x - point0.x);
+        var height = Math.abs(point1.y - point0.y);
+        var depth = 0;
+        var originX = Math.min(point0.x, point1.x);
+        var originY = Math.min(point0.y, point1.y);
+        var originZ = Math.min(point0.z, point1.z);
+        var geometry = new THREE.PlaneGeometry( width, height );
+        geometry.translate(originX + width/2, originY + height/2, originZ + depth/2);
+        return geometry;
+      } else {
+        var width = Math.abs(point1.x - point0.x);
+        var height = Math.abs(point1.y - point0.y);
+        var depth = Math.abs(point2.z - point1.z);
+        var originX = Math.min(point0.x, point2.x);
+        var originY = Math.min(point0.y, point2.y);
+        var originZ = Math.min(point0.z, point2.z);
+        var geometry = new THREE.BoxGeometry(width, height, depth);
+        geometry.translate(originX + width/2, originY + height/2, originZ + depth/2);
+        return geometry;
+      }
     },
 
     CreateDodecahedron : function(scale=3, transX=0, transY=0, transZ=0)
@@ -452,29 +488,26 @@ qx.Class.define("app.wrappers.threeWrapper",
 
     CreateInvisiblePlane : function(fixed_axe = 2, fixed_position = 0)
     {
-      var plane = null;
       var planeMaterial = new THREE.MeshBasicMaterial({
         alphaTest: 0,
         visible: false
       });
+      var plane = new THREE.Mesh( new THREE.PlaneBufferGeometry(5000, 5000), planeMaterial );
+
       switch (fixed_axe) {
         case 0:
-          plane = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(fixed_position, 5000, 5000),
-            planeMaterial
-          );
+          plane.geometry.rotateY( Math.PI / 2 );
+          plane.geometry.translate( fixed_position, 0, 0 );
           break;
         case 1:
-          plane = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(5000, fixed_position, 5000),
-            planeMaterial
-          );
+          plane.geometry.rotateZ( Math.PI / 2 );
+          plane.geometry.translate( 0, fixed_position, 0 );
+          break;
+        case 2:
+          //plane.geometry.rotateX( Math.PI / 2 );
+          plane.geometry.translate( 0, 0, fixed_position );
           break;
         default:
-          plane = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(5000, 5000, fixed_position),
-            planeMaterial
-          );
           break;
       }
 
@@ -517,9 +550,9 @@ qx.Class.define("app.wrappers.threeWrapper",
     {
       const grid_size = 20;
       const grid_divisions = 20;
-      const center_line = new THREE.Color(0x666666);
+      const center_line_color = new THREE.Color(0x666666);
       const grid_color = new THREE.Color(0x555555);
-      var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line, grid_color );
+      var gridHelper = new THREE.GridHelper( grid_size, grid_divisions, center_line_color, grid_color );
       // Z up:
       //https://stackoverflow.com/questions/44630265/how-can-i-set-z-up-coordinate-system-in-three-js
       gridHelper.geometry.rotateX( Math.PI / 2 );
