@@ -354,6 +354,20 @@ qx.Class.define("app.wrappers.threeWrapper",
       }
     },
 
+    CreateCylinder : function(center, radius, height)
+    {
+      if ( height === undefined ) {
+        var geometry = new THREE.CircleGeometry( radius, 32 );
+        geometry.translate(center.x, center.y, center.z);
+        return geometry;
+      } else {
+        var geometry = new THREE.CylinderGeometry(radius, radius, height, 16);
+        geometry.rotateX( Math.PI / 2 );
+        geometry.translate(center.x, center.y, height/2);
+        return geometry;
+      }
+    },
+
     CreateDodecahedron : function(scale=3, transX=0, transY=0, transZ=0)
     {
       var geometry = new THREE.DodecahedronGeometry(scale);

@@ -273,6 +273,17 @@ qx.Class.define("app.Application",
           }
         }, this);
 
+        this._availableServicesBar.addListener("newCylinderRequested", function(e) {
+          var enableCylinderTool = e.getData();
+          if (enableCylinderTool) {
+            var useExternalModeler = this._appModel.getUseExternalModeler();
+            var cylinderCreator = new app.modeler.cylinderCreator(this._threeView);
+            this._threeView.StartTool(cylinderCreator);
+          } else {
+            this._threeView.StopTool();
+          }
+        }, this);
+
         this._availableServicesBar.addListener("newSplineRequested", function(e) {
           //this._threeView.SetSelectionMode(0);
           var enableSplineTool = e.getData();

@@ -31,6 +31,7 @@ qx.Class.define("app.components.availableServices",
     "moveToolRequested": "qx.event.type.Data",
     "newSphereRequested": "qx.event.type.Data",
     "newBlockRequested": "qx.event.type.Data",
+    "newCylinderRequested": "qx.event.type.Data",
     "newDodecaRequested": "qx.event.type.Data",
     "newSplineRequested": "qx.event.type.Data",
     "booleanOperationRequested": "qx.event.type.Data",
@@ -41,6 +42,7 @@ qx.Class.define("app.components.availableServices",
     _moveBtn: null,
     _sphereBtn: null,
     _blockBtn: null,
+    _cylinderBtn: null,
     _dodecaBtn: null,
     _splineBtn: null,
 
@@ -105,6 +107,9 @@ qx.Class.define("app.components.availableServices",
         this._blockBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Box"));
         this._blockBtn.addListener("execute", this._onAddBlockRequested.bind(this));
 
+        this._cylinderBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Cylinder"));
+        this._cylinderBtn.addListener("execute", this._onAddCylinderRequested.bind(this));
+
         this._dodecaBtn = new qx.ui.toolbar.Button(this.tr("Add Dodecahedron"));
         this._dodecaBtn.addListener("execute", this._onAddDodecaRequested.bind(this));
 
@@ -113,6 +118,7 @@ qx.Class.define("app.components.availableServices",
 
         menuPart.add(this._sphereBtn);
         menuPart.add(this._blockBtn);
+        menuPart.add(this._cylinderBtn);
         menuPart.add(this._dodecaBtn);
         menuPart.add(this._splineBtn);
       }
@@ -159,6 +165,10 @@ qx.Class.define("app.components.availableServices",
 
     _onAddBlockRequested : function() {
       this.fireDataEvent("newBlockRequested", this._blockBtn.getValue());
+    },
+
+    _onAddCylinderRequested : function() {
+      this.fireDataEvent("newCylinderRequested", this._cylinderBtn.getValue());
     },
 
     _onAddDodecaRequested : function() {
