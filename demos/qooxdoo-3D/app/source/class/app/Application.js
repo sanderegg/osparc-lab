@@ -230,6 +230,17 @@ qx.Class.define("app.Application",
           this._threeView.AddEntity(entityTypeName, 3);
         }, this);
 
+        this._availableServicesBar.addListener("newBlockRequested", function(e) {
+          var enableBoxTool = e.getData();
+          if (enableBoxTool) {
+            var useExternalModeler = this._appModel.getUseExternalModeler();
+            var boxCreator = new app.modeler.boxCreator(this._threeView);
+            this._threeView.StartTool(boxCreator);
+          } else {
+            this._threeView.StopTool();
+          }
+        }, this);
+
         this._availableServicesBar.addListener("newSphereRequested", function(e) {
           var enableSphereTool = e.getData();
           if (enableSphereTool) {

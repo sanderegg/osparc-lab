@@ -188,17 +188,11 @@ qx.Class.define("app.components.threeView",
       this.fireDataEvent("entityAdded", [entity.uuid, entity.name]);
     },
 
-    AddEntity : function(objType = "Sphere", scale = 1)
+    AddEntity : function(objType = "Dodecahedron", scale = 1)
     {
       var geometry;
 
       switch (objType) {
-        case "Sphere":
-          geometry = this._threeWrapper.CreateSphere(scale);
-          break;
-        case "Box":
-          geometry = this._threeWrapper.CreateBox(scale);
-          break;
         case "Dodecahedron":
           geometry = this._threeWrapper.CreateDodecahedron(scale);
           break;

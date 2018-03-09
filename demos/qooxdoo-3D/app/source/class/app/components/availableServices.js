@@ -102,7 +102,7 @@ qx.Class.define("app.components.availableServices",
         this._sphereBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Sphere"));
         this._sphereBtn.addListener("execute", this._onAddSphereRequested, this);
 
-        this._blockBtn = new qx.ui.toolbar.Button(this.tr("Add Box"));
+        this._blockBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Box"));
         this._blockBtn.addListener("execute", this._onAddBlockRequested.bind(this));
 
         this._dodecaBtn = new qx.ui.toolbar.Button(this.tr("Add Dodecahedron"));
@@ -158,7 +158,7 @@ qx.Class.define("app.components.availableServices",
     },
 
     _onAddBlockRequested : function() {
-      this.fireDataEvent("newBasicEntityRequested", "Box");
+      this.fireDataEvent("newBlockRequested", this._blockBtn.getValue());
     },
 
     _onAddDodecaRequested : function() {
