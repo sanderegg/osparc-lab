@@ -225,11 +225,6 @@ qx.Class.define("app.Application",
           this._threeView.SetSelectionMode(selectionMode);
         }, this);
 
-        this._availableServicesBar.addListener("newBasicEntityRequested", function(e) {
-          var entityTypeName = e.getData();
-          this._threeView.AddEntity(entityTypeName, 3);
-        }, this);
-
         this._availableServicesBar.addListener("newBlockRequested", function(e) {
           var enableBoxTool = e.getData();
           if (enableBoxTool) {
@@ -279,6 +274,17 @@ qx.Class.define("app.Application",
             var useExternalModeler = this._appModel.getUseExternalModeler();
             var cylinderCreator = new app.modeler.cylinderCreator(this._threeView);
             this._threeView.StartTool(cylinderCreator);
+          } else {
+            this._threeView.StopTool();
+          }
+        }, this);
+
+        this._availableServicesBar.addListener("newDodecaRequested", function(e) {
+          var enableDodecahedronTool = e.getData();
+          if (enableDodecahedronTool) {
+            var useExternalModeler = this._appModel.getUseExternalModeler();
+            var dodecahedronCreator = new app.modeler.dodecahedronCreator(this._threeView);
+            this._threeView.StartTool(dodecahedronCreator);
           } else {
             this._threeView.StopTool();
           }

@@ -188,29 +188,6 @@ qx.Class.define("app.components.threeView",
       this.fireDataEvent("entityAdded", [entity.uuid, entity.name]);
     },
 
-    AddEntity : function(objType = "Dodecahedron", scale = 1)
-    {
-      var geometry;
-
-      switch (objType) {
-        case "Dodecahedron":
-          geometry = this._threeWrapper.CreateDodecahedron(scale);
-          break;
-        default:
-          break;
-      }
-
-      if (geometry) {
-        var material = this._threeWrapper.CreateNewMaterial();
-        var entity = this._threeWrapper.CreateEntity(geometry, material);
-        entity.name = objType;
-        this.AddEntityToScene(entity);
-        return entity;
-      } else {
-        console.log(name, " not implemented yet");
-      }
-    },
-
     RemoveAll : function()
     {
       for (var i = this._entities.length-1; i >= 0 ; i--) {
