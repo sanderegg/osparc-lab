@@ -414,8 +414,8 @@ qx.Class.define("app.wrappers.threeWrapper",
           vertex.y = vertices.getY( i );
           vertex.z = vertices.getZ( i );
 
-          //// transfrom the vertex to world space
-          //vertex.applyMatrix4( entity.matrixWorld );
+          // transfrom the vertex to world space
+          vertex.applyMatrix4( entity.matrixWorld );
 
           myVertices.push(vertex.x);
           myVertices.push(vertex.y);
