@@ -36,11 +36,14 @@ qx.Class.define("app.modeler.dodecahedronCreator", {
         if (this._dodecahedron_temp) {
           this._threeView._threeWrapper.RemoveFromScene(this._dodecahedron_temp);
         }
-        var dodecahedronGeometry = this._threeView._threeWrapper.CreateDodecahedron( this._centerPoint, temp_radius );
+        var dodecahedronGeometry = this._threeView._threeWrapper.CreateDodecahedron(temp_radius);
         if (this._dodecahedron_material === null) {
           this._dodecahedron_material = this._threeView._threeWrapper.CreateNewMaterial();
         }
         this._dodecahedron_temp = this._threeView._threeWrapper.CreateEntity(dodecahedronGeometry, this._dodecahedron_material);
+
+        this._updatePostion(this._dodecahedron_temp, this._centerPoint);
+
         this._threeView._threeWrapper.AddEntityToScene(this._dodecahedron_temp);
       }
 
@@ -69,6 +72,13 @@ qx.Class.define("app.modeler.dodecahedronCreator", {
       return true;
     },
 
+    _updatePostion : function(mesh, center)
+    {
+      mesh.position.x = center.x;
+      mesh.position.y = center.y;
+      mesh.position.z = center.z;
+    },
+
     _consolidateDodecahedron : function()
     {
       if (this._dodecahedron_temp) {
@@ -76,12 +86,15 @@ qx.Class.define("app.modeler.dodecahedronCreator", {
         this._dodecahedron_temp = null;
       }
 
-      var geometry = this._threeView._threeWrapper.CreateDodecahedron(this._centerPoint, this._radius);
+      var geometry = this._threeView._threeWrapper.CreateDodecahedron(this._radius);
       if (this._dodecahedron_material === null) {
         this._dodecahedron_material = this._threeView._threeWrapper.CreateNewMaterial();
       }
       var entity = this._threeView._threeWrapper.CreateEntity(geometry, this._dodecahedron_material);
       entity.name = "Dodecahedron";
+
+      this._updatePostion(entity, this._centerPoint);
+
       this._threeView.AddEntityToScene(entity);
       this._threeView.StopTool();
     },

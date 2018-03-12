@@ -357,10 +357,9 @@ qx.Class.define("app.wrappers.threeWrapper",
       }
     },
 
-    CreateDodecahedron : function(center, radius)
+    CreateDodecahedron : function(radius)
     {
       var geometry = new THREE.DodecahedronGeometry(radius);
-      geometry.translate(center.x, center.y, center.z);
       return geometry;
     },
 

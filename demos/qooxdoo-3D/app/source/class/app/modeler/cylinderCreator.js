@@ -114,8 +114,6 @@ qx.Class.define("app.modeler.cylinderCreator", {
         mesh.position.y = center.y;
         mesh.position.z = center.z;
       } else {
-        //geometry.rotateX( Math.PI / 2 );
-        //geometry.translate(center.x, center.y, height/2);
         mesh.rotation.x = Math.PI / 2;
         mesh.position.x = center.x;
         mesh.position.y = center.y;
