@@ -335,21 +335,13 @@ qx.Class.define("app.wrappers.threeWrapper",
         var width = Math.abs(point1.x - point0.x);
         var height = Math.abs(point1.y - point0.y);
         var depth = 0;
-        var originX = Math.min(point0.x, point1.x);
-        var originY = Math.min(point0.y, point1.y);
-        var originZ = Math.min(point0.z, point1.z);
         var geometry = new THREE.PlaneGeometry( width, height );
-        geometry.translate(originX + width/2, originY + height/2, originZ + depth/2);
         return geometry;
       } else {
         var width = Math.abs(point1.x - point0.x);
         var height = Math.abs(point1.y - point0.y);
         var depth = Math.abs(point2.z - point1.z);
-        var originX = Math.min(point0.x, point1.x);
-        var originY = Math.min(point0.y, point1.y);
-        var originZ = Math.min(point0.z, point2.z);
         var geometry = new THREE.BoxGeometry(width, height, depth);
-        geometry.translate(originX + width/2, originY + height/2, originZ + depth/2);
         return geometry;
       }
     },

@@ -54,6 +54,9 @@ qx.Class.define("app.modeler.boxCreator", {
             this._plane_material = this._threeView._threeWrapper.CreateNewPlaneMaterial();
           }
           this._square_temp = this._threeView._threeWrapper.CreateEntity(squareGeometry, this._plane_material);
+
+          this._updatePosition( this._square_temp, this._corner0Pos, intersect.point );
+
           this._threeView._threeWrapper.AddEntityToScene(this._square_temp);
         }
         else if (this._nextStep === this._steps.corner2)
@@ -65,6 +68,9 @@ qx.Class.define("app.modeler.boxCreator", {
             this._box_material = this._threeView._threeWrapper.CreateNewMaterial(this._plane_material.color.r, this._plane_material.color.g, this._plane_material.color.b);
           }
           this._box_temp = this._threeView._threeWrapper.CreateEntity(boxGeometry, this._box_material);
+
+          this._updatePosition(this._box_temp, this._corner0Pos, this._corner1Pos, intersect.point);
+
           this._threeView._threeWrapper.AddEntityToScene(this._box_temp);
         }
       }
@@ -99,6 +105,24 @@ qx.Class.define("app.modeler.boxCreator", {
       return true;
     },
 
+    _updatePosition( mesh, p1, p2, p3 )
+    {
+      var width = Math.abs(p2.x - p1.x);
+      var height = Math.abs(p2.y - p1.y);
+      var originX = Math.min(p1.x, p2.x);
+      var originY = Math.min(p1.y, p2.y);
+      if (p3 === undefined) {
+        var depth = Math.abs(p1.z - p2.z);
+        var originZ = Math.min(p1.z, p2.z);
+      } else {
+        var depth = Math.abs(p3.z - p2.z);
+        var originZ = Math.min(p1.z, p3.z);
+      }
+      mesh.position.x = originX + width/2;
+      mesh.position.y = originY + height/2;
+      mesh.position.z = originZ + depth/2;
+    },
+
     _consolidateBox : function()
     {
       this._removeTemps();
@@ -115,6 +139,9 @@ qx.Class.define("app.modeler.boxCreator", {
       }
       var entity = this._threeView._threeWrapper.CreateEntity(geometry, this._box_material);
       entity.name = "Box";
+
+      this._updatePosition(entity, this._corner0Pos, this._corner1Pos, this._corner2Pos);
+
       this._threeView.AddEntityToScene(entity);
       this._threeView.StopTool();
     },
