@@ -50,11 +50,14 @@ qx.Class.define("app.modeler.cylinderCreator", {
           this._removeTemps();
 
           var temp_radius = Math.hypot(intersect.point.x-this._centerPos.x, intersect.point.y-this._centerPos.y);
-          var circleGeometry = this._threeView._threeWrapper.CreateCylinder( this._centerPos, temp_radius );
+          var circleGeometry = this._threeView._threeWrapper.CreateCylinder( temp_radius );
           if (this._plane_material === null) {
             this._plane_material = this._threeView._threeWrapper.CreateNewPlaneMaterial();
           }
           this._circle_temp = this._threeView._threeWrapper.CreateEntity(circleGeometry, this._plane_material);
+
+          this._updatePosition(this._circle_temp, this._centerPos);
+
           this._threeView._threeWrapper.AddEntityToScene(this._circle_temp);
         }
         else if (this._nextStep === this._steps.height)
@@ -62,11 +65,14 @@ qx.Class.define("app.modeler.cylinderCreator", {
           this._removeTemps();
 
           var temp_height = intersect.point.z - this._centerPos.z;
-          var cylinderGeometry = this._threeView._threeWrapper.CreateCylinder( this._centerPos, this._radius, temp_height );
+          var cylinderGeometry = this._threeView._threeWrapper.CreateCylinder( this._radius, temp_height );
           if (this._cylinder_material === null) {
             this._cylinder_material = this._threeView._threeWrapper.CreateNewMaterial(this._plane_material.color.r, this._plane_material.color.g, this._plane_material.color.b);
           }
           this._cylinder_temp = this._threeView._threeWrapper.CreateEntity(cylinderGeometry, this._cylinder_material);
+
+          this._updatePosition(this._cylinder_temp, this._centerPos, temp_height);
+
           this._threeView._threeWrapper.AddEntityToScene(this._cylinder_temp);
         }
       }
@@ -101,6 +107,22 @@ qx.Class.define("app.modeler.cylinderCreator", {
       return true;
     },
 
+    _updatePosition(mesh, center, height)
+    {
+      if (height === undefined) {
+        mesh.position.x = center.x;
+        mesh.position.y = center.y;
+        mesh.position.z = center.z;
+      } else {
+        //geometry.rotateX( Math.PI / 2 );
+        //geometry.translate(center.x, center.y, height/2);
+        mesh.rotation.x = Math.PI / 2;
+        mesh.position.x = center.x;
+        mesh.position.y = center.y;
+        mesh.position.z = height/2;
+      }
+    },
+
     _consolidateCylinder : function()
     {
       this._removeTemps();
@@ -111,12 +133,15 @@ qx.Class.define("app.modeler.cylinderCreator", {
         this._cylinder_temp = null;
       }
 
-      var geometry = this._threeView._threeWrapper.CreateCylinder( this._centerPos, this._radius, this._height );
+      var geometry = this._threeView._threeWrapper.CreateCylinder( this._radius, this._height );
       if (this._cylinder_material === null) {
         this._cylinder_material = this._threeView._threeWrapper.CreateNewMaterial();
       }
       var entity = this._threeView._threeWrapper.CreateEntity(geometry, this._cylinder_material);
       entity.name = "Cylinder";
+
+      this._updatePosition(entity, this._centerPos, this._height);
+
       this._threeView.AddEntityToScene(entity);
       this._threeView.StopTool();
     },
