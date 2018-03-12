@@ -292,7 +292,6 @@ qx.Class.define("app.wrappers.threeWrapper",
     CreateSphere : function(radius, center, widthSegments=32, heightSegments=16)
     {
       var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
-      geometry.translate(center.x, center.y, center.z);
       return geometry;
     },
 
@@ -300,6 +299,9 @@ qx.Class.define("app.wrappers.threeWrapper",
     {
       var sphere_geo = this.CreateSphere(0.07, position, 8, 8);
       var sphere = new THREE.Mesh(sphere_geo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      sphere.position.x = position.x;
+      sphere.position.y = position.y;
+      sphere.position.z = position.z;
       return sphere;
       /*
       var starsGeometry = new THREE.Geometry();

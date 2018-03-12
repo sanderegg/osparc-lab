@@ -36,11 +36,14 @@ qx.Class.define("app.modeler.sphereCreator", {
         if (this._sphere_temp) {
           this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
         }
-        var sphereGeometry = this._threeView._threeWrapper.CreateSphere(temp_radius, this._centerPoint);
+        var sphereGeometry = this._threeView._threeWrapper.CreateSphere(temp_radius);
         if (this._sphere_material === null) {
           this._sphere_material = this._threeView._threeWrapper.CreateNewMaterial();
         }
         this._sphere_temp = this._threeView._threeWrapper.CreateEntity(sphereGeometry, this._sphere_material);
+
+        this._updatePostion(this._sphere_temp, this._centerPoint);
+
         this._threeView._threeWrapper.AddEntityToScene(this._sphere_temp);
       }
 
@@ -69,6 +72,13 @@ qx.Class.define("app.modeler.sphereCreator", {
       return true;
     },
 
+    _updatePostion : function(mesh, center)
+    {
+      mesh.position.x = center.x;
+      mesh.position.y = center.y;
+      mesh.position.z = center.z;
+    },
+
     _consolidateSphere : function()
     {
       if (this._sphere_temp) {
@@ -76,12 +86,15 @@ qx.Class.define("app.modeler.sphereCreator", {
         this._sphere_temp = null;
       }
 
-      var geometry = this._threeView._threeWrapper.CreateSphere(this._radius, this._centerPoint);
+      var geometry = this._threeView._threeWrapper.CreateSphere(this._radius);
       if (this._sphere_material === null) {
         this._sphere_material = this._threeView._threeWrapper.CreateNewMaterial();
       }
       var entity = this._threeView._threeWrapper.CreateEntity(geometry, this._sphere_material);
       entity.name = "Sphere";
+
+      this._updatePostion(entity, this._centerPoint);
+
       this._threeView.AddEntityToScene(entity);
       this._threeView.StopTool();
     },
