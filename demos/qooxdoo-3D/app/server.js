@@ -209,7 +209,7 @@ function importScene(socket_client, active_user) {
 };
 
 function exportScene(socket_client, active_user, scene_json) {
-  const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.json';
+  const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.glTF';
   console.log('export Scene to: ', models_dir);
   var content = JSON.stringify(scene_json);
   var fs = require('fs');

@@ -151,7 +151,7 @@ qx.Class.define("app.wrappers.threeWrapper",
       });
     },
 
-    ExportScene : function ()
+    ExportScene : function (downloadScene = false)
     {
       var options = {
         binary: false,
@@ -160,8 +160,22 @@ qx.Class.define("app.wrappers.threeWrapper",
       var scope = this;
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( this._scene, function ( gltf ) {
-        scope.fireDataEvent("sceneToBeExported", gltf);
+        if (downloadScene) {
+          scope._downloadJSON(gltf, "myScene.gltf");
+        } else {
+          scope.fireDataEvent("sceneToBeExported", gltf);
+        }
       }, options );
+    },
+
+    _downloadJSON : function(exportObj, fileName)
+    {
+      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href",     dataStr);
+      downloadAnchorNode.setAttribute("download", fileName);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
     },
 
     RemoveFromScene : function(objFromScene)

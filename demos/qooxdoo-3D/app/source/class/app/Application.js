@@ -198,7 +198,13 @@ qx.Class.define("app.Application",
         }, this);
 
         this._menuBar.addListener("fileSaveScenePressed", function(e) {
-          this._threeView.SerializeScene();
+          const donwloadFile = false;
+          this._threeView.SerializeScene(donwloadFile);
+        }, this);
+
+        this._menuBar.addListener("fileDownloadScenePressed", function(e) {
+          const donwloadFile = true;
+          this._threeView.SerializeScene(donwloadFile);
         }, this);
 
         this._menuBar.addListener("fileLoadModelPressed", function(e) {
