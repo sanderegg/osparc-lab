@@ -166,6 +166,36 @@ qx.Class.define("app.wrappers.threeWrapper",
       );
     },
 
+    CreateSceneWithMeshes : function(mesh_ids)
+    {
+      var downloadScene = true;
+      var options = {
+        binary: true,
+      };
+
+      var myMeshes = [];
+      for (var i = 0; i < this._scene.children.length; i++) {
+        if (mesh_ids.includes(this._scene.children[i].uuid)) {
+          myMeshes.push(this._scene.children[i]);
+        }
+      }
+
+      var scope = this;
+      var glTFExporter = new THREE.GLTFExporter();
+      glTFExporter.parse( myMeshes,
+        function ( gltf ) {
+          if (downloadScene) {
+            if (options.binary) {
+              scope._downloadBinJSON(gltf, "mySimpleScene.glb");
+            } else {
+              scope._downloadJSON(gltf, "mySimpleScene.gltf");
+            }
+          } else {
+            scope.fireDataEvent("sceneToBeExported", gltf);
+          }
+        }, options );
+    },
+
     ExportScene : function (downloadScene = false, exportSceneAsBinary = false)
     {
       var options = {
