@@ -111,26 +111,17 @@ qx.Class.define("app.components.menuBar",
 
     getModelsList : function()
     {
+      var modelsList = ["Rat"];
+      //modelsList.push("Thelonious");
+
       var modelsMenu = new qx.ui.menu.Menu;
-
-      /*
-      {
-        var theoButton = new qx.ui.menu.Button("Thelonious", null, null);
-        theoButton.addListener("execute", function(e) {
-          this.fireDataEvent("fileLoadModelPressed", "Thelonious");
+      for (var i = 0; i < modelsList.length; i++) {
+        var modelButton = new qx.ui.menu.Button(modelsList[i], null, null);
+        modelButton.addListener("execute", function(e) {
+          this.fireDataEvent("fileLoadModelPressed", modelsList[i]);
         }, this);
-        modelsMenu.add(theoButton);
+        modelsMenu.add(modelButton);
       }
-      */
-
-      {
-        var ratButton = new qx.ui.menu.Button("Rat", null, null);
-        ratButton.addListener("execute", function(e) {
-          this.fireDataEvent("fileLoadModelPressed", "Rat");
-        }, this);
-        modelsMenu.add(ratButton);
-      }
-
       return modelsMenu;
     },
 
