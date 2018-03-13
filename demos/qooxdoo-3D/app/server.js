@@ -193,7 +193,7 @@ function importScene(socket_client, active_user) {
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
     const file_path = models_dir +'/'+ file;
-    if (file === 'myScene.glTF') {
+    if (file === 'myScene.gltf') {
       fs.readFile(file_path, function (err, data) {
         if (err)
           throw err;
@@ -209,7 +209,7 @@ function importScene(socket_client, active_user) {
 };
 
 function exportScene(socket_client, active_user, scene_json) {
-  const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.glTF';
+  const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.gltf';
   console.log('export Scene to: ', models_dir);
   var content = JSON.stringify(scene_json);
   var fs = require('fs');
