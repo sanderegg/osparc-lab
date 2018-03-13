@@ -193,7 +193,7 @@ function importScene(socket_client, active_user) {
   var fs = require("fs");
   fs.readdirSync(models_dir).forEach(file => {
     const file_path = models_dir +'/'+ file;
-    if (file === 'myScene.json') {
+    if (file === 'myScene.glTF') {
       fs.readFile(file_path, function (err, data) {
         if (err)
           throw err;
