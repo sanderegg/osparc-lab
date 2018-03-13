@@ -147,8 +147,17 @@ qx.Class.define("app.wrappers.threeWrapper",
       var glTFLoader = new THREE.GLTFLoader();
       glTFLoader.parse(model_buffer, null,
         function( myScene ) {
-          scope._scene.add(myScene.scene);
-          scope.Render();
+          const onlyMeshes = true;
+          if (onlyMeshes) {
+            for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
+              if (myScene.scene.children[i].type === 'Mesh') {
+                scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
+              }
+            }
+          } else {
+            scope._scene.add(myScene.scene);
+            scope.Render();
+          }
         },
         function ( error ) {
           console.log( 'An error happened' );
