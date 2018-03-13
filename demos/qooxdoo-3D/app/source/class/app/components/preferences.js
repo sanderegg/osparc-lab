@@ -109,6 +109,16 @@ qx.Class.define("app.components.preferences",
       form.add(useExternalModelerBox, this.tr("Use external modeler"));
 
 
+      var exportSceneAsBinary = this._model.getExportSceneAsBinary();
+      var exportSceneAsBinaryBox = new qx.ui.form.CheckBox();
+      exportSceneAsBinaryBox.setValue(Boolean(exportSceneAsBinary));
+      exportSceneAsBinaryBox.addListener("changeValue", function(e) {
+        var useBinary = e.getData();
+        this._model.setExportSceneAsBinary(useBinary);
+      }, this);
+      form.add(exportSceneAsBinaryBox, this.tr("Export scenes in binary format"));
+
+
       return form;
     },
 

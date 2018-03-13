@@ -384,9 +384,9 @@ qx.Class.define("app.components.threeView",
       this._threeWrapper.ImportSceneFromBuffer(model_buffer);
     },
 
-    SerializeScene : function(downloadFile)
+    SerializeScene : function(downloadFile, exportSceneAsBinary)
     {
-      this._threeWrapper.ExportScene(downloadFile);
+      this._threeWrapper.ExportScene(downloadFile, exportSceneAsBinary);
     },
   }
 });

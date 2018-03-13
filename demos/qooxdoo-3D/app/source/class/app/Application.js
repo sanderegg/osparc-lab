@@ -155,6 +155,7 @@ qx.Class.define("app.Application",
           },
         ],
         "UseExternalModeler" : 0,
+        "ExportSceneAsBinary" : 0,
       };
       return myDefaultData;
     },
@@ -199,12 +200,14 @@ qx.Class.define("app.Application",
 
         this._menuBar.addListener("fileSaveScenePressed", function(e) {
           const donwloadFile = false;
-          this._threeView.SerializeScene(donwloadFile);
+          const exportSceneAsBinary = this._appModel.getExportSceneAsBinary();
+          this._threeView.SerializeScene(donwloadFile, exportSceneAsBinary);
         }, this);
 
         this._menuBar.addListener("fileDownloadScenePressed", function(e) {
           const donwloadFile = true;
-          this._threeView.SerializeScene(donwloadFile);
+          const exportSceneAsBinary = this._appModel.getExportSceneAsBinary();
+          this._threeView.SerializeScene(donwloadFile, exportSceneAsBinary);
         }, this);
 
         this._menuBar.addListener("fileLoadModelPressed", function(e) {
