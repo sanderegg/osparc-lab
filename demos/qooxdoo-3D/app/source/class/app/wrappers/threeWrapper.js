@@ -145,10 +145,15 @@ qx.Class.define("app.wrappers.threeWrapper",
     {
       var scope = this;
       var glTFLoader = new THREE.GLTFLoader();
-      glTFLoader.parse(model_buffer, null, function( myScene ) {
-        scope._scene.add(myScene.scene);
-        scope.Render();
-      });
+      glTFLoader.parse(model_buffer, null,
+        function( myScene ) {
+          scope._scene.add(myScene.scene);
+          scope.Render();
+        },
+        function ( error ) {
+          console.log( 'An error happened' );
+        }
+      );
     },
 
     ExportScene : function (downloadScene = false)
@@ -159,13 +164,18 @@ qx.Class.define("app.wrappers.threeWrapper",
 
       var scope = this;
       var glTFExporter = new THREE.GLTFExporter();
-      glTFExporter.parse( this._scene, function ( gltf ) {
-        if (downloadScene) {
-          scope._downloadJSON(gltf, "myScene.gltf");
-        } else {
-          scope.fireDataEvent("sceneToBeExported", gltf);
-        }
-      }, options );
+      glTFExporter.parse( this._scene,
+        function ( gltf ) {
+          if (downloadScene) {
+            if (options.binary) {
+              scope._downloadJSON(gltf, "myScene.glb");
+            } else {
+              scope._downloadJSON(gltf, "myScene.gltf");
+            }
+          } else {
+            scope.fireDataEvent("sceneToBeExported", gltf);
+          }
+        }, options );
     },
 
     _downloadJSON : function(exportObj, fileName)
