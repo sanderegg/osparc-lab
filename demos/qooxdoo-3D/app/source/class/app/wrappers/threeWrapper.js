@@ -150,7 +150,8 @@ qx.Class.define("app.wrappers.threeWrapper",
           const onlyMeshes = true;
           if (onlyMeshes) {
             for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
-              if (myScene.scene.children[i].type === 'Mesh') {
+              if (myScene.scene.children[i].type === 'Mesh' ||
+                  myScene.scene.children[i].type === 'Line') {
                 scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
               }
             }
