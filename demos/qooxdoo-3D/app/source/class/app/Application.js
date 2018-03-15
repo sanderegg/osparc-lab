@@ -364,6 +364,12 @@ qx.Class.define("app.Application",
         this._availableServicesBar.addListener("booleanOperationRequested", function(e) {
           var operationType = e.getData();
           if (this._threeView._entities.length>1) {
+            var entityMeshesIDs = this._entityList._entities.GetSelectedEntityIds();
+            if (entityMeshesIDs.length>1) {
+              this._threeView._threeWrapper.CreateSceneWithMeshes(entityMeshesIDs);
+              return;
+            }
+
             var entityMeshes = [];
             for (var i = 0; i < 2; i++) {
               var entityMesh = this._threeView._threeWrapper.FromEntityToEntityMesh(this._threeView._entities[i]);
