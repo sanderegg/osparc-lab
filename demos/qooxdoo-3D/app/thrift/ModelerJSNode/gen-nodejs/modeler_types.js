@@ -11,8 +11,9 @@ var Q = thrift.Q;
 
 
 var ttypes = module.exports = {};
-ttypes.MeshFileFormat = {
-  'GLTF' : 0
+ttypes.SceneFileFormat = {
+  'GLTF' : 0,
+  'GLB' : 1
 };
 ttypes.BooleanOperationType = {
   'UNITE' : 0,
