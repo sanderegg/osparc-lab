@@ -12,7 +12,7 @@ var Q = thrift.Q;
 
 var ttypes = module.exports = {};
 ttypes.MeshFileFormat = {
-  'OBJ' : 0
+  'GLTF' : 0
 };
 ttypes.BooleanOperationType = {
   'UNITE' : 0,
@@ -25,6 +25,72 @@ ttypes.EntityFilterType = {
   'BODY' : 2,
   'BODY_AND_MESH' : 3
 };
+var ApiVersion = module.exports.ApiVersion = function(args) {
+  this.major = 0;
+  this.minor = 1;
+  if (args) {
+    if (args.major !== undefined && args.major !== null) {
+      this.major = args.major;
+    }
+    if (args.minor !== undefined && args.minor !== null) {
+      this.minor = args.minor;
+    }
+  }
+};
+ApiVersion.prototype = {};
+ApiVersion.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.major = input.readI32();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.I32) {
+        this.minor = input.readI32();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+ApiVersion.prototype.write = function(output) {
+  output.writeStructBegin('ApiVersion');
+  if (this.major !== null && this.major !== undefined) {
+    output.writeFieldBegin('major', Thrift.Type.I32, 1);
+    output.writeI32(this.major);
+    output.writeFieldEnd();
+  }
+  if (this.minor !== null && this.minor !== undefined) {
+    output.writeFieldBegin('minor', Thrift.Type.I32, 2);
+    output.writeI32(this.minor);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 var Entity = module.exports.Entity = function(args) {
   this.name = null;
   this.uuid = null;
@@ -741,7 +807,7 @@ EntityMesh.prototype.write = function(output) {
   return;
 };
 
-var EncodedMesh = module.exports.EncodedMesh = function(args) {
+var EncodedScene = module.exports.EncodedScene = function(args) {
   this.fileType = null;
   this.data = null;
   if (args) {
@@ -753,8 +819,8 @@ var EncodedMesh = module.exports.EncodedMesh = function(args) {
     }
   }
 };
-EncodedMesh.prototype = {};
-EncodedMesh.prototype.read = function(input) {
+EncodedScene.prototype = {};
+EncodedScene.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -790,8 +856,8 @@ EncodedMesh.prototype.read = function(input) {
   return;
 };
 
-EncodedMesh.prototype.write = function(output) {
-  output.writeStructBegin('EncodedMesh');
+EncodedScene.prototype.write = function(output) {
+  output.writeStructBegin('EncodedScene');
   if (this.fileType !== null && this.fileType !== undefined) {
     output.writeFieldBegin('fileType', Thrift.Type.I32, 1);
     output.writeI32(this.fileType);
