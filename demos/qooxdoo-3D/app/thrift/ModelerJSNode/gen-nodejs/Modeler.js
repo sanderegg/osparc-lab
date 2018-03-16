@@ -1644,13 +1644,9 @@ Modeler_GetEntitiesEncodedScene_result.prototype.write = function(output) {
 
 var Modeler_CreateEntitiesFromScene_args = function(args) {
   this.scene = null;
-  this.format = 0;
   if (args) {
     if (args.scene !== undefined && args.scene !== null) {
       this.scene = new ttypes.EncodedScene(args.scene);
-    }
-    if (args.format !== undefined && args.format !== null) {
-      this.format = args.format;
     }
   }
 };
@@ -1676,13 +1672,9 @@ Modeler_CreateEntitiesFromScene_args.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
-      case 2:
-      if (ftype == Thrift.Type.I32) {
-        this.format = input.readI32();
-      } else {
+      case 0:
         input.skip(ftype);
-      }
-      break;
+        break;
       default:
         input.skip(ftype);
     }
@@ -1697,11 +1689,6 @@ Modeler_CreateEntitiesFromScene_args.prototype.write = function(output) {
   if (this.scene !== null && this.scene !== undefined) {
     output.writeFieldBegin('scene', Thrift.Type.STRUCT, 1);
     this.scene.write(output);
-    output.writeFieldEnd();
-  }
-  if (this.format !== null && this.format !== undefined) {
-    output.writeFieldBegin('format', Thrift.Type.I32, 2);
-    output.writeI32(this.format);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -3029,7 +3016,7 @@ ModelerClient.prototype.recv_GetEntitiesEncodedScene = function(input,mtype,rseq
   }
   return callback('GetEntitiesEncodedScene failed: unknown result');
 };
-ModelerClient.prototype.CreateEntitiesFromScene = function(scene, format, callback) {
+ModelerClient.prototype.CreateEntitiesFromScene = function(scene, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
     var _defer = Q.defer();
@@ -3040,20 +3027,19 @@ ModelerClient.prototype.CreateEntitiesFromScene = function(scene, format, callba
         _defer.resolve(result);
       }
     };
-    this.send_CreateEntitiesFromScene(scene, format);
+    this.send_CreateEntitiesFromScene(scene);
     return _defer.promise;
   } else {
     this._reqs[this.seqid()] = callback;
-    this.send_CreateEntitiesFromScene(scene, format);
+    this.send_CreateEntitiesFromScene(scene);
   }
 };
 
-ModelerClient.prototype.send_CreateEntitiesFromScene = function(scene, format) {
+ModelerClient.prototype.send_CreateEntitiesFromScene = function(scene) {
   var output = new this.pClass(this.output);
   output.writeMessageBegin('CreateEntitiesFromScene', Thrift.MessageType.CALL, this.seqid());
   var params = {
-    scene: scene,
-    format: format
+    scene: scene
   };
   var args = new Modeler_CreateEntitiesFromScene_args(params);
   args.write(output);
@@ -3800,8 +3786,8 @@ ModelerProcessor.prototype.process_CreateEntitiesFromScene = function(seqid, inp
   var args = new Modeler_CreateEntitiesFromScene_args();
   args.read(input);
   input.readMessageEnd();
-  if (this._handler.CreateEntitiesFromScene.length === 2) {
-    Q.fcall(this._handler.CreateEntitiesFromScene.bind(this._handler), args.scene, args.format)
+  if (this._handler.CreateEntitiesFromScene.length === 1) {
+    Q.fcall(this._handler.CreateEntitiesFromScene.bind(this._handler), args.scene)
       .then(function(result) {
         var result_obj = new Modeler_CreateEntitiesFromScene_result({success: result});
         output.writeMessageBegin("CreateEntitiesFromScene", Thrift.MessageType.REPLY, seqid);
@@ -3817,7 +3803,7 @@ ModelerProcessor.prototype.process_CreateEntitiesFromScene = function(seqid, inp
         output.flush();
       });
   } else {
-    this._handler.CreateEntitiesFromScene(args.scene, args.format, function (err, result) {
+    this._handler.CreateEntitiesFromScene(args.scene, function (err, result) {
       var result_obj;
       if ((err === null || typeof err === 'undefined')) {
         result_obj = new Modeler_CreateEntitiesFromScene_result((err !== null || typeof err === 'undefined') ? err : {success: result});
