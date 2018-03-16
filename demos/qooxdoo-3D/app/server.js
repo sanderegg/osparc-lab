@@ -238,7 +238,7 @@ function importModel(socket_client, model_name) {
         modelPath = "D:/sparc/thelonius_reduced.smash";
         break;
       case 'Rat':
-        modelPath = "D:/sparc/ratmodel_simplified.sat";
+        modelPath = "D:/sparc/ratmodel_simplified.smash";
         break;
       case 'BigRat':
         modelPath = "D:/sparc/Rat_Male_567g_v2.0b02.sat";
@@ -249,9 +249,10 @@ function importModel(socket_client, model_name) {
     }
     console.log('Importing', model_name);
     modelerClient.ImportModel( modelPath, function(err2, response2) {
+      console.log('Importing path', modelPath);
       modelerClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH, function(err3, response3) {
         console.log('Total meshes', response3.length);
-        let listOfEncodedScenes = [];
+        
         let nMeshes = response3.length;
         for (let i = 0; i <nMeshes ; i++) {
           let mesh_id = response3[i].uuid;
@@ -262,11 +263,20 @@ function importModel(socket_client, model_name) {
               type: 'importModelScene',
               value: response4.data
             };
-            listOfEncodedScenes.push(encodedScene);
-            //socket_client.emit('importModelScene', meshEntity);
-            console.log(i);
-            if (i === nMeshes-1) {
-              sendEncodedScenesToTheClient(socket_client, listOfEncodedScenes);
+            var storeAllInServerFirst = false;
+            if (storeAllInServerFirst)
+            {
+              let listOfEncodedScenes = [];
+              listOfEncodedScenes.push(encodedScene);
+              //socket_client.emit('importModelScene', meshEntity);
+              console.log(i);
+              if (i === nMeshes-1) {
+                sendEncodedScenesToTheClient(socket_client, listOfEncodedScenes);
+              }
+            }
+            else
+            {
+              sendEncodedScenesToTheClient(socket_client, [encodedScene]);
             }
           });
         }
