@@ -1,0 +1,147 @@
+#: qxapp.components.menuBar:51
+msgid "File"
+msgstr ""
+
+#: qxapp.components.menuBar:52
+msgid "Edit"
+msgstr ""
+
+#: qxapp.components.menuBar:53
+msgid "View"
+msgstr ""
+
+#: qxapp.components.menuBar:54
+msgid "Help"
+msgstr ""
+
+#: qxapp.components.menuBar:69
+msgid "New"
+msgstr ""
+
+#: qxapp.components.menuBar:70
+msgid "Load entities"
+msgstr ""
+
+#: qxapp.components.menuBar:71
+msgid "Save entities"
+msgstr ""
+
+#: qxapp.components.menuBar:72
+msgid "Load scene"
+msgstr ""
+
+#: qxapp.components.menuBar:73
+msgid "Save scene"
+msgstr ""
+
+#: app.components.menuBar:73
+msgid "Load ViP"
+msgstr ""
+
+#: qxapp.components.availableServices:66
+msgid "Disabled"
+msgstr ""
+
+#: qxapp.components.availableServices:71
+msgid "Select entity"
+msgstr ""
+
+#: qxapp.components.availableServices:76
+msgid "Select face"
+msgstr ""
+
+#: qxapp.components.availableServices:94
+msgid "Move"
+msgstr ""
+
+#: qxapp.components.availableServices:109
+msgid "Add Sphere"
+msgstr ""
+
+#: qxapp.components.availableServices:112
+msgid "Add Box"
+msgstr ""
+
+#: qxapp.components.availableServices:118
+msgid "Add Dodecahedron"
+msgstr ""
+
+#: qxapp.components.entityList:9
+msgid "Entity List"
+msgstr ""
+
+#: qxapp.components.entityList:42
+msgid "Remove entity"
+msgstr ""
+
+#: qxapp.components.preferences:9
+msgid "Preferences"
+msgstr "Ezarpenak"
+
+#: qxapp.components.preferences:129
+msgid "Cancel"
+msgstr "Atzera"
+
+#: qxapp.components.preferences:137
+msgid "Accept"
+msgstr "Onartu"
+
+#: qxapp.components.preferences:75
+msgid "Language"
+msgstr "Hizkuntza"
+
+#: qxapp.components.preferences:99
+msgid "User"
+msgstr "Erabiltzailea"
+
+#: qxapp.components.userMenu:15
+msgid "Hello, "
+msgstr "Kaixo, "
+
+#: app.components.propertiesView:9
+msgid "Properties"
+msgstr ""
+
+#: qxapp.components.availableServices:121
+msgid "Add Spline"
+msgstr ""
+
+#: qx.ui.form.validation.Manager:37
+msgid "This field is required"
+msgstr ""
+
+#: qxapp.components.preferences:109
+msgid "Use external modeler"
+msgstr "Erabili kanpoko modelatzailea"
+
+#: qxapp.components.availableServices:148
+msgid "Unite"
+msgstr ""
+
+#: qxapp.components.availableServices:149
+msgid "Intersect"
+msgstr ""
+
+#: qxapp.components.availableServices:150
+msgid "Substract"
+msgstr ""
+
+#: qxapp.components.menuBar:75
+msgid "Load Models"
+msgstr ""
+
+#: qxapp.components.menuBar:74
+msgid "Download scene"
+msgstr ""
+
+#: qxapp.components.availableServices:97
+msgid "Rotate"
+msgstr ""
+
+#: qxapp.components.availableServices:115
+msgid "Add Cylinder"
+msgstr ""
+
+#: qxapp.components.preferences:119
+msgid "Export scenes in binary format"
+msgstr ""
