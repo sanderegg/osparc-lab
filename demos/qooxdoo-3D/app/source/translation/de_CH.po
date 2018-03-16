@@ -1,36 +1,36 @@
-#: app.components.menuBar:50
+#: app.components.menuBar:51
 msgid "File"
 msgstr ""
 
-#: app.components.menuBar:51
+#: app.components.menuBar:52
 msgid "Edit"
 msgstr ""
 
-#: app.components.menuBar:52
+#: app.components.menuBar:53
 msgid "View"
 msgstr ""
 
-#: app.components.menuBar:53
+#: app.components.menuBar:54
 msgid "Help"
 msgstr ""
 
-#: app.components.menuBar:68
+#: app.components.menuBar:69
 msgid "New"
 msgstr ""
 
-#: app.components.menuBar:69
+#: app.components.menuBar:70
 msgid "Load entities"
 msgstr ""
 
-#: app.components.menuBar:70
+#: app.components.menuBar:71
 msgid "Save entities"
 msgstr ""
 
-#: app.components.menuBar:71
+#: app.components.menuBar:72
 msgid "Load scene"
 msgstr ""
 
-#: app.components.menuBar:72
+#: app.components.menuBar:73
 msgid "Save scene"
 msgstr ""
 
@@ -38,31 +38,31 @@ msgstr ""
 msgid "Load ViP"
 msgstr ""
 
-#: app.components.availableServices:63
+#: app.components.availableServices:66
 msgid "Disabled"
 msgstr ""
 
-#: app.components.availableServices:68
+#: app.components.availableServices:71
 msgid "Select entity"
 msgstr ""
 
-#: app.components.availableServices:73
+#: app.components.availableServices:76
 msgid "Select face"
 msgstr ""
 
-#: app.components.availableServices:91
+#: app.components.availableServices:94
 msgid "Move"
 msgstr ""
 
-#: app.components.availableServices:102
+#: app.components.availableServices:109
 msgid "Add Sphere"
 msgstr ""
 
-#: app.components.availableServices:105
+#: app.components.availableServices:112
 msgid "Add Box"
 msgstr ""
 
-#: app.components.availableServices:108
+#: app.components.availableServices:118
 msgid "Add Dodecahedron"
 msgstr ""
 
@@ -78,11 +78,11 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
-#: app.components.preferences:119
+#: app.components.preferences:129
 msgid "Cancel"
 msgstr ""
 
-#: app.components.preferences:127
+#: app.components.preferences:137
 msgid "Accept"
 msgstr ""
 
@@ -102,7 +102,7 @@ msgstr "Grüezi, "
 msgid "Properties"
 msgstr ""
 
-#: app.components.availableServices:111
+#: app.components.availableServices:121
 msgid "Add Spline"
 msgstr ""
 
@@ -114,18 +114,34 @@ msgstr ""
 msgid "Use external modeler"
 msgstr ""
 
-#: app.components.availableServices:137
+#: app.components.availableServices:148
 msgid "Unite"
 msgstr ""
 
-#: app.components.availableServices:138
+#: app.components.availableServices:149
 msgid "Intersect"
 msgstr ""
 
-#: app.components.availableServices:139
+#: app.components.availableServices:150
 msgid "Substract"
 msgstr ""
 
-#: app.components.menuBar:73
+#: app.components.menuBar:75
 msgid "Load Models"
+msgstr ""
+
+#: app.components.menuBar:74
+msgid "Download scene"
+msgstr ""
+
+#: app.components.availableServices:97
+msgid "Rotate"
+msgstr ""
+
+#: app.components.availableServices:115
+msgid "Add Cylinder"
+msgstr ""
+
+#: app.components.preferences:119
+msgid "Export scenes in binary format"
 msgstr ""
