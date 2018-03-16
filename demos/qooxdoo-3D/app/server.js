@@ -137,10 +137,10 @@ io.on('connection', function(socket_client) {
     });
   });
 
-  socket_client.on('newBooleanOperationRequested', function(entityMeshes_operationType) {
-    var entityMeshes = entityMeshes_operationType[0];
-    var operationType = entityMeshes_operationType[1];
-    booleanOperation(socket_client, entityMeshes, operationType);
+  socket_client.on('newBooleanOperationRequested', function(entityMeshesScene_operationType) {
+    var entityMeshesScene = entityMeshesScene_operationType[0];
+    var operationType = entityMeshesScene_operationType[1];
+    booleanOperation(socket_client, entityMeshesScene, operationType);
   });
 });
 
@@ -299,50 +299,19 @@ function importModel(socket_client, model_name) {
   }
 };
 
-function booleanOperation(socket_client, entityMeshes, operationType) {
-  const testBufferGeometries = false;
-  if (testBufferGeometries) {
-    applicationClient.NewDocument( function(err, response) {
-      let mesh_uuids = [];
-      modelerClient.CreateMesh(entityMeshes[0], '', function(err2, response2) {
-        console.log('uuid3', response2);
-        const get_normals = false;
-        modelerClient.GetEntityMeshes(response2, get_normals, function(err3, response3) {
-          var meshEntity = {
-            type: 'newBooleanOperationRequested',
-            value: response3,
-            uuid: response2,
-            name: 'myMesh'
-          };
-          socket_client.emit('newBooleanOperationRequested', meshEntity);
-        });
-      });
-    });
-    return;
+function booleanOperation(socket_client, entityMeshesScene, operationType) {
+  var myEncodedScene = {
+    fileType: thrModelerTypes.SceneFileFormat.GLTF,
+    data: entityMeshesScene
   }
-
-  applicationClient.NewDocument( function(err, response) {
-    let mesh_uuids = [];
-    modelerClient.CreateMesh(entityMeshes[0], '', function(err2, response2) {
-      console.log('uuid1', response2);
-      mesh_uuids.push(response2);
-      modelerClient.CreateMesh(entityMeshes[1], '', function(err3, response3) {
-        console.log('uuid2', response3);
-        mesh_uuids.push(response3);
-        console.log('operationType', operationType);
-        modelerClient.BooleanOperation(mesh_uuids, operationType, function(err4, response4) {
-          console.log('uuid3', response4);
-          const get_normals = false;
-          modelerClient.GetEntityMeshes(response4, get_normals, function(err5, response5) {
-            var meshEntity = {
-              type: 'newBooleanOperationRequested',
-              value: response5,
-              uuid: response4,
-              name: 'myMesh'
-            };
-            socket_client.emit('newBooleanOperationRequested', meshEntity);
-          });
-        });
+  modelerClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
+    modelerClient.BooleanOperation(response, operationType, function(err2, response2) {
+      modelerClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
+        var encodedScene = {
+          type: 'newBooleanOperationRequested',
+          value: response3.data
+        };
+        socket_client.emit('newBooleanOperationRequested', encodedScene);
       });
     });
   });

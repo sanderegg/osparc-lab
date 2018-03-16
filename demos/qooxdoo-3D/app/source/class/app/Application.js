@@ -373,25 +373,21 @@ qx.Class.define("app.Application",
         this._availableServicesBar.addListener("booleanOperationRequested", function(e) {
           var operationType = e.getData();
           if (this._threeView._entities.length>1) {
-            var entityMeshesIDs = this._entityList._entities.GetSelectedEntityIds();
+            var entityMeshesIDs = this._entityList.GetSelectedEntityIds();
             if (entityMeshesIDs.length>1) {
-              this._threeView._threeWrapper.CreateSceneWithMeshes(entityMeshesIDs);
-              return;
-            }
-
-            var entityMeshes = [];
-            for (var i = 0; i < 2; i++) {
-              var entityMesh = this._threeView._threeWrapper.FromEntityToEntityMesh(this._threeView._entities[i]);
-              entityMeshes.push(entityMesh);
-            }
-            if (!this._socket.slotExists("newBooleanOperationRequested")) {
-              this._socket.on("newBooleanOperationRequested", function(val) {
-                if (val.type === "newBooleanOperationRequested") {
-                  this._threeView.CreateEntityFromResponse(val.value, val.name, val.uuid);
+              this._threeView._threeWrapper.addListener("sceneWithMeshesToBeExported", function(e) {
+                var sceneWithMeshes = e.getData();
+                if (!this._socket.slotExists("newBooleanOperationRequested")) {
+                  this._socket.on("newBooleanOperationRequested", function(val) {
+                    if (val.type === "newBooleanOperationRequested") {
+                      this._threeView.ImportSceneFromBuffer(val.value);
+                    }
+                  }, this);
                 }
+                this._socket.emit("newBooleanOperationRequested", [JSON.stringify(sceneWithMeshes), operationType]);
               }, this);
+              this._threeView._threeWrapper.CreateSceneWithMeshes(entityMeshesIDs);
             }
-            this._socket.emit("newBooleanOperationRequested", [entityMeshes, operationType]);
           }
         }, this);
       }

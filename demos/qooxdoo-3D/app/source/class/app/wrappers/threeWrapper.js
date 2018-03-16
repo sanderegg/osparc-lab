@@ -78,6 +78,7 @@ qx.Class.define("app.wrappers.threeWrapper",
     "ThreeLibReady": "qx.event.type.Data",
     "EntityToBeAdded": "qx.event.type.Data",
     "sceneToBeExported": "qx.event.type.Data",
+    "sceneWithMeshesToBeExported": "qx.event.type.Data",
   },
 
   members: {
@@ -170,7 +171,7 @@ qx.Class.define("app.wrappers.threeWrapper",
     {
       var downloadScene = true;
       var options = {
-        binary: true,
+        binary: false,
       };
 
       var myMeshes = [];
@@ -184,15 +185,7 @@ qx.Class.define("app.wrappers.threeWrapper",
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( myMeshes,
         function ( gltf ) {
-          if (downloadScene) {
-            if (options.binary) {
-              scope._downloadBinJSON(gltf, "mySimpleScene.glb");
-            } else {
-              scope._downloadJSON(gltf, "mySimpleScene.gltf");
-            }
-          } else {
-            scope.fireDataEvent("sceneToBeExported", gltf);
-          }
+          scope.fireDataEvent("sceneWithMeshesToBeExported", gltf);
         }, options );
     },
 
