@@ -112,13 +112,14 @@ qx.Class.define("app.components.menuBar",
     getModelsList : function()
     {
       var modelsList = ["Rat"];
+      modelsList.push("BigRat");
       //modelsList.push("Thelonious");
 
       var modelsMenu = new qx.ui.menu.Menu;
       for (var i = 0; i < modelsList.length; i++) {
         var modelButton = new qx.ui.menu.Button(modelsList[i], null, null);
         modelButton.addListener("execute", function(e) {
-          this.fireDataEvent("fileLoadModelPressed", modelsList[i]);
+          this.fireDataEvent("fileLoadModelPressed", modelButton.getLabel());
         }, this);
         modelsMenu.add(modelButton);
       }
