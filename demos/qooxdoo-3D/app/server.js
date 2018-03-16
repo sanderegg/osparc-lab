@@ -238,34 +238,35 @@ function importModel(socket_client, model_name) {
         modelPath = "D:/sparc/thelonius_reduced.smash";
         break;
       case 'Rat':
-        modelPath = "D:/sparc/ratmodel_simplified.smash";
+        modelPath = "D:/sparc/ratmodel_simplified.sat";
+        break;
+      case 'BigRat':
+        modelPath = "D:/sparc/Rat_Male_567g_v2.0b02.sat";
         break;
       default:
         modelPath = "D:/sparc/ratmodel_simplified.smash";
         break;
     }
+    console.log('Importing', model_name);
     modelerClient.ImportModel( modelPath, function(err2, response2) {
-      console.log('Importing', model_name);
       modelerClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH, function(err3, response3) {
         console.log('Total meshes', response3.length);
-        let meshEntities = [];
+        let listOfEncodedScenes = [];
         let nMeshes = response3.length;
         for (let i = 0; i <nMeshes ; i++) {
           let mesh_id = response3[i].uuid;
           let mesh_name = response3[i].name;
-          const get_normals = false;
-          modelerClient.GetEntityMeshes( mesh_id, get_normals, function(err4, response4) {
-            var meshEntity = {
-              type: 'importModel',
-              value: response4,
-              uuid: mesh_id,
-              name: mesh_name
+          console.log(mesh_id);
+          modelerClient.GetEntitiesEncodedScene([mesh_id], thrModelerTypes.SceneFileFormat.GLTF, function(err4, response4) {
+            var encodedScene = {
+              type: 'importModelScene',
+              value: response4.data
             };
-            meshEntities.push(meshEntity);
-            //socket_client.emit('importModel', meshEntity);
+            listOfEncodedScenes.push(encodedScene);
+            //socket_client.emit('importModelScene', meshEntity);
             console.log(i);
             if (i === nMeshes-1) {
-              sendToMeshEntitiesToTheClient(socket_client, meshEntities);
+              sendEncodedScenesToTheClient(socket_client, listOfEncodedScenes);
             }
           });
         }
@@ -279,6 +280,13 @@ function importModel(socket_client, model_name) {
       socket_client.emit('importModel', meshEntities[i]);
     }
   };
+
+  function sendEncodedScenesToTheClient(socket_client, listOfEncodedScenes) {
+    console.log('sendEncodedScenesToTheClient');
+    for (var i = 0; i < listOfEncodedScenes.length; i++) {
+      socket_client.emit('importModelScene', listOfEncodedScenes[i]);
+    }
+  }
 };
 
 function booleanOperation(socket_client, entityMeshes, operationType) {

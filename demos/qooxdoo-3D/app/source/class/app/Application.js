@@ -212,6 +212,14 @@ qx.Class.define("app.Application",
 
         this._menuBar.addListener("fileLoadModelPressed", function(e) {
           var selectedModel = e.getData();
+          if (!this._socket.slotExists("importModelScene")) {
+            this._socket.on("importModelScene", function(val) {
+              if (val.type === "importModelScene") {
+                this._threeView.ImportSceneFromBuffer(val.value);
+              }
+            }, this);
+          }
+          /*
           if (!this._socket.slotExists("importModel")) {
             this._socket.on("importModel", function(val) {
               if (val.type === "importModel") {
@@ -219,6 +227,7 @@ qx.Class.define("app.Application",
               }
             }, this);
           }
+          */
           this._socket.emit("importModel", selectedModel);
         }, this);
 
