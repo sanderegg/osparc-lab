@@ -310,15 +310,30 @@ function booleanOperation(socket_client, entityMeshesScene, operationType) {
     data: entityMeshesScene
   }
   s4lModClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
-    s4lModClient.BooleanOperation(response, operationType, function(err2, response2) {
-      s4lModClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
-        var encodedScene = {
-          type: 'newBooleanOperationRequested',
-          value: response3.data
-        };
-        socket_client.emit('newBooleanOperationRequested', encodedScene);
+    if (err) {
+      console.log('Entities creation failed: ' + err);
+    }
+    else {
+      s4lModClient.BooleanOperation(response, operationType, function(err2, response2) {
+        if (err2) {
+          console.log('Boolean operation failed: ' + err2);
+        }
+        else {
+          s4lModClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
+            if (err3) {
+              console.log('Getting entities failed: ' + err3)
+            }
+            else {
+              var encodedScene = {
+                type: 'newBooleanOperationRequested',
+                value: response3.data
+              };
+              socket_client.emit('newBooleanOperationRequested', encodedScene);
+            }            
+          });
+        }        
       });
-    });
+    }    
   });
 };
 
