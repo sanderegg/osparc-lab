@@ -23,7 +23,7 @@ VOLUME /home/node
 EXPOSE $web_app_port
 
 # TODO ensure npm@5.5.1
-CMD npm install -y \
+ENTRYPOINT npm install -y \
   && echo node $(node --version) \
   && echo npm $(npm --version) \
   && npm install nodemon -g \
