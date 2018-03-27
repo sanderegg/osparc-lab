@@ -26,5 +26,6 @@ EXPOSE $web_app_port
 ENTRYPOINT npm install -y \
   && echo node $(node --version) \
   && echo npm $(npm --version) \
+  && npm install promise \
   && npm install nodemon -g \
   && nodemon -L start

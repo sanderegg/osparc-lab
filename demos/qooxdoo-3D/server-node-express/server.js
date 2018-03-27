@@ -6,6 +6,7 @@ const path = require('path');
 
 const app = express();
 let server = require('http').createServer(app);
+let Promise = require('promise');
 
 const HOSTNAME = process.env.SIMCORE_WEB_HOSTNAME || '127.0.0.1';
 const PORT = process.env.SIMCORE_WEB_PORT || 8080;
@@ -41,25 +42,23 @@ const S4L_IP = process.env.CS_S4L_HOSTNAME || '172.16.9.89';
 const S4L_PORT_APP = process.env.CS_S4L_PORT_APP || 9095;
 const S4L_PORT_MOD = process.env.CS_S4L_PORT_MOD || 9096;
 
-let transport = thrift.TBufferedTransport;
-let protocol = thrift.TBinaryProtocol;
+const transport = thrift.TBufferedTransport;
+const protocol = thrift.TBinaryProtocol;
 
-let s4lAppClient = createThriftConnection(S4L_IP, S4L_PORT_APP,
-  thrApplication, function(err) {
-  console.log('Thrift connection to the application failed:');
-  console.log(err);
+let s4lAppClient = null;
+let s4lModelerClient = null;
+connectToS4LServer().then(function() {
+  console.log('Connected to S4L server');
+  s4lAppClient.GetApiVersion( function(err, response) {
+    console.log('Application API version', response);
+  });
+  s4lModelerClient.GetApiVersion( function(err, response) {
+    console.log('Application API version', response);
+  });
+}).catch(function(err) {
+  console.log('No connection: ' + err);
 });
 
-// var multiplexer = new thrift.Multiplexer();
-// var s4lAppClient = multiplexer.createClient('All the same', thrApplication, connection);
-s4lAppClient.GetApiVersion( function(err, response) {
-  console.log('Application API version', response);
-});
-
-let s4lModClient = createThriftConnection(S4L_IP, S4L_PORT_MOD, thrModeler, function(err) {
-  console.log('Thrift connection to the modeler failed:');
-  console.log(err);
-});
 
 let io = require('socket.io')(server);
 io.on('connection', function(socketClient) {
@@ -86,56 +85,70 @@ io.on('connection', function(socketClient) {
   });
 
   socketClient.on('importModel', function(modelName) {
-    importModel(socketClient, modelName);
+    connectToS4LServer().then(function() {
+      importModelS4L(socketClient, modelName);
+    }).catch(failureCallback);
   });
 
 
   socketClient.on('newSplineS4LRequested', function(pointListUUID) {
     let pointList = pointListUUID[0];
     let uuid = pointListUUID[1];
-    let transform4x4 = [
-      1.0, 0.0, 0.0, 0.0,
-      0.0, 1.0, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0, 1.0];
-    let color = {diffuse: {r: 1.0, g: 0.3, b: 0.65, a: 1.0}};
-    let spline = {vertices: pointList, transform4x4: transform4x4, material: color};
-    s4lModClient.CreateSpline( spline, uuid, function(err, responseUUID) {
-      s4lModClient.GetEntityWire( responseUUID, function(err2, response2) {
-        let listOfPoints = {
-          type: 'newSplineS4LRequested',
-          value: response2,
-          uuid: responseUUID,
-        };
-        socketClient.emit('newSplineS4LRequested', listOfPoints);
-      });
-    });
+    connectToS4LServer.then(function() {
+      createSplineS4L(pointlist, uuid);
+    }).catch(failureCallback);
   });
 
   socketClient.on('newSphereS4LRequested', function(radiusCenterUUID) {
     let radius = radiusCenterUUID[0];
     let center = radiusCenterUUID[1];
     let uuid = radiusCenterUUID[2];
-    s4lModClient.CreateSolidSphere( center, radius, uuid, function(err, responseUUID) {
-      const getNormals = false;
-      s4lModClient.GetEntityMeshes( responseUUID, getNormals, function(err2, response2) {
-        let meshEntity = {
-          type: 'newSphereS4LRequested',
-          value: response2,
-          uuid: responseUUID,
-        };
-        socketClient.emit('newSphereS4LRequested', meshEntity);
-      });
-    });
+
+    connectToS4LServer().then(function() {
+      createSphereS4L(radius, center, uuid);
+    }).catch(failureCallback);    
   });
 
-  socketClient.on('newBooleanOperationRequested', function(entityMeshesScene_operationType) {
-    let entityMeshesScene = entityMeshesScene_operationType[0];
-    let operationType = entityMeshesScene_operationType[1];
-    booleanOperation(socketClient, entityMeshesScene, operationType);
+  socketClient.on('newBooleanOperationRequested', function(entityMeshesSceneOperationType) {
+    let entityMeshesScene = entityMeshesSceneOperationType[0];
+    let operationType = entityMeshesSceneOperationType[1];
+    connectToS4LServer().then(function() {
+      booleanOperationS4L(socketClient, entityMeshesScene, operationType);
+    }).
+    catch(failureCallback);
   });
 });
 
+function failureCallback(error) {
+  console.log('Thrift error: ' + error);
+}
+
+function connectToS4LServer() {
+  return new Promise(function(resolve, reject) {
+    createThriftConnection(S4L_IP, S4L_PORT_APP, thrApplication, s4lAppClient, disconnectFromApplicationServer)
+    .then(function(client) {
+      s4lAppClient = client;
+      createThriftConnection(S4L_IP, S4L_PORT_MOD, thrModeler, s4lModelerClient, disconnectFromModelerServer)
+        .then(function(client) {
+          s4lModelerClient = client;
+          resolve();
+        });
+    })
+    .catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+function disconnectFromModelerServer() {
+  s4lModelerClient = null;
+  console.log('Modeler client disconnected');
+}
+
+function disconnectFromApplicationServer() {
+  s4lAppClient = null;
+  console.log('Application client disconnected');
+}
 
 /**
  * creates a Thrift connection with the thing object
@@ -143,29 +156,75 @@ io.on('connection', function(socketClient) {
  * @param {any} host
  * @param {any} port
  * @param {any} thing
- * @param {any} errorCallback
- * @return {any} the client object
+ * @param {any} client
+ * @param {any} disconnectionCB
+ * @return {any} the client object promise
  */
-function createThriftConnection(host, port, thing, errorCallback) {
-  const connection = thrift.createConnection(host, port, {
-    transport: transport,
-    protocol: protocol,
-  });
-  connection.on('error', errorCallback);
-  connection.on('close', function() {
-    console.log('Connection to ' + thing + ' closed');
-  });
-  connection.on('timeout', function() {
-    console.log('Connection to ' + thing + ' timed out...');
-  });
-  connection.on('reconnecting', function(delay, attempt) {
-    console.log('Reconnecting to ' + thing + ' delay ' + delay + ', attempt ' + attempt);
-  });
-  connection.on('connect', function() {
-    console.log('connected to ' + thing);
-  });
+function createThriftConnection(host, port, thing, client, disconnectionCB) {
+  return new Promise(function(resolve, reject) {
+    if (client == null) {
+      const connection = thrift.createConnection(host, port, {
+        transport: transport,
+        protocol: protocol,
+      });
 
-  return thrift.createClient(thing, connection);
+      connection.on('close', function() {
+        console.log('Connection to ' + host + ':' + port + ' closed');
+        disconnectionCB();
+      });
+      connection.on('timeout', function() {
+        console.log('Connection to ' + ' timed out...');
+      });
+      connection.on('reconnecting', function(delay, attempt) {
+        console.log('Reconnecting to ' + host + ':' + port + ' delay ' + delay + ', attempt ' + attempt);
+      });
+      connection.on('connect', function() {
+        console.log('connected to ' + host + ':' + port);
+        client = thrift.createClient(thing, connection);
+        resolve(client);
+      });
+      connection.on('error', function(err) {
+        console.log('connection error to ' + host + ':' + port);
+        reject(err);
+      });
+    } else {
+      resolve(client);
+    }
+  });
+}
+
+function createSphereS4L(radius, center, uuid) {
+  s4lModelerClient.CreateSolidSphere( center, radius, uuid, function(err, responseUUID) {
+    const getNormals = false;
+    s4lModelerClient.GetEntityMeshes( responseUUID, getNormals, function(err2, response2) {
+      let meshEntity = {
+        type: 'newSphereS4LRequested',
+        value: response2,
+        uuid: responseUUID,
+      };
+      socketClient.emit('newSphereS4LRequested', meshEntity);
+    });
+  });
+}
+
+function createSplineS4L(pointlist, uuid) {
+  let transform4x4 = [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0];
+  let color = {diffuse: {r: 1.0, g: 0.3, b: 0.65, a: 1.0}};
+  let spline = {vertices: pointList, transform4x4: transform4x4, material: color};
+  s4lModelerClient.CreateSpline( spline, uuid, function(err, responseUUID) {
+    s4lModelerClient.GetEntityWire( responseUUID, function(err2, response2) {
+      let listOfPoints = {
+        type: 'newSplineS4LRequested',
+        value: response2,
+        uuid: responseUUID,
+      };
+      socketClient.emit('newSplineS4LRequested', listOfPoints);
+    });
+  });
 }
 
 /**
@@ -261,7 +320,7 @@ function exportScene(socketClient, activeUser, sceneJson) {
   });
 };
 
-function importModel(socketClient, modelName) {
+function importModelS4L(socketClient, modelName) {
   s4lAppClient.NewDocument( function(err, response) {
     let modelPath;
     switch (modelName) {
@@ -279,17 +338,18 @@ function importModel(socketClient, modelName) {
         break;
     }
     console.log('Importing', modelName);
-    s4lModClient.ImportModel( modelPath, function(err2, response2) {
+    s4lModelerClient.ImportModel( modelPath, function(err2, response2) {
       console.log('Importing path', modelPath);
-      s4lModClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH, function(err3, response3) {
+      s4lModelerClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH,
+        function(err3, response3) {
         console.log('Total meshes', response3.length);
 
         let nMeshes = response3.length;
         for (let i = 0; i <nMeshes; i++) {
-          let mesh_id = response3[i].uuid;
-          let mesh_name = response3[i].name;
-          console.log(mesh_id);
-          s4lModClient.GetEntitiesEncodedScene([mesh_id], thrModelerTypes.SceneFileFormat.GLTF, function(err4, response4) {
+          let meshId = response3[i].uuid;
+          console.log(meshId);
+          s4lModelerClient.GetEntitiesEncodedScene([meshId], thrModelerTypes.SceneFileFormat.GLTF,
+            function(err4, response4) {
             let encodedScene = {
               type: 'importModelScene',
               value: response4.data,
@@ -312,12 +372,12 @@ function importModel(socketClient, modelName) {
     });
   });
 
-  function sendToMeshEntitiesToTheClient(socketClient, meshEntities) {
+  /* function sendToMeshEntitiesToTheClient(socketClient, meshEntities) {
     console.log('sendToMeshEntitiesToTheClient');
     for (let i = 0; i < meshEntities.length; i++) {
       socketClient.emit('importModel', meshEntities[i]);
     }
-  };
+  }; */
 
   function sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes) {
     console.log('sendEncodedScenesToTheClient');
@@ -327,20 +387,21 @@ function importModel(socketClient, modelName) {
   }
 };
 
-function booleanOperation(socketClient, entityMeshesScene, operationType) {
+function booleanOperationS4L(socketClient, entityMeshesScene, operationType) {
   let myEncodedScene = {
     fileType: thrModelerTypes.SceneFileFormat.GLTF,
     data: entityMeshesScene,
   };
-  s4lModClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
+  s4lModelerClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
     if (err) {
       console.log('Entities creation failed: ' + err);
     } else {
-      s4lModClient.BooleanOperation(response, operationType, function(err2, response2) {
+      s4lModelerClient.BooleanOperation(response, operationType, function(err2, response2) {
         if (err2) {
           console.log('Boolean operation failed: ' + err2);
         } else {
-          s4lModClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
+          s4lModelerClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF,
+            function(err3, response3) {
             if (err3) {
               console.log('Getting entities failed: ' + err3);
             } else {
