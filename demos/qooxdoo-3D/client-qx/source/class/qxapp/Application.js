@@ -218,15 +218,6 @@ qx.Class.define('qxapp.Application',
               }
             }, this);
           }
-          /*
-          if (!this._socket.slotExists("importModel")) {
-            this._socket.on("importModel", function(val) {
-              if (val.type === "importModel") {
-                this._threeView.CreateEntityFromResponse(val.value, val.name, val.uuid);
-              }
-            }, this);
-          }
-          */
           this._socket.emit('importModel', selectedModel);
         }, this);
 

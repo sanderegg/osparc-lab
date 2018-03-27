@@ -320,7 +320,7 @@ function exportScene(socketClient, activeUser, sceneJson) {
   });
 };
 
-function importModelS4L(socketClient, modelName) {
+function importModelS4L(socketClient, modelName) {  
   s4lAppClient.NewDocument( function(err, response) {
     let modelPath;
     switch (modelName) {
@@ -347,7 +347,6 @@ function importModelS4L(socketClient, modelName) {
         let nMeshes = response3.length;
         for (let i = 0; i <nMeshes; i++) {
           let meshId = response3[i].uuid;
-          console.log(meshId);
           s4lModelerClient.GetEntitiesEncodedScene([meshId], thrModelerTypes.SceneFileFormat.GLTF,
             function(err4, response4) {
             let encodedScene = {
@@ -380,7 +379,6 @@ function importModelS4L(socketClient, modelName) {
   }; */
 
   function sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes) {
-    console.log('sendEncodedScenesToTheClient');
     for (let i = 0; i < listOfEncodedScenes.length; i++) {
       socketClient.emit('importModelScene', listOfEncodedScenes[i]);
     }
