@@ -42,6 +42,7 @@ COPY server-node-express .
 
 # TODO ensure npm@5.5.1
 RUN npm install -y \
+  && npm install promise \
   && echo node $(node --version) \
   && echo npm $(npm --version)
 
