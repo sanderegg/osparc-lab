@@ -359,7 +359,7 @@ qx.Class.define('qxapp.Application',
           if (this._threeView._entities.length>1) {
             let entityMeshesIDs = this._entityList.GetSelectedEntityIds();
             if (entityMeshesIDs.length>1) {
-              this._threeView._threeWrapper.addListener('sceneWithMeshesToBeExported', function(e) {
+              this._threeView._threeWrapper.addListenerOnce('sceneWithMeshesToBeExported', function(e) {
                 let sceneWithMeshes = e.getData();
                 if (!this._socket.slotExists('newBooleanOperationRequested')) {
                   this._socket.on('newBooleanOperationRequested', function(val) {
