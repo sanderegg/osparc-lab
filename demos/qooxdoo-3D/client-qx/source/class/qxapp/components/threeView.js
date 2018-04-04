@@ -48,7 +48,10 @@ qx.Class.define("qxapp.components.threeView",
           
           var that = this;
           window.addEventListener( 'resize', function () {
-            console.log('_onWindowResize', window.innerWidth, window.innerHeight);
+            that.set({
+              width: window.innerWidth,
+              height: window.innerHeight
+            });
             that._threeWrapper.SetSize( window.innerWidth, window.innerHeight );
           }, that );
 

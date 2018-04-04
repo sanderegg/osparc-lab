@@ -46,6 +46,13 @@ qx.Class.define("qxapp.components.menuBar",
         width: width,
         backgroundColor: backgroundColor
       });
+      
+      window.addEventListener( 'resize', function () {
+        menubar.set({
+          width: window.innerWidth,
+        });
+      });
+
       frame.add(menubar);
 
       var fileMenu = new qx.ui.menubar.Button(this.tr("File"), null, this.getFileMenu());

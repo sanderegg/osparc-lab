@@ -55,7 +55,14 @@ qx.Class.define("qxapp.components.availableServices",
       toolbar.set({
         width: width,
         backgroundColor: backgroundColor
-      })
+      });
+      
+      window.addEventListener( 'resize', function () {
+        toolbar.set({
+          width: window.innerWidth,
+        });
+      });
+
       frame.add(toolbar);
 
       // Model selection
