@@ -45,6 +45,13 @@ qx.Class.define("qxapp.components.threeView",
 
           document.addEventListener( 'mousedown', this._onMouseDown.bind(this), false );
           document.addEventListener( 'mousemove', this._onMouseHover.bind(this), false );
+          
+          var that = this;
+          window.addEventListener( 'resize', function () {
+            console.log('_onWindowResize', window.innerWidth, window.innerHeight);
+            that._threeWrapper.SetSize( window.innerWidth, window.innerHeight );
+          }, that );
+
           this._render();
 
         }, this);
