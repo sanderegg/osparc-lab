@@ -148,17 +148,11 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       var glTFLoader = new THREE.GLTFLoader();
       glTFLoader.parse(model_buffer, null,
         function( myScene ) {
-          const onlyMeshes = true;
-          if (onlyMeshes) {
-            for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
-              if (myScene.scene.children[i].type === 'Mesh' ||
-                  myScene.scene.children[i].type === 'Line') {
+          for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
+            if (myScene.scene.children[i].type === 'Mesh' ||
+                myScene.scene.children[i].type === 'Line') {
                 scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
-              }
             }
-          } else {
-            scope._scene.add(myScene.scene);
-            scope.Render();
           }
         },
         function ( error ) {
@@ -232,7 +226,7 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       downloadAnchorNode.remove();
     },
 
-    RemoveFromScene : function(objFromScene)
+    RemoveEntityFromScene : function(objFromScene)
     {
       var index = this._scene.children.indexOf(objFromScene);
       if (index >= 0) {
@@ -242,16 +236,16 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       return false;
     },
 
-    RemoveFromSceneById : function(uuid)
+    RemoveEntityFromSceneById : function(uuid)
     {
-      var objInScene = this.GetFromScene(uuid);
+      var objInScene = this.GetEntityFromScene(uuid);
       if (objInScene) {
-        return this.RemoveFromScene(objInScene);
+        return this.RemoveEntityFromScene(objInScene);
       }
       return false;
     },
 
-    GetFromScene : function(uuid)
+    GetEntityFromScene : function(uuid)
     {
       for (var i = 0; i < this._scene.children.length; i++) {
         if (this._scene.children[i].uuid === uuid) {

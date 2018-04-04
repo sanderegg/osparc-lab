@@ -105,7 +105,7 @@ qx.Class.define("qxapp.modeler.sphereCreatorS4L", {
       //}
 
       if (this._sphere_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._sphere_temp);
       }
 
       if (this._my_uuid === sphere.uuid) {

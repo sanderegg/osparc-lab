@@ -34,7 +34,7 @@ qx.Class.define("qxapp.modeler.splineCreator", {
         var hoverPointList = this._pointList.concat([intersect.point]);
         if (hoverPointList.length>1)
         {
-          this._threeView._threeWrapper.RemoveFromScene(this._spline_temp);
+          this._threeView._threeWrapper.RemoveEntityFromScene(this._spline_temp);
           this._spline_temp = this._threeView._threeWrapper.CreateSpline(hoverPointList);
           this._threeView._threeWrapper.AddEntityToScene(this._spline_temp);
         }
@@ -57,7 +57,7 @@ qx.Class.define("qxapp.modeler.splineCreator", {
         {
           if (event.button === 0)
           {
-            this._threeView._threeWrapper.RemoveFromScene(this._spline_temp);
+            this._threeView._threeWrapper.RemoveEntityFromScene(this._spline_temp);
             this._spline_temp = this._threeView._threeWrapper.CreateSpline(this._pointList);
             this._threeView._threeWrapper.AddEntityToScene(this._spline_temp);
           }
@@ -74,10 +74,10 @@ qx.Class.define("qxapp.modeler.splineCreator", {
     _consolidateSpline : function()
     {
       if (this._spline_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._spline_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._spline_temp);
         this._spline_temp = null;
         for (var i = 0; i < this._controlPoints.length; i++) {
-          this._threeView._threeWrapper.RemoveFromScene(this._controlPoints[i]);
+          this._threeView._threeWrapper.RemoveEntityFromScene(this._controlPoints[i]);
         }
       }
 

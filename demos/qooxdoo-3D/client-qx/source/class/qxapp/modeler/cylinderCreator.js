@@ -33,10 +33,10 @@ qx.Class.define("qxapp.modeler.cylinderCreator", {
     _removeTemps : function()
     {
       if (this._circle_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._circle_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._circle_temp);
       }
       if (this._cylinder_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._cylinder_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._cylinder_temp);
       }
     },
 

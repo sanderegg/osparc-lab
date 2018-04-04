@@ -207,7 +207,7 @@ qx.Class.define("qxapp.components.threeView",
       }
 
       if (uuid) {
-        this._threeWrapper.RemoveFromSceneById(uuid);
+        this._threeWrapper.RemoveEntityFromSceneById(uuid);
         this.fireDataEvent("entityRemoved", uuid);
         this._render();
       }
@@ -278,7 +278,7 @@ qx.Class.define("qxapp.components.threeView",
     StopMoveTool : function()
     {
       for (var i = 0; i < this._transformControls.length; i++) {
-        if (this._threeWrapper.RemoveFromScene(this._transformControls[i])) {
+        if (this._threeWrapper.RemoveEntityFromScene(this._transformControls[i])) {
           this._transformControls[i].detach();
         }
       }
