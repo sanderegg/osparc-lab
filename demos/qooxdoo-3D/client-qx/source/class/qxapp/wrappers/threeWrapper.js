@@ -282,6 +282,8 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       this._camera.aspect = width / height;
       this._camera.updateProjectionMatrix();
       this._renderer.setSize(width, height);
+      this._orbitControls.update();
+      this.Render();
     },
 
     CreateNewPlaneMaterial : function(red, green, blue)
