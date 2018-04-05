@@ -351,6 +351,17 @@ qx.Class.define("qxapp.components.threeView",
       this._render();
     },
 
+    ShowHideEntity : function( id, show )
+    {
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i].uuid === id) {
+          this._entities[i].visible = show;
+          break;
+        }
+      }
+      this._render();
+    },
+
     _showEdges : function( show_edges )
     {
       if (show_edges) {

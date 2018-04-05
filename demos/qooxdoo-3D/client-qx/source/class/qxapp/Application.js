@@ -384,6 +384,12 @@ qx.Class.define("qxapp.Application",
           var entityIds = e.getData();
           this._threeView.HighlightEntities(entityIds);
         }, this);
+
+        this._entityList.addListener("visibilityChanged", function(e) {
+          var entityId = e.getData()[0];
+          var show = e.getData()[1];
+          this._threeView.ShowHideEntity(entityId, show);
+        }, this);
       }
 
       // 3D View

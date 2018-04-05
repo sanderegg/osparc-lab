@@ -54,6 +54,7 @@ qx.Class.define("qxapp.components.entityList",
   events : {
     "removeEntityRequested": "qx.event.type.Data",
     "selectionChanged": "qx.event.type.Data",
+    "visibilityChanged": "qx.event.type.Data",
   },
 
   members: {
@@ -95,7 +96,21 @@ qx.Class.define("qxapp.components.entityList",
     },
 
     AddEntity : function(id, name) {
-      var newItem = new qx.ui.tree.TreeFile(name);
+      var newItem = new qx.ui.tree.TreeFile();
+
+      // A checkbox comes right after the tree icon
+      var checkbox = new qx.ui.form.CheckBox();
+      checkbox.setFocusable(false);
+      checkbox.setValue(true);
+      newItem.addWidget(checkbox);
+      var that = this;
+      checkbox.addListener("changeValue",
+        function(e) {
+          that.fireDataEvent("visibilityChanged", [id, e.getData()]);
+        }, that);
+      
+      newItem.addLabel(name);
+
       newItem.id = id;
       this._tree.getRoot().add(newItem);
       this._tree.setSelection([newItem]);
