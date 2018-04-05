@@ -119,6 +119,11 @@ qx.Class.define("qxapp.components.threeView",
 
       if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
+        var isShiftKeyPressed = event.shiftKey;
+        if (isShiftKeyPressed) {
+          return;
+        }
+        
         var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
         var attended = this._activeTool.OnMouseHover(event, intersects);
         if (attended) {
@@ -141,6 +146,11 @@ qx.Class.define("qxapp.components.threeView",
 
       if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
+        var isShiftKeyPressed = event.shiftKey;
+        if (isShiftKeyPressed) {
+          return;
+        }
+
         var attended = this._activeTool.OnMouseDown(event, intersects);
         if (attended) {
           return;
