@@ -382,6 +382,7 @@ qx.Class.define("qxapp.Application",
 
         this._entityList.addListener("selectionChanged", function(e) {
           var entityIds = e.getData();
+          this._threeView.UnhighlightAll();
           this._threeView.HighlightEntities(entityIds);
         }, this);
 

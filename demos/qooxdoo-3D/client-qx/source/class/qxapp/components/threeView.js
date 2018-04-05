@@ -138,39 +138,37 @@ qx.Class.define("qxapp.components.threeView",
 
       var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
       var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
 
       if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
-        var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
         var attended = this._activeTool.OnMouseDown(event, intersects);
         if (attended) {
           return;
         }
       }
 
-      var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
       if (intersects.length > 0)
       {
-        if(this._intersected != null) {
-          if (this._selectionMode === ENTITY_PICKING) {
-            this._intersected.object.material.opacity = 0.6;
-          } else if (this._selectionMode === FACE_PICKING) {
-            this._intersected.face.color.setHex(this._intersected.currentHex);
-          }
-        }
-        this._intersected = intersects[0];
-
         if (this._selectionMode === ENTITY_PICKING) {
+          if(this._intersected != null) {
+            this._intersected.object.material.opacity = 0.6;
+          }
+          this._intersected = intersects[0];
           this.fireDataEvent("entitySelected", this._intersected.object.uuid);
           this._intersected.currentHex = this._intersected.object.material.color.getHex();
           this._intersected.object.material.opacity = 0.9;
-        } else if (this._selectionMode === FACE_PICKING) {
+        }
+        else if (this._selectionMode === FACE_PICKING) {
+          if(this._intersected != null) {
+            this._intersected.face.color.setHex(this._intersected.currentHex);
+          }
+          this._intersected = intersects[0];
           this.fireDataEvent("entitySelected", null);
           this._intersected.currentHex = this._intersected.face.color.getHex();
           const highlightedColor = 0x000000;
           this._intersected.face.color.setHex(highlightedColor);
         }
-
         this._intersected.object.geometry.__dirtyColors = true;
         this._intersected.object.geometry.colorsNeedUpdate = true;
       } else {
@@ -300,10 +298,10 @@ qx.Class.define("qxapp.components.threeView",
     {
       if (mode === FACE_PICKING) {
         this._showEdges(true);
-        this._highlightAll();
+        this.HighlightAll();
       } else {
         this._showEdges(false);
-        this._unhighlightAll();
+        this.UnhighlightAll();
       }
 
       this._selectionMode = mode;
@@ -326,23 +324,24 @@ qx.Class.define("qxapp.components.threeView",
       this.AddEntityToScene(entity);
     },
 
-    _highlightAll : function()
+    HighlightAll : function()
     {
       for (var i = 0; i < this._entities.length; i++) {
         this._entities[i].material.opacity = 0.9;
       }
+      this._render();
     },
 
-    _unhighlightAll : function()
+    UnhighlightAll : function()
     {
       for (var i = 0; i < this._entities.length; i++) {
         this._entities[i].material.opacity = 0.6;
       }
+      this._render();
     },
 
     HighlightEntities : function( ids )
     {
-      this._unhighlightAll();
       for (var i = 0; i < this._entities.length; i++) {
         if (ids.indexOf(this._entities[i].uuid) >= 0) {
           this._entities[i].material.opacity = 0.9;
