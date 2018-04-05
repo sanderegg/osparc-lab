@@ -113,19 +113,19 @@ qx.Class.define("qxapp.components.availableServices",
         var menuPart = new qx.ui.toolbar.Part;
         toolbar.add(menuPart);
 
-        this._sphereBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Sphere"));
+        this._sphereBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Sphere"));
         this._sphereBtn.addListener("execute", this._onAddSphereRequested, this);
 
-        this._blockBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Box"));
+        this._blockBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Box"));
         this._blockBtn.addListener("execute", this._onAddBlockRequested.bind(this));
 
-        this._cylinderBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Cylinder"));
+        this._cylinderBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Cylinder"));
         this._cylinderBtn.addListener("execute", this._onAddCylinderRequested.bind(this));
 
-        this._dodecaBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Dodecahedron"));
+        this._dodecaBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Dodecahedron"));
         this._dodecaBtn.addListener("execute", this._onAddDodecaRequested.bind(this));
 
-        this._splineBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Spline"));
+        this._splineBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Spline"));
         this._splineBtn.addListener("execute", this._onAddSplineRequested.bind(this));
 
         menuPart.add(this._sphereBtn);
@@ -133,6 +133,10 @@ qx.Class.define("qxapp.components.availableServices",
         menuPart.add(this._cylinderBtn);
         menuPart.add(this._dodecaBtn);
         menuPart.add(this._splineBtn);
+        
+        var radioGroup = new qx.ui.form.RadioGroup(this._sphereBtn, this._blockBtn, this._cylinderBtn, this._dodecaBtn, this._splineBtn);
+        radioGroup.setAllowEmptySelection(true);
+        radioGroup.setSelection([]);
       }
 
       // Boolean operations
