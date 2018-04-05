@@ -145,19 +145,24 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
     ImportSceneFromBuffer : function(model_buffer)
     {
       var scope = this;
+
+      function onLoad(myScene) {
+        for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
+          if (myScene.scene.children[i].type === 'Mesh' ||
+              myScene.scene.children[i].type === 'Line') {
+              scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
+          }
+        }
+      }
+
+      function onError(error) {
+        console.log( 'An error happened' );
+      }
+      
       var glTFLoader = new THREE.GLTFLoader();
       glTFLoader.parse(model_buffer, null,
-        function( myScene ) {
-          for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
-            if (myScene.scene.children[i].type === 'Mesh' ||
-                myScene.scene.children[i].type === 'Line') {
-                scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
-            }
-          }
-        },
-        function ( error ) {
-          console.log( 'An error happened' );
-        }
+        onLoad,
+        onError
       );
     },
 
@@ -176,11 +181,15 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       }
 
       var scope = this;
+
+      function onCompleted(gltf) {
+        scope.fireDataEvent("sceneWithMeshesToBeExported", gltf);
+      }
+
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( myMeshes,
-        function ( gltf ) {
-          scope.fireDataEvent("sceneWithMeshesToBeExported", gltf);
-        }, options );
+        onCompleted, 
+        options );
     },
 
     ExportScene : function (downloadScene = false, exportSceneAsBinary = false)
@@ -190,19 +199,23 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       };
 
       var scope = this;
+
+      function onCompleted(gltf) {
+        if (downloadScene) {
+          if (options.binary) {
+            scope._downloadBinJSON(gltf, "myScene.glb");
+          } else {
+            scope._downloadJSON(gltf, "myScene.gltf");
+          }
+        } else {
+          scope.fireDataEvent("sceneToBeExported", gltf);
+        }
+      }
+
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( this._scene,
-        function ( gltf ) {
-          if (downloadScene) {
-            if (options.binary) {
-              scope._downloadBinJSON(gltf, "myScene.glb");
-            } else {
-              scope._downloadJSON(gltf, "myScene.gltf");
-            }
-          } else {
-            scope.fireDataEvent("sceneToBeExported", gltf);
-          }
-        }, options );
+        onCompleted, 
+        options );
     },
 
     _downloadBinJSON : function(exportObj, fileName)
