@@ -397,8 +397,16 @@ qx.Class.define("qxapp.Application",
       {
         this._threeView.addListener("entitySelected", function(e) {
           var entityId = e.getData();
-          this._availableServicesBar.OnEntitySelectedChanged(entityId);
-          this._entityList.OnEntitySelectedChanged(entityId);
+          this._entityList.OnEntitySelectedChanged([entityId]);
+        }, this);
+        
+        this._threeView.addListener("entitySelectedAdd", function(e) {
+          var entityId = e.getData();
+          var selectedEntityIds = this._entityList.GetSelectedEntityIds();
+          if (selectedEntityIds.indexOf(entityId) === -1) {
+            selectedEntityIds.push(entityId)
+            this._entityList.OnEntitySelectedChanged(selectedEntityIds);
+          }
         }, this);
 
         this._threeView.addListener("entityAdded", function(e) {

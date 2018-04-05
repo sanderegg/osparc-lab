@@ -124,15 +124,17 @@ qx.Class.define("qxapp.components.entityList",
       }
     },
 
-    OnEntitySelectedChanged : function(uuid) {
-      if (uuid === null) {
+    OnEntitySelectedChanged : function(uuids) {
+      if (uuids === null) {
         this._tree.resetSelection();
       } else {
+        var selected = [];
         for (var i = 0; i < this._tree.getRoot().getChildren().length; i++) {
-          if (this._tree.getRoot().getChildren()[i].id === uuid) {
-            this._tree.setSelection([this._tree.getRoot().getChildren()[i]]);
+          if (uuids.indexOf(this._tree.getRoot().getChildren()[i].id) >= 0 ) {
+            selected.push(this._tree.getRoot().getChildren()[i]);
           }
         }
+        this._tree.setSelection(selected);
       }
     },
   }

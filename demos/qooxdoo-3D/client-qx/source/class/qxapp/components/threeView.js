@@ -77,6 +77,7 @@ qx.Class.define("qxapp.components.threeView",
 
   events : {
     "entitySelected": "qx.event.type.Data",
+    "entitySelectedAdd": "qx.event.type.Data",
     "entityAdded": "qx.event.type.Data",
     "entityRemoved": "qx.event.type.Data",
     "entitiesToBeExported": "qx.event.type.Data",
@@ -110,7 +111,6 @@ qx.Class.define("qxapp.components.threeView",
       if (this._selectionMode === NO_TOOL ||
         //hacky
         event.target.nodeName != 'CANVAS') {
-        //this.fireDataEvent("entitySelected", null);
         return;
       }
 
@@ -132,7 +132,6 @@ qx.Class.define("qxapp.components.threeView",
       if (this._selectionMode === NO_TOOL ||
         //hacky
         event.target.nodeName != 'CANVAS') {
-        //this.fireDataEvent("entitySelected", null);
         return;
       }
 
@@ -151,13 +150,17 @@ qx.Class.define("qxapp.components.threeView",
       if (intersects.length > 0)
       {
         if (this._selectionMode === ENTITY_PICKING) {
-          if(this._intersected != null) {
-            this._intersected.object.material.opacity = 0.6;
+          var isCtrlKeyPressed = event.ctrlKey;
+          if(this._intersected != null && !isCtrlKeyPressed) {
+            this.UnhighlightAll();
           }
           this._intersected = intersects[0];
-          this.fireDataEvent("entitySelected", this._intersected.object.uuid);
-          this._intersected.currentHex = this._intersected.object.material.color.getHex();
-          this._intersected.object.material.opacity = 0.9;
+          if (isCtrlKeyPressed) {
+            this.fireDataEvent("entitySelectedAdd", this._intersected.object.uuid);
+          } else {
+            this.fireDataEvent("entitySelected", this._intersected.object.uuid); 
+          }
+          this.HighlightEntities([this._intersected.object.uuid]);
         }
         else if (this._selectionMode === FACE_PICKING) {
           if(this._intersected != null) {
@@ -175,7 +178,7 @@ qx.Class.define("qxapp.components.threeView",
     		if (this._intersected) {
           this.fireDataEvent("entitySelected", null);
           if (this._selectionMode === ENTITY_PICKING) {
-            this._intersected.object.material.opacity = 0.6;
+            this.UnhighlightAll();
           } else if (this._selectionMode === FACE_PICKING) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }

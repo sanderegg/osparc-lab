@@ -175,10 +175,6 @@ qx.Class.define("qxapp.components.availableServices",
       return menu;
     },
 
-    OnEntitySelectedChanged : function(uuid) {
-      //this._moveBtn.setEnabled(uuid !== null);
-    },
-
     _onAddSphereRequested : function() {
       this.fireDataEvent("newSphereRequested", this._sphereBtn.getValue());
     },
