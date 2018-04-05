@@ -369,26 +369,6 @@ qx.Class.define("qxapp.components.threeView",
       this._render();
     },
 
-    ImportEntityFromBuffer : function (model_buffer, model_name)
-    {
-      this._threeWrapper.ImportEntityFromBuffer(model_buffer, model_name);
-    },
-
-    SerializeEntities : function()
-    {
-      var entities_array = [];
-      for (var i = 0; i < this._entities.length; i++) {
-        var entity_to_export = this._threeWrapper.ExportEntity(this._entities[i]);
-        var entity_name = 'model_' + i.toString() + '.obj';
-        var entity_json = {
-          name: entity_name,
-          data: entity_to_export
-        };
-        entities_array.push(entity_json);
-      }
-      this.fireDataEvent("entitiesToBeExported", entities_array);
-    },
-
     ImportSceneFromBuffer : function (model_buffer)
     {
       this._threeWrapper.ImportSceneFromBuffer(model_buffer);

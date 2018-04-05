@@ -27,8 +27,6 @@ qx.Class.define("qxapp.components.menuBar",
 
   events : {
     "fileNewPressed": "qx.event.type.Event",
-    "fileLoadEntitiesPressed": "qx.event.type.Event",
-    "fileSaveEntitiesPressed": "qx.event.type.Event",
     "fileLoadScenePressed": "qx.event.type.Event",
     "fileSaveScenePressed": "qx.event.type.Event",
     "fileDownloadScenePressed": "qx.event.type.Event",
@@ -74,8 +72,6 @@ qx.Class.define("qxapp.components.menuBar",
       var fileMenu = new qx.ui.menu.Menu;
 
       var newButton = new qx.ui.menu.Button(this.tr("New"), null, null);
-      var loadEntitiesButton = new qx.ui.menu.Button(this.tr("Load entities"), null, null);
-      var saveEntitiesButton = new qx.ui.menu.Button(this.tr("Save entities"), null, null);
       var loadSceneButton = new qx.ui.menu.Button(this.tr("Load scene"), null, null);
       var saveSceneButton = new qx.ui.menu.Button(this.tr("Save scene"), null, null);
       var downloadSceneButton = new qx.ui.menu.Button(this.tr("Download scene"), null, null);
@@ -83,14 +79,6 @@ qx.Class.define("qxapp.components.menuBar",
 
       newButton.addListener("execute", function(e) {
         this.fireDataEvent("fileNewPressed");
-      }, this);
-
-      loadEntitiesButton.addListener("execute", function(e) {
-        this.fireDataEvent("fileLoadEntitiesPressed");
-      }, this);
-
-      saveEntitiesButton.addListener("execute", function(e) {
-        this.fireDataEvent("fileSaveEntitiesPressed");
       }, this);
 
       loadSceneButton.addListener("execute", function(e) {
@@ -106,8 +94,6 @@ qx.Class.define("qxapp.components.menuBar",
       }, this);
 
       fileMenu.add(newButton);
-      fileMenu.add(loadEntitiesButton);
-      fileMenu.add(saveEntitiesButton);
       fileMenu.add(loadSceneButton);
       fileMenu.add(saveSceneButton);
       fileMenu.add(downloadSceneButton);

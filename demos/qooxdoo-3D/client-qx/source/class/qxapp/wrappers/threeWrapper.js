@@ -13,8 +13,6 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
     var three_path = "three/three.min.js";
     var orbit_path = "three/OrbitControls.js";
     var transform_path = "three/TransformControls.js";
-    var obj_loader_path = "three/OBJLoader.js";
-    var obj_exporter_path = "three/OBJExporter.js";
     var gltf_loader_path = "three/GLTFLoader.js";
     var gltf_exporter_path = "three/GLTFExporter.js";
     var vtk_loader_path = "three/VTKLoader.js";
@@ -22,8 +20,6 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       three_path,
       orbit_path,
       transform_path,
-      obj_loader_path,
-      obj_exporter_path,
       gltf_loader_path,
       gltf_exporter_path,
       vtk_loader_path
@@ -103,43 +99,6 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
     {
       this._scene.add(objToScene);
       this.Render();
-    },
-
-    ImportEntityFromBuffer : function(model_buffer, model_name)
-    {
-      // https://threejs.org/docs/#api/loaders/MaterialLoader
-      // Have a look at this to load materials together with geometry.
-      //Could be stored in userData{}
-
-      var objLoader = new THREE.OBJLoader();
-      var myObj = objLoader.parse(model_buffer);
-
-      var scope = this;
-      myObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
-
-          // entity is black
-          // https://github.com/expo/expo-three/issues/5#issuecomment-360956203
-          var material = scope.CreateNewMaterial();
-          child.material = material;
-          child.name = model_name;
-
-          child.geometry.__dirtyColors = true;
-          child.geometry.colorsNeedUpdate = true;
-          child.geometry.dynamic = true;
-
-          scope.fireDataEvent("EntityToBeAdded", child);
-        }
-      });
-    },
-
-    ExportEntity : function (entity)
-    {
-      // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
-
-      var exporter = new THREE.OBJExporter();
-      var entity_to_export = exporter.parse(entity);
-      return entity_to_export;
     },
 
     ImportSceneFromBuffer : function(model_buffer)

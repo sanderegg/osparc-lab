@@ -10,7 +10,8 @@ var https = require('https');
 
 const HOSTNAME = process.env.SIMCORE_WEB_HOSTNAME || "127.0.0.1"
 const PORT = process.env.SIMCORE_WEB_PORT || 8080;
-const APP_PATH = process.env.SIMCORE_WEB_OUTDIR || path.resolve(__dirname, 'source-output')
+const APP_PATH = process.env.SIMCORE_WEB_OUTDIR || path.resolve(__dirname, 'source-output');
+const MODELS_PATH = '/models/';
 
 
 // serve static assets normally
@@ -82,16 +83,6 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket_client) {
   console.log('Client connected...');
 
-  socket_client.on('importEntities', function(active_user) {
-    importEntities(socket_client, active_user);
-  });
-
-  socket_client.on('exportEntities', function(args) {
-    var active_user = args[0];
-    var entities_json = args[1];
-    exportEntities(socket_client, active_user, entities_json);
-  });
-
   socket_client.on('importScene', function(active_user) {
     importScene(socket_client, active_user);
   });
@@ -148,49 +139,6 @@ io.on('connection', function(socket_client) {
     booleanOperation(socket_client, entityMeshesScene, operationType);
   });
 });
-
-
-function importEntities(socket_client, active_user) {
-  const models_dir = APP_PATH + MODELS_PATH + active_user;
-  console.log('import Entities from: ', models_dir);
-  var fs = require("fs");
-  fs.readdirSync(models_dir).forEach(file => {
-    if ('obj' === file.split('.').pop()) {
-      const file_path = models_dir +'/'+ file;
-      fs.readFile(file_path, function (err, data) {
-        if (err)
-          throw err;
-        var modelJson = {};
-        modelJson.modelName = file;
-        modelJson.value = data.toString();
-        modelJson.type = 'importEntities';
-        console.log("sending file: ", modelJson.modelName);
-        socket_client.emit('importEntities', modelJson);
-      });
-    }
-  });
-};
-
-function exportEntities(socket_client, active_user, entities_json) {
-  const models_dir = APP_PATH + MODELS_PATH + active_user;
-  var fs = require('fs');
-  var response = {};
-  response.type = 'exportEntities';
-  response.value = entities_json.length > 0;
-  for (var i = 0; i < entities_json.length; i++) {
-    const file_path = models_dir +'/'+ entities_json[i].name;
-    fs.writeFile(file_path, entities_json[i].data, 'utf8', function (err) {
-      if (err) {
-        console.log("Error: ", err);
-        response.value = response.value && false;
-      } else {
-        console.log(models_dir, " file was saved!");
-        response.value = response.value && true;
-      }
-    });
-  }
-  socket_client.emit('exportEntities', response);
-};
 
 function importScene(socket_client, active_user) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;

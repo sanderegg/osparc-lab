@@ -172,17 +172,6 @@ qx.Class.define("qxapp.Application",
           this._threeView.RemoveAll();
         }, this);
 
-        this._menuBar.addListener("fileLoadEntitiesPressed", function(e) {
-          if (!this._socket.slotExists("importEntities")) {
-            this._socket.on("importEntities", function(val) {
-              if (val.type === "importEntities") {
-                this._threeView.ImportEntityFromBuffer(val.value, val.modelName);
-              }
-            }, this);
-          }
-          this._socket.emit("importEntities", this._getActiveUserName());
-        }, this);
-
         this._menuBar.addListener("fileSaveEntitiesPressed", function(e) {
           this._threeView.SerializeEntities();
         }, this);
@@ -219,15 +208,6 @@ qx.Class.define("qxapp.Application",
               }
             }, this);
           }
-          /*
-          if (!this._socket.slotExists("importModel")) {
-            this._socket.on("importModel", function(val) {
-              if (val.type === "importModel") {
-                this._threeView.CreateEntityFromResponse(val.value, val.name, val.uuid);
-              }
-            }, this);
-          }
-          */
           this._socket.emit("importModel", selectedModel);
         }, this);
 
