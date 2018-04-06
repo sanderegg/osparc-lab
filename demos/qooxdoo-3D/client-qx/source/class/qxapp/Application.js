@@ -158,12 +158,12 @@ qx.Class.define('qxapp.Application',
       return myDefaultData;
     },
 
-    _getActiveUserName : function() {
+    _getActiveUserName: function() {
       const activeUserId = this._appModel.getActiveUser();
       return this._appModel.getUsers().toArray()[activeUserId].getName();
     },
 
-    _initSignals : function() {
+    _initSignals: function() {
       // Menu bar
       {
         this._menuBar.addListener('fileNewPressed', function(e) {
@@ -235,8 +235,8 @@ qx.Class.define('qxapp.Application',
         this._availableServicesBar.addListener('newBlockRequested', function(e) {
           let enableBoxTool = e.getData();
           if (enableBoxTool) {
-            var useExternalModeler = this._appModel.getUseExternalModeler();
-            var boxCreator = new qxapp.modeler.boxCreator(this._threeView);
+            let useExternalModeler = this._appModel.getUseExternalModeler();
+            let boxCreator = new qxapp.modeler.boxCreator(this._threeView);
             this._threeView.StartTool(boxCreator);
           } else {
             this._threeView.StopTool();
@@ -246,14 +246,11 @@ qx.Class.define('qxapp.Application',
         this._availableServicesBar.addListener('newSphereRequested', function(e) {
           let enableSphereTool = e.getData();
           if (enableSphereTool) {
-            var useExternalModeler = this._appModel.getUseExternalModeler();
-            if (!useExternalModeler)
-            {
-              var sphereCreator = new qxapp.modeler.sphereCreator(this._threeView);
+            let useExternalModeler = this._appModel.getUseExternalModeler();
+            if (!useExternalModeler) {
+              var sphereCreator = new qxapp.modeler.sphereCreator(this._threeView); var sphereCreator = new qxapp.modeler.sphereCreator(this._threeView);
               this._threeView.StartTool(sphereCreator);
-            }
-            else
-            {
+            } else {
               var sphereCreator = new qxapp.modeler.sphereCreatorS4L(this._threeView);
               this._threeView.StartTool(sphereCreator);
               sphereCreator.addListenerOnce('newSphereS4LRequested', function(e) {
@@ -278,8 +275,8 @@ qx.Class.define('qxapp.Application',
         this._availableServicesBar.addListener('newCylinderRequested', function(e) {
           let enableCylinderTool = e.getData();
           if (enableCylinderTool) {
-            var useExternalModeler = this._appModel.getUseExternalModeler();
-            var cylinderCreator = new qxapp.modeler.cylinderCreator(this._threeView);
+            let useExternalModeler = this._appModel.getUseExternalModeler();
+            let cylinderCreator = new qxapp.modeler.cylinderCreator(this._threeView);
             this._threeView.StartTool(cylinderCreator);
           } else {
             this._threeView.StopTool();
@@ -289,8 +286,8 @@ qx.Class.define('qxapp.Application',
         this._availableServicesBar.addListener('newDodecaRequested', function(e) {
           let enableDodecahedronTool = e.getData();
           if (enableDodecahedronTool) {
-            var useExternalModeler = this._appModel.getUseExternalModeler();
-            var dodecahedronCreator = new qxapp.modeler.dodecahedronCreator(this._threeView);
+            let useExternalModeler = this._appModel.getUseExternalModeler();
+            let dodecahedronCreator = new qxapp.modeler.dodecahedronCreator(this._threeView);
             this._threeView.StartTool(dodecahedronCreator);
           } else {
             this._threeView.StopTool();
@@ -301,14 +298,11 @@ qx.Class.define('qxapp.Application',
           // this._threeView.SetSelectionMode(0);
           let enableSplineTool = e.getData();
           if (enableSplineTool) {
-            var useExternalModeler = this._appModel.getUseExternalModeler();
-            if (!useExternalModeler)
-            {
+            let useExternalModeler = this._appModel.getUseExternalModeler();
+            if (!useExternalModeler) {
               var splineCreator = new qxapp.modeler.splineCreator(this._threeView);
               this._threeView.StartTool(splineCreator);
-            }
-            else
-            {
+            } else {
               var splineCreator = new qxapp.modeler.splineCreatorS4L(this._threeView);
               this._threeView.StartTool(splineCreator);
               splineCreator.addListenerOnce('newSplineS4LRequested', function(e) {
@@ -331,9 +325,9 @@ qx.Class.define('qxapp.Application',
 
         this._availableServicesBar.addListener('moveToolRequested', function(e) {
           this._threeView.SetSelectionMode(0);
-          var enableMoveTool = e.getData();
+          let enableMoveTool = e.getData();
           if (enableMoveTool) {
-            var selObjId = this._entityList.GetSelectedEntityId();
+            let selObjId = this._entityList.GetSelectedEntityId();
             if (selObjId) {
               this._threeView.StartMoveTool(selObjId, 'translate');
             } else {
@@ -346,9 +340,9 @@ qx.Class.define('qxapp.Application',
 
         this._availableServicesBar.addListener('rotateToolRequested', function(e) {
           this._threeView.SetSelectionMode(0);
-          var enableRotateTool = e.getData();
+          let enableRotateTool = e.getData();
           if (enableRotateTool) {
-            var selObjId = this._entityList.GetSelectedEntityId();
+            let selObjId = this._entityList.GetSelectedEntityId();
             if (selObjId) {
               this._threeView.StartMoveTool(selObjId, 'rotate');
             } else {
@@ -362,7 +356,7 @@ qx.Class.define('qxapp.Application',
         this._availableServicesBar.addListener('booleanOperationRequested', function(e) {
           let operationType = e.getData();
           if (this._threeView._entities.length>1) {
-            var entityMeshesIDs = this._entityList.GetSelectedEntityIds();
+            let entityMeshesIDs = this._entityList.GetSelectedEntityIds();
             if (entityMeshesIDs.length>1) {
               this._threeView._threeWrapper.addListenerOnce('sceneWithMeshesToBeExported', function(e) {
                 let sceneWithMeshes = e.getData();
@@ -391,7 +385,7 @@ qx.Class.define('qxapp.Application',
 
         this._entityList.addListener('selectionChanged', function(e) {
           let entityIds = e.getData();
-          this._threeView.UnhighlightAll();
+          this._threeView.UnhigasdhlightAll();
           this._threeView.HighlightEntities(entityIds);
         }, this);
 
@@ -453,14 +447,13 @@ qx.Class.define('qxapp.Application',
       }
     },
 
-    ShowPreferences : function()
-    {
-      var preferencesDlg = new qxapp.components.preferences(
+    ShowPreferences: function() {
+      let preferencesDlg = new qxapp.components.preferences(
         this._appModel, 250, 300,
         this._appModel.getColors().getSettingsView().getBackground(), this._appModel.getColors().getSettingsView().getFont());
 
       preferencesDlg.open();
       preferencesDlg.center();
     },
-  }
+  },
 });
