@@ -170,21 +170,6 @@ qx.Class.define('qxapp.Application',
           this._threeView.RemoveAll();
         }, this);
 
-        this._menuBar.addListener('fileLoadEntitiesPressed', function(e) {
-          if (!this._socket.slotExists('importEntities')) {
-            this._socket.on('importEntities', function(val) {
-              if (val.type === 'importEntities') {
-                this._threeView.ImportEntityFromBuffer(val.value, val.modelName);
-              }
-            }, this);
-          }
-          this._socket.emit('importEntities', this._getActiveUserName());
-        }, this);
-
-        this._menuBar.addListener('fileSaveEntitiesPressed', function(e) {
-          this._threeView.SerializeEntities();
-        }, this);
-
         this._menuBar.addListener('fileLoadScenePressed', function(e) {
           if (!this._socket.slotExists('importScene')) {
             this._socket.on('importScene', function(val) {
@@ -385,7 +370,7 @@ qx.Class.define('qxapp.Application',
 
         this._entityList.addListener('selectionChanged', function(e) {
           let entityIds = e.getData();
-          this._threeView.UnhigasdhlightAll();
+          this._threeView.UnhighlightAll();
           this._threeView.HighlightEntities(entityIds);
         }, this);
 
