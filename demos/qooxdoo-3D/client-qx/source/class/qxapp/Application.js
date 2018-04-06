@@ -102,7 +102,7 @@ qx.Class.define('qxapp.Application',
 
       let toolBarcontainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(1)).set({
         backgroundColor: 'white',
-        allowGrowY: false
+        allowGrowY: false,
       });
       toolBarcontainer.add(this._menuBar);
       toolBarcontainer.add(this._availableServicesBar);
@@ -118,8 +118,8 @@ qx.Class.define('qxapp.Application',
     },
 
     _getDefaultData : function() {
-      var myDefaultData = {
-        'LocaleCode' : 'en',
+      let myDefaultData = {
+        'LocaleCode': 'en',
         'Colors': {
           'MenuBar': {
             'Background': '#535353', // 83, 83, 83
@@ -137,7 +137,7 @@ qx.Class.define('qxapp.Application',
             'Background': '#3F3F3F', // 63, 63, 63
           },
         },
-        'ActiveUser' : 0,
+        'ActiveUser': 0,
         'Users': [
           {
             'Name': 'Odei',
@@ -152,8 +152,8 @@ qx.Class.define('qxapp.Application',
             'ID': 2,
           },
         ],
-        'UseExternalModeler' : 0,
-        'ExportSceneAsBinary' : 0,
+        'UseExternalModeler': 0,
+        'ExportSceneAsBinary': 0,
       };
       return myDefaultData;
     },
