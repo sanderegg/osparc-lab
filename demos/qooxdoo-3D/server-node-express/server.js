@@ -64,16 +64,6 @@ let io = require('socket.io')(server);
 io.on('connection', function(socketClient) {
   console.log('Client connected...');
 
-  socketClient.on('importEntities', function(activeUser) {
-    importEntities(socketClient, activeUser);
-  });
-
-  socketClient.on('exportEntities', function(args) {
-    let activeUser = args[0];
-    let entitiesJson = args[1];
-    exportEntities(socketClient, activeUser, entitiesJson);
-  });
-
   socketClient.on('importScene', function(activeUser) {
     importScene(socketClient, activeUser);
   });
@@ -251,55 +241,6 @@ function createSplineS4L(pointlist, uuid) {
     });
   });
 }
-
-/**
- * Import entities from local folder
- *
- * @param {any} socketClient
- * @param {any} activeUser
- */
-function importEntities(socketClient, activeUser) {
-  const modelsDirectory = APP_PATH + MODELS_PATH + activeUser;
-  console.log('import Entities from: ', modelsDirectory);
-  let fs = require('fs');
-  fs.readdirSync(modelsDirectory).forEach((file) => {
-    if ('obj' === file.split('.').pop()) {
-      const filePath = modelsDirectory +'/'+ file;
-      fs.readFile(filePath, function(err, data) {
-        if (err) {
-          throw err;
-        }
-        let modelJson = {};
-        modelJson.modelName = file;
-        modelJson.value = data.toString();
-        modelJson.type = 'importEntities';
-        console.log('sending file: ', modelJson.modelName);
-        socketClient.emit('importEntities', modelJson);
-      });
-    }
-  });
-};
-
-function exportEntities(socketClient, activeUser, entitiesJson) {
-  const modelsDirectory = APP_PATH + MODELS_PATH + activeUser;
-  let fs = require('fs');
-  let response = {};
-  response.type = 'exportEntities';
-  response.value = entitiesJson.length > 0;
-  for (let i = 0; i < entitiesJson.length; i++) {
-    const filePath = modelsDirectory +'/'+ entitiesJson[i].name;
-    fs.writeFile(filePath, entitiesJson[i].data, 'utf8', function(err) {
-      if (err) {
-        console.log('Error: ', err);
-        response.value = response.value && false;
-      } else {
-        console.log(modelsDirectory, ' file was saved!');
-        response.value = response.value && true;
-      }
-    });
-  }
-  socketClient.emit('exportEntities', response);
-};
 
 function importScene(socketClient, activeUser) {
   const modelsDirectory = APP_PATH + MODELS_PATH + activeUser;

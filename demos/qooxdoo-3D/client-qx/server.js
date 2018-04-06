@@ -250,16 +250,16 @@ function importModelS4L(socketClient, modelName) {
     let modelPath;
     switch (modelName) {
       case 'Thelonious':
-        modelPath = "D:/sparc/thelonius_reduced.smash";
+        modelPath = 'D:/sparc/thelonius_reduced.smash';
         break;
       case 'Rat':
-        modelPath = "D:/sparc/ratmodel_simplified.smash";
+        modelPath = 'D:/sparc/ratmodel_simplified.smash';
         break;
       case 'BigRat':
-        modelPath = "D:/sparc/Rat_Male_567g_v2.0b02.sat";
+        modelPath = 'D:/sparc/Rat_Male_567g_v2.0b02.sat';
         break;
       default:
-        modelPath = "D:/sparc/ratmodel_simplified.smash";
+        modelPath = 'D:/sparc/ratmodel_simplified.smash';
         break;
     }
     console.log('Importing', modelName);
