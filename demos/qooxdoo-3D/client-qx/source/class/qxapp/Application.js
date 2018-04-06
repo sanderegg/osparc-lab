@@ -228,7 +228,7 @@ qx.Class.define('qxapp.Application',
       // Services
       {
         this._availableServicesBar.addListener('selectionModeChanged', function(e) {
-          selectionMode = e.getData();
+          let selectionMode = e.getData();
           this._threeView.SetSelectionMode(selectionMode);
         }, this);
 
@@ -298,7 +298,7 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._availableServicesBar.addListener('newSplineRequested', function(e) {
-          //this._threeView.SetSelectionMode(0);
+          // this._threeView.SetSelectionMode(0);
           let enableSplineTool = e.getData();
           if (enableSplineTool) {
             var useExternalModeler = this._appModel.getUseExternalModeler();
