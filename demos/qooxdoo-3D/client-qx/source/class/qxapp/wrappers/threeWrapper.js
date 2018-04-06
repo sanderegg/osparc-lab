@@ -13,8 +13,6 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
     var three_path = "three/three.min.js";
     var orbit_path = "three/OrbitControls.js";
     var transform_path = "three/TransformControls.js";
-    var obj_loader_path = "three/OBJLoader.js";
-    var obj_exporter_path = "three/OBJExporter.js";
     var gltf_loader_path = "three/GLTFLoader.js";
     var gltf_exporter_path = "three/GLTFExporter.js";
     var vtk_loader_path = "three/VTKLoader.js";
@@ -22,8 +20,6 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       three_path,
       orbit_path,
       transform_path,
-      obj_loader_path,
-      obj_exporter_path,
       gltf_loader_path,
       gltf_exporter_path,
       vtk_loader_path
@@ -105,65 +101,27 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       this.Render();
     },
 
-    ImportEntityFromBuffer : function(model_buffer, model_name)
-    {
-      // https://threejs.org/docs/#api/loaders/MaterialLoader
-      // Have a look at this to load materials together with geometry.
-      //Could be stored in userData{}
-
-      var objLoader = new THREE.OBJLoader();
-      var myObj = objLoader.parse(model_buffer);
-
-      var scope = this;
-      myObj.traverse( function ( child ) {
-        if ( child instanceof THREE.Mesh ) {
-
-          // entity is black
-          // https://github.com/expo/expo-three/issues/5#issuecomment-360956203
-          var material = scope.CreateNewMaterial();
-          child.material = material;
-          child.name = model_name;
-
-          child.geometry.__dirtyColors = true;
-          child.geometry.colorsNeedUpdate = true;
-          child.geometry.dynamic = true;
-
-          scope.fireDataEvent("EntityToBeAdded", child);
-        }
-      });
-    },
-
-    ExportEntity : function (entity)
-    {
-      // https://stackoverflow.com/questions/28736104/three-js-how-to-deserialize-geometry-tojson-where-is-geometry-fromjson
-
-      var exporter = new THREE.OBJExporter();
-      var entity_to_export = exporter.parse(entity);
-      return entity_to_export;
-    },
-
     ImportSceneFromBuffer : function(model_buffer)
     {
       var scope = this;
+
+      function onLoad(myScene) {
+        for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
+          if (myScene.scene.children[i].type === 'Mesh' ||
+              myScene.scene.children[i].type === 'Line') {
+              scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
+          }
+        }
+      }
+
+      function onError(error) {
+        console.log( 'An error happened' );
+      }
+      
       var glTFLoader = new THREE.GLTFLoader();
       glTFLoader.parse(model_buffer, null,
-        function( myScene ) {
-          const onlyMeshes = true;
-          if (onlyMeshes) {
-            for (var i = myScene.scene.children.length-1; i >=0 ; i--) {
-              if (myScene.scene.children[i].type === 'Mesh' ||
-                  myScene.scene.children[i].type === 'Line') {
-                scope.fireDataEvent("EntityToBeAdded", myScene.scene.children[i]);
-              }
-            }
-          } else {
-            scope._scene.add(myScene.scene);
-            scope.Render();
-          }
-        },
-        function ( error ) {
-          console.log( 'An error happened' );
-        }
+        onLoad,
+        onError
       );
     },
 
@@ -182,11 +140,15 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       }
 
       var scope = this;
+
+      function onCompleted(gltf) {
+        scope.fireDataEvent("sceneWithMeshesToBeExported", gltf);
+      }
+
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( myMeshes,
-        function ( gltf ) {
-          scope.fireDataEvent("sceneWithMeshesToBeExported", gltf);
-        }, options );
+        onCompleted, 
+        options );
     },
 
     ExportScene : function (downloadScene = false, exportSceneAsBinary = false)
@@ -196,19 +158,23 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       };
 
       var scope = this;
+
+      function onCompleted(gltf) {
+        if (downloadScene) {
+          if (options.binary) {
+            scope._downloadBinJSON(gltf, "myScene.glb");
+          } else {
+            scope._downloadJSON(gltf, "myScene.gltf");
+          }
+        } else {
+          scope.fireDataEvent("sceneToBeExported", gltf);
+        }
+      }
+
       var glTFExporter = new THREE.GLTFExporter();
       glTFExporter.parse( this._scene,
-        function ( gltf ) {
-          if (downloadScene) {
-            if (options.binary) {
-              scope._downloadBinJSON(gltf, "myScene.glb");
-            } else {
-              scope._downloadJSON(gltf, "myScene.gltf");
-            }
-          } else {
-            scope.fireDataEvent("sceneToBeExported", gltf);
-          }
-        }, options );
+        onCompleted, 
+        options );
     },
 
     _downloadBinJSON : function(exportObj, fileName)
@@ -232,7 +198,7 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       downloadAnchorNode.remove();
     },
 
-    RemoveFromScene : function(objFromScene)
+    RemoveEntityFromScene : function(objFromScene)
     {
       var index = this._scene.children.indexOf(objFromScene);
       if (index >= 0) {
@@ -242,16 +208,16 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       return false;
     },
 
-    RemoveFromSceneById : function(uuid)
+    RemoveEntityFromSceneById : function(uuid)
     {
-      var objInScene = this.GetFromScene(uuid);
+      var objInScene = this.GetEntityFromScene(uuid);
       if (objInScene) {
-        return this.RemoveFromScene(objInScene);
+        return this.RemoveEntityFromScene(objInScene);
       }
       return false;
     },
 
-    GetFromScene : function(uuid)
+    GetEntityFromScene : function(uuid)
     {
       for (var i = 0; i < this._scene.children.length; i++) {
         if (this._scene.children[i].uuid === uuid) {
@@ -288,6 +254,8 @@ qx.Class.define("qxapp.wrappers.threeWrapper",
       this._camera.aspect = width / height;
       this._camera.updateProjectionMatrix();
       this._renderer.setSize(width, height);
+      this._orbitControls.update();
+      this.Render();
     },
 
     CreateNewPlaneMaterial : function(red, green, blue)

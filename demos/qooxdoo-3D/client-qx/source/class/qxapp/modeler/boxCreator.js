@@ -33,10 +33,10 @@ qx.Class.define("qxapp.modeler.boxCreator", {
     _removeTemps : function()
     {
       if (this._square_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._square_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._square_temp);
       }
       if (this._box_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._box_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._box_temp);
       }
     },
 

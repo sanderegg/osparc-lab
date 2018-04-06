@@ -34,7 +34,7 @@ qx.Class.define("qxapp.modeler.sphereCreator", {
         var intersect = intersects[0];
         var temp_radius = Math.hypot(intersect.point.x-this._centerPoint.x, intersect.point.y-this._centerPoint.y);
         if (this._sphere_temp) {
-          this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
+          this._threeView._threeWrapper.RemoveEntityFromScene(this._sphere_temp);
         }
         var sphereGeometry = this._threeView._threeWrapper.CreateSphere(temp_radius);
         if (this._sphere_material === null) {
@@ -82,7 +82,7 @@ qx.Class.define("qxapp.modeler.sphereCreator", {
     _consolidateSphere : function()
     {
       if (this._sphere_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._sphere_temp);
         this._sphere_temp = null;
       }
 

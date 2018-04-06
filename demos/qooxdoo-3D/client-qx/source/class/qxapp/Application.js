@@ -210,7 +210,6 @@ qx.Class.define('qxapp.Application',
 
         this._menuBar.addListener('fileLoadModelPressed', function(e) {
           let selectedModel = e.getData();
-          console.log('Hello from Importer');
           if (!this._socket.slotExists('importModelScene')) {
             this._socket.on('importModelScene', function(val) {
               if (val.type === 'importModelScene') {
@@ -386,7 +385,14 @@ qx.Class.define('qxapp.Application',
 
         this._entityList.addListener('selectionChanged', function(e) {
           let entityIds = e.getData();
+          this._threeView.UnhigasdhlightAll();
           this._threeView.HighlightEntities(entityIds);
+        }, this);
+
+        this._entityList.addListener('visibilityChanged', function(e) {
+          var entityId = e.getData()[0];
+          var show = e.getData()[1];
+          this._threeView.ShowHideEntity(entityId, show);
         }, this);
       }
 
@@ -394,8 +400,16 @@ qx.Class.define('qxapp.Application',
       {
         this._threeView.addListener('entitySelected', function(e) {
           let entityId = e.getData();
-          this._availableServicesBar.OnEntitySelectedChanged(entityId);
-          this._entityList.OnEntitySelectedChanged(entityId);
+          this._entityList.OnEntitySelectedChanged([entityId]);
+        }, this);
+        
+        this._threeView.addListener('entitySelectedAdd', function(e) {
+          var entityId = e.getData();
+          var selectedEntityIds = this._entityList.GetSelectedEntityIds();
+          if (selectedEntityIds.indexOf(entityId) === -1) {
+            selectedEntityIds.push(entityId)
+            this._entityList.OnEntitySelectedChanged(selectedEntityIds);
+          }
         }, this);
 
         this._threeView.addListener('entityAdded', function(e) {

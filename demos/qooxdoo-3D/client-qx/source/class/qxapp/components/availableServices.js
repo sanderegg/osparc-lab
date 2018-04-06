@@ -55,13 +55,20 @@ qx.Class.define("qxapp.components.availableServices",
       toolbar.set({
         width: width,
         backgroundColor: backgroundColor
-      })
+      });
+      
+      window.addEventListener( 'resize', function () {
+        toolbar.set({
+          width: window.innerWidth,
+        });
+      });
+
       frame.add(toolbar);
 
       // Model selection
       {
-        var menuPart = new qx.ui.toolbar.Part;
-        toolbar.add(menuPart);
+        var selectionPart = new qx.ui.toolbar.Part;
+        toolbar.add(selectionPart);
 
         var disabled_btn = new qx.ui.toolbar.RadioButton(this.tr("Disabled"));
         disabled_btn.addListener("execute", function(e) {
@@ -78,18 +85,18 @@ qx.Class.define("qxapp.components.availableServices",
           this.fireDataEvent("selectionModeChanged", 3);
         }, this);
 
-        menuPart.add(disabled_btn);
-        menuPart.add(sel_ent_btn);
-        menuPart.add(sel_face_btn);
+        selectionPart.add(disabled_btn);
+        selectionPart.add(sel_ent_btn);
+        selectionPart.add(sel_face_btn);
 
-        var radioGroup = new qx.ui.form.RadioGroup(disabled_btn, sel_ent_btn, sel_face_btn);
-        radioGroup.setAllowEmptySelection(true);
+        var selectionGroup = new qx.ui.form.RadioGroup(disabled_btn, sel_ent_btn, sel_face_btn);
+        selectionGroup.setAllowEmptySelection(true);
       }
 
       // Move
       {
-        var menuPart = new qx.ui.toolbar.Part;
-        toolbar.add(menuPart);
+        var transformPart = new qx.ui.toolbar.Part;
+        toolbar.add(transformPart);
 
         this._moveBtn = new qx.ui.toolbar.CheckBox(this.tr("Move"));
         this._moveBtn.addListener("execute", this._onMoveToolRequested.bind(this));
@@ -97,35 +104,43 @@ qx.Class.define("qxapp.components.availableServices",
         this._rotateBtn = new qx.ui.toolbar.CheckBox(this.tr("Rotate"));
         this._rotateBtn.addListener("execute", this._onRotateToolRequested.bind(this));
 
-        menuPart.add(this._moveBtn);
-        menuPart.add(this._rotateBtn);
+        transformPart.add(this._moveBtn);
+        transformPart.add(this._rotateBtn);
+        
+        var transformGroup = new qx.ui.form.RadioGroup(this._moveBtn, this._rotateBtn);
+        transformGroup.setAllowEmptySelection(true);
+        transformGroup.setSelection([]);
       }
 
       // Create standard model
       {
-        var menuPart = new qx.ui.toolbar.Part;
-        toolbar.add(menuPart);
+        var drawingPart = new qx.ui.toolbar.Part;
+        toolbar.add(drawingPart);
 
-        this._sphereBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Sphere"));
+        this._sphereBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Sphere"));
         this._sphereBtn.addListener("execute", this._onAddSphereRequested, this);
 
-        this._blockBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Box"));
+        this._blockBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Box"));
         this._blockBtn.addListener("execute", this._onAddBlockRequested.bind(this));
 
-        this._cylinderBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Cylinder"));
+        this._cylinderBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Cylinder"));
         this._cylinderBtn.addListener("execute", this._onAddCylinderRequested.bind(this));
 
-        this._dodecaBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Dodecahedron"));
+        this._dodecaBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Dodecahedron"));
         this._dodecaBtn.addListener("execute", this._onAddDodecaRequested.bind(this));
 
-        this._splineBtn = new qx.ui.toolbar.CheckBox(this.tr("Add Spline"));
+        this._splineBtn = new qx.ui.toolbar.RadioButton(this.tr("Add Spline"));
         this._splineBtn.addListener("execute", this._onAddSplineRequested.bind(this));
 
-        menuPart.add(this._sphereBtn);
-        menuPart.add(this._blockBtn);
-        menuPart.add(this._cylinderBtn);
-        menuPart.add(this._dodecaBtn);
-        menuPart.add(this._splineBtn);
+        drawingPart.add(this._sphereBtn);
+        drawingPart.add(this._blockBtn);
+        drawingPart.add(this._cylinderBtn);
+        drawingPart.add(this._dodecaBtn);
+        drawingPart.add(this._splineBtn);
+        
+        var drawingGroup = new qx.ui.form.RadioGroup(this._sphereBtn, this._blockBtn, this._cylinderBtn, this._dodecaBtn, this._splineBtn);
+        drawingGroup.setAllowEmptySelection(true);
+        drawingGroup.setSelection([]);
       }
 
       // Boolean operations
@@ -158,10 +173,6 @@ qx.Class.define("qxapp.components.availableServices",
       menu.add(substractButton);
 
       return menu;
-    },
-
-    OnEntitySelectedChanged : function(uuid) {
-      //this._moveBtn.setEnabled(uuid !== null);
     },
 
     _onAddSphereRequested : function() {

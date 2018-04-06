@@ -96,16 +96,8 @@ qx.Class.define("qxapp.modeler.sphereCreatorS4L", {
       sphere.name = "Sphere_S4L";
       sphere.uuid = response.uuid;
 
-      //console.log('temp', this._uuid_temp);
-      //console.log('defi', this._my_uuid);
-      //console.log('spId', sphere.uuid);
-
-      //if (this._uuid_temp === '') {
-      //  this._uuid_temp = sphere.uuid;
-      //}
-
       if (this._sphere_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._sphere_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._sphere_temp);
       }
 
       if (this._my_uuid === sphere.uuid) {

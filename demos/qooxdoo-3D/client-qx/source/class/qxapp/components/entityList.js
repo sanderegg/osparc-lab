@@ -54,6 +54,7 @@ qx.Class.define("qxapp.components.entityList",
   events : {
     "removeEntityRequested": "qx.event.type.Data",
     "selectionChanged": "qx.event.type.Data",
+    "visibilityChanged": "qx.event.type.Data",
   },
 
   members: {
@@ -95,7 +96,32 @@ qx.Class.define("qxapp.components.entityList",
     },
 
     AddEntity : function(id, name) {
-      var newItem = new qx.ui.tree.TreeFile(name);
+      var newItem = new qx.ui.tree.TreeFile();
+
+      // A checkbox comes right after the tree icon
+      var checkbox = new qx.ui.form.CheckBox();
+      checkbox.setFocusable(false);
+      checkbox.setValue(true);
+      newItem.addWidget(checkbox);
+      var that = this;
+      checkbox.addListener("changeValue",
+        function(e) {
+          that.fireDataEvent("visibilityChanged", [id, e.getData()]);
+          var selectedIds = that.GetSelectedEntityIds();
+          for (var i = 0; i < that._tree.getRoot().getChildren().length; i++) {
+            if (selectedIds.indexOf(that._tree.getRoot().getChildren()[i].id) >= 0) {
+              // ToDo: Look for a better solution
+              for (var j = 0; j < that._tree.getRoot().getChildren()[i].__widgetChildren.length; j++) {
+                if (that._tree.getRoot().getChildren()[i].__widgetChildren[j].basename === "CheckBox") {
+                  that._tree.getRoot().getChildren()[i].__widgetChildren[j].setValue(e.getData());
+                } 
+              }
+            }
+          }
+        }, that);
+      
+      newItem.addLabel(name);
+
       newItem.id = id;
       this._tree.getRoot().add(newItem);
       this._tree.setSelection([newItem]);
@@ -109,15 +135,17 @@ qx.Class.define("qxapp.components.entityList",
       }
     },
 
-    OnEntitySelectedChanged : function(uuid) {
-      if (uuid === null) {
+    OnEntitySelectedChanged : function(uuids) {
+      if (uuids === null) {
         this._tree.resetSelection();
       } else {
+        var selected = [];
         for (var i = 0; i < this._tree.getRoot().getChildren().length; i++) {
-          if (this._tree.getRoot().getChildren()[i].id === uuid) {
-            this._tree.setSelection([this._tree.getRoot().getChildren()[i]]);
+          if (uuids.indexOf(this._tree.getRoot().getChildren()[i].id) >= 0 ) {
+            selected.push(this._tree.getRoot().getChildren()[i]);
           }
         }
+        this._tree.setSelection(selected);
       }
     },
   }

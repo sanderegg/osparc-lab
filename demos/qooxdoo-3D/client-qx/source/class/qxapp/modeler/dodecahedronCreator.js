@@ -34,7 +34,7 @@ qx.Class.define("qxapp.modeler.dodecahedronCreator", {
         var intersect = intersects[0];
         var temp_radius = Math.hypot(intersect.point.x-this._centerPoint.x, intersect.point.y-this._centerPoint.y);
         if (this._dodecahedron_temp) {
-          this._threeView._threeWrapper.RemoveFromScene(this._dodecahedron_temp);
+          this._threeView._threeWrapper.RemoveEntityFromScene(this._dodecahedron_temp);
         }
         var dodecahedronGeometry = this._threeView._threeWrapper.CreateDodecahedron(temp_radius);
         if (this._dodecahedron_material === null) {
@@ -82,7 +82,7 @@ qx.Class.define("qxapp.modeler.dodecahedronCreator", {
     _consolidateDodecahedron : function()
     {
       if (this._dodecahedron_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._dodecahedron_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._dodecahedron_temp);
         this._dodecahedron_temp = null;
       }
 

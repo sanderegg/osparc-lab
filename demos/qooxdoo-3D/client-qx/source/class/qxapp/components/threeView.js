@@ -45,6 +45,16 @@ qx.Class.define("qxapp.components.threeView",
 
           document.addEventListener( 'mousedown', this._onMouseDown.bind(this), false );
           document.addEventListener( 'mousemove', this._onMouseHover.bind(this), false );
+          
+          var that = this;
+          window.addEventListener( 'resize', function () {
+            that.set({
+              width: window.innerWidth,
+              height: window.innerHeight
+            });
+            that._threeWrapper.SetSize( window.innerWidth, window.innerHeight );
+          }, that );
+
           this._render();
 
         }, this);
@@ -67,6 +77,7 @@ qx.Class.define("qxapp.components.threeView",
 
   events : {
     "entitySelected": "qx.event.type.Data",
+    "entitySelectedAdd": "qx.event.type.Data",
     "entityAdded": "qx.event.type.Data",
     "entityRemoved": "qx.event.type.Data",
     "entitiesToBeExported": "qx.event.type.Data",
@@ -100,7 +111,6 @@ qx.Class.define("qxapp.components.threeView",
       if (this._selectionMode === NO_TOOL ||
         //hacky
         event.target.nodeName != 'CANVAS') {
-        //this.fireDataEvent("entitySelected", null);
         return;
       }
 
@@ -109,6 +119,11 @@ qx.Class.define("qxapp.components.threeView",
 
       if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
+        var isShiftKeyPressed = event.shiftKey;
+        if (isShiftKeyPressed) {
+          return;
+        }
+        
         var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
         var attended = this._activeTool.OnMouseHover(event, intersects);
         if (attended) {
@@ -122,52 +137,58 @@ qx.Class.define("qxapp.components.threeView",
       if (this._selectionMode === NO_TOOL ||
         //hacky
         event.target.nodeName != 'CANVAS') {
-        //this.fireDataEvent("entitySelected", null);
         return;
       }
 
       var posX = ( event.clientX / window.innerWidth ) * 2 - 1;
       var posY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
 
       if (this._selectionMode === TOOL_ACTIVE && this._activeTool)
       {
-        var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
+        var isShiftKeyPressed = event.shiftKey;
+        if (isShiftKeyPressed) {
+          return;
+        }
+
         var attended = this._activeTool.OnMouseDown(event, intersects);
         if (attended) {
           return;
         }
       }
 
-      var intersects = this._threeWrapper.IntersectEntities(this._entities, posX, posY);
       if (intersects.length > 0)
       {
-        if(this._intersected != null) {
-          if (this._selectionMode === ENTITY_PICKING) {
-            this._intersected.object.material.opacity = 0.6;
-          } else if (this._selectionMode === FACE_PICKING) {
+        if (this._selectionMode === ENTITY_PICKING) {
+          var isCtrlKeyPressed = event.ctrlKey;
+          if(this._intersected != null && !isCtrlKeyPressed) {
+            this.UnhighlightAll();
+          }
+          this._intersected = intersects[0];
+          if (isCtrlKeyPressed) {
+            this.fireDataEvent("entitySelectedAdd", this._intersected.object.uuid);
+          } else {
+            this.fireDataEvent("entitySelected", this._intersected.object.uuid); 
+          }
+          this.HighlightEntities([this._intersected.object.uuid]);
+        }
+        else if (this._selectionMode === FACE_PICKING) {
+          if(this._intersected != null) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }
-        }
-        this._intersected = intersects[0];
-
-        if (this._selectionMode === ENTITY_PICKING) {
-          this.fireDataEvent("entitySelected", this._intersected.object.uuid);
-          this._intersected.currentHex = this._intersected.object.material.color.getHex();
-          this._intersected.object.material.opacity = 0.9;
-        } else if (this._selectionMode === FACE_PICKING) {
+          this._intersected = intersects[0];
           this.fireDataEvent("entitySelected", null);
           this._intersected.currentHex = this._intersected.face.color.getHex();
           const highlightedColor = 0x000000;
           this._intersected.face.color.setHex(highlightedColor);
         }
-
         this._intersected.object.geometry.__dirtyColors = true;
         this._intersected.object.geometry.colorsNeedUpdate = true;
       } else {
     		if (this._intersected) {
           this.fireDataEvent("entitySelected", null);
           if (this._selectionMode === ENTITY_PICKING) {
-            this._intersected.object.material.opacity = 0.6;
+            this.UnhighlightAll();
           } else if (this._selectionMode === FACE_PICKING) {
             this._intersected.face.color.setHex(this._intersected.currentHex);
           }
@@ -207,7 +228,7 @@ qx.Class.define("qxapp.components.threeView",
       }
 
       if (uuid) {
-        this._threeWrapper.RemoveFromSceneById(uuid);
+        this._threeWrapper.RemoveEntityFromSceneById(uuid);
         this.fireDataEvent("entityRemoved", uuid);
         this._render();
       }
@@ -278,7 +299,7 @@ qx.Class.define("qxapp.components.threeView",
     StopMoveTool : function()
     {
       for (var i = 0; i < this._transformControls.length; i++) {
-        if (this._threeWrapper.RemoveFromScene(this._transformControls[i])) {
+        if (this._threeWrapper.RemoveEntityFromScene(this._transformControls[i])) {
           this._transformControls[i].detach();
         }
       }
@@ -290,10 +311,10 @@ qx.Class.define("qxapp.components.threeView",
     {
       if (mode === FACE_PICKING) {
         this._showEdges(true);
-        this._highlightAll();
+        this.HighlightAll();
       } else {
         this._showEdges(false);
-        this._unhighlightAll();
+        this.UnhighlightAll();
       }
 
       this._selectionMode = mode;
@@ -316,26 +337,38 @@ qx.Class.define("qxapp.components.threeView",
       this.AddEntityToScene(entity);
     },
 
-    _highlightAll : function()
+    HighlightAll : function()
     {
       for (var i = 0; i < this._entities.length; i++) {
         this._entities[i].material.opacity = 0.9;
       }
+      this._render();
     },
 
-    _unhighlightAll : function()
+    UnhighlightAll : function()
     {
       for (var i = 0; i < this._entities.length; i++) {
         this._entities[i].material.opacity = 0.6;
       }
+      this._render();
     },
 
     HighlightEntities : function( ids )
     {
-      this._unhighlightAll();
       for (var i = 0; i < this._entities.length; i++) {
         if (ids.indexOf(this._entities[i].uuid) >= 0) {
           this._entities[i].material.opacity = 0.9;
+        }
+      }
+      this._render();
+    },
+
+    ShowHideEntity : function( id, show )
+    {
+      for (var i = 0; i < this._entities.length; i++) {
+        if (this._entities[i].uuid === id) {
+          this._entities[i].visible = show;
+          break;
         }
       }
       this._render();
@@ -357,26 +390,6 @@ qx.Class.define("qxapp.components.threeView",
         }
       }
       this._render();
-    },
-
-    ImportEntityFromBuffer : function (model_buffer, model_name)
-    {
-      this._threeWrapper.ImportEntityFromBuffer(model_buffer, model_name);
-    },
-
-    SerializeEntities : function()
-    {
-      var entities_array = [];
-      for (var i = 0; i < this._entities.length; i++) {
-        var entity_to_export = this._threeWrapper.ExportEntity(this._entities[i]);
-        var entity_name = 'model_' + i.toString() + '.obj';
-        var entity_json = {
-          name: entity_name,
-          data: entity_to_export
-        };
-        entities_array.push(entity_json);
-      }
-      this.fireDataEvent("entitiesToBeExported", entities_array);
     },
 
     ImportSceneFromBuffer : function (model_buffer)

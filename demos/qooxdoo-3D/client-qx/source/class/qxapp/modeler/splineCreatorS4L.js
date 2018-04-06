@@ -92,7 +92,7 @@ qx.Class.define("qxapp.modeler.splineCreatorS4L", {
       }
 
       if (this._spline_temp) {
-        this._threeView._threeWrapper.RemoveFromScene(this._spline_temp);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._spline_temp);
       }
 
       if (this._uuid_temp === spline.uuid) {
@@ -108,7 +108,7 @@ qx.Class.define("qxapp.modeler.splineCreatorS4L", {
       spline.name = "Spline_S4L";
 
       for (var i = 0; i < this._controlPoints.length; i++) {
-        this._threeView._threeWrapper.RemoveFromScene(this._controlPoints[i]);
+        this._threeView._threeWrapper.RemoveEntityFromScene(this._controlPoints[i]);
         spline.add(this._controlPoints[i]);
       }
       this._threeView.AddEntityToScene(spline);
