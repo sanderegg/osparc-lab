@@ -8,21 +8,21 @@ const app = express();
 let server = require('http').createServer(app);
 let Promise = require('promise');
 
-const HOSTNAME = process.env.SIMCORE_WEB_HOSTNAME || "127.0.0.1"
+const HOSTNAME = process.env.SIMCORE_WEB_HOSTNAME || '127.0.0.1';
 const PORT = process.env.SIMCORE_WEB_PORT || 8080;
 const APP_PATH = process.env.SIMCORE_WEB_OUTDIR || path.resolve(__dirname, 'source-output');
 const MODELS_PATH = '/models/';
 
 
 // serve static assets normally
-const static_path = APP_PATH
-console.log( "Serving static : " + static_path );
-app.use( express.static(static_path) );
+const staticPath = APP_PATH;
+console.log( 'Serving static : ' + staticPath );
+app.use( express.static(staticPath) );
 
 // handle every other route with index.html, which will contain
 // a script tag to your application's JavaScript file(s).
-app.get('/', function (request, response) {
-  console.log("Routing / to " + path.resolve(APP_PATH, 'index.html'))
+app.get('/', function(request, response) {
+  console.log('Routing / to ' + path.resolve(APP_PATH, 'index.html'));
   response.sendFile( path.resolve(APP_PATH, 'index.html') );
 });
 
@@ -31,20 +31,20 @@ server.listen(PORT, HOSTNAME);
 
 let thrift = require('thrift');
 
-let thrApplication       = require('./thrift/ApplicationJSNode/gen-nodejs/Application.js');
-//let thrApplicationTypes  = require('./thrift/ApplicationJSNode/gen-nodejs/application_types');
-//let thrAppLogger         = require('./thrift/ApplicationJSNode/gen-nodejs/Logger');
-//let thrAppSharedService  = require('./thrift/ApplicationJSNode/gen-nodejs/SharedService');
-//let thrAppProcessFactory = require('./thrift/ApplicationJSNode/gen-nodejs/ProcessFactory');
-let thrModeler           = require('./thrift/ModelerJSNode/gen-nodejs/Modeler');
-let thrModelerTypes      = require('./thrift/ModelerJSNode/gen-nodejs/modeler_types');
+let thrApplication = require('./thrift/ApplicationJSNode/gen-nodejs/Application.js');
+// let thrApplicationTypes = require('./thrift/ApplicationJSNode/gen-nodejs/application_types');
+// let thrAppLogger = require('./thrift/ApplicationJSNode/gen-nodejs/Logger');
+// let thrAppSharedService = require('./thrift/ApplicationJSNode/gen-nodejs/SharedService');
+// let thrAppProcessFactory = require('./thrift/ApplicationJSNode/gen-nodejs/ProcessFactory');
+let thrModeler = require('./thrift/ModelerJSNode/gen-nodejs/Modeler');
+let thrModelerTypes = require('./thrift/ModelerJSNode/gen-nodejs/modeler_types');
 
 const S4L_IP = process.env.CS_S4L_HOSTNAME || '172.16.9.89';
 const S4L_PORT_APP = process.env.CS_S4L_PORT_APP || 9095;
 const S4L_PORT_MOD = process.env.CS_S4L_PORT_MOD || 9096;
 
-let transport = thrift.TBufferedTransport;
-let protocol = thrift.TBinaryProtocol;
+const transport = thrift.TBufferedTransport;
+const protocol = thrift.TBinaryProtocol;
 
 let s4lAppClient = null;
 let s4lModelerClient = null;
@@ -65,18 +65,20 @@ let io = require('socket.io')(server);
 io.on('connection', function(socketClient) {
   console.log('Client connected...');
 
-  socketClient.on('importScene', function(active_user) {
-    importScene(socketClient, active_user);
+  socketClient.on('importScene', function(activeUser) {
+    importScene(socketClient, activeUser);
   });
 
   socketClient.on('exportScene', function(args) {
-    let active_user = args[0];
-    let scene_json = args[1];
-    exportScene(socketClient, active_user, scene_json);
+    let activeUser = args[0];
+    let sceneJson = args[1];
+    exportScene(socketClient, activeUser, sceneJson);
   });
 
-  socketClient.on('importModel', function(model_name) {
-    importModel(socketClient, model_name);
+  socketClient.on('importModel', function(modelName) {
+    connectToS4LServer().then(function() {
+      importModelS4L(socketClient, modelName);
+    }).catch(failureCallback);
   });
 
 
@@ -86,8 +88,8 @@ io.on('connection', function(socketClient) {
     var transform4x4 = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
     var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
     var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
-    s4lModClient.CreateSpline( spline, uuid, function(err, response_uuid) {
-      s4lModClient.GetEntityWire( response_uuid, function(err2, response2) {
+    s4lModelerClient.CreateSpline( spline, uuid, function(err, response_uuid) {
+      s4lModelerClient.GetEntityWire( response_uuid, function(err2, response2) {
         let listOfPoints = {
           type: 'newSplineS4LRequested',
           value: response2,
@@ -102,9 +104,9 @@ io.on('connection', function(socketClient) {
     let radius = radiusCenterUUID[0];
     let center = radiusCenterUUID[1];
     let uuid = radiusCenterUUID[2];
-    s4lModClient.CreateSolidSphere( center, radius, uuid, function(err, response_uuid) {
+    s4lModelerClient.CreateSolidSphere( center, radius, uuid, function(err, response_uuid) {
       const get_normals = false;
-      s4lModClient.GetEntityMeshes( response_uuid, get_normals, function(err2, response2) {
+      s4lModelerClient.GetEntityMeshes( response_uuid, get_normals, function(err2, response2) {
         let meshEntity = {
           type: 'newSphereS4LRequested',
           value: response2,
@@ -118,7 +120,10 @@ io.on('connection', function(socketClient) {
   socketClient.on('newBooleanOperationRequested', function(entityMeshesSceneOperationType) {
     let entityMeshesScene = entityMeshesSceneOperationType[0];
     let operationType = entityMeshesSceneOperationType[1];
-    booleanOperation(socketClient, entityMeshesScene, operationType);
+    connectToS4LServer().then(function() {
+      booleanOperationS4L(socketClient, entityMeshesScene, operationType);
+    }).
+    catch(failureCallback);
   });
 });
 
@@ -196,40 +201,41 @@ function createThriftConnection(host, port, thing, client, disconnectionCB) {
   });
 }
 
-function importScene(socketClient, active_user) {
-  const models_dir = APP_PATH + MODELS_PATH + active_user;
-  console.log('import Scene from: ', models_dir);
-  let fs = require("fs");
-  fs.readdirSync(models_dir).forEach(file => {
-    const file_path = models_dir +'/'+ file;
+function importScene(socketClient, activeUser) {
+  const modelsDirectory = APP_PATH + MODELS_PATH + activeUser;
+  console.log('import Scene from: ', modelsDirectory);
+  let fs = require('fs');
+  fs.readdirSync(modelsDirectory).forEach((file) => {
+    const filePath = modelsDirectory +'/'+ file;
     if (file === 'myScene.gltf') {
-      fs.readFile(file_path, function (err, data) {
-        if (err)
+      fs.readFile(filePath, function(err, data) {
+        if (err) {
           throw err;
+        }
         let modelJson = {};
         modelJson.modelName = file;
         modelJson.value = data.toString();
         modelJson.type = 'importScene';
-        console.log("sending file: ", modelJson.modelName);
+        console.log('sending file: ', modelJson.modelName);
         socketClient.emit('importScene', modelJson);
       });
     }
   });
 };
 
-function exportScene(socketClient, active_user, scene_json) {
-  const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.gltf';
-  console.log('export Scene to: ', models_dir);
-  let content = JSON.stringify(scene_json);
+function exportScene(socketClient, activeUser, sceneJson) {
+  const modelsDirectory = APP_PATH + MODELS_PATH + activeUser + '/myScene.gltf';
+  console.log('export Scene to: ', modelsDirectory);
+  let content = JSON.stringify(sceneJson);
   let fs = require('fs');
-  fs.writeFile(models_dir, content, 'utf8', function (err) {
+  fs.writeFile(modelsDirectory, content, 'utf8', function(err) {
     let response = {};
     response.type = 'exportScene';
     response.value = false;
     if (err) {
-      console.log("Error: ", err);
+      console.log('Error: ', err);
     } else {
-      console.log(models_dir, " file was saved!");
+      console.log(modelsDirectory, ' file was saved!');
       response.value = true;
     }
     socketClient.emit('exportScene', response);
@@ -239,10 +245,10 @@ function exportScene(socketClient, active_user, scene_json) {
   });
 };
 
-function importModel(socketClient, model_name) {
+function importModelS4L(socketClient, modelName) {
   s4lAppClient.NewDocument( function(err, response) {
     let modelPath;
-    switch (model_name) {
+    switch (modelName) {
       case 'Thelonious':
         modelPath = "D:/sparc/thelonius_reduced.smash";
         break;
@@ -256,35 +262,32 @@ function importModel(socketClient, model_name) {
         modelPath = "D:/sparc/ratmodel_simplified.smash";
         break;
     }
-    console.log('Importing', model_name);
-    s4lModClient.ImportModel( modelPath, function(err2, response2) {
+    console.log('Importing', modelName);
+    s4lModelerClient.ImportModel( modelPath, function(err2, response2) {
       console.log('Importing path', modelPath);
-      s4lModClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH, function(err3, response3) {
+      s4lModelerClient.GetFilteredEntities(thrModelerTypes.EntityFilterType.BODY_AND_MESH,
+        function(err3, response3) {
         console.log('Total meshes', response3.length);
-        
+
         let nMeshes = response3.length;
-        for (let i = 0; i <nMeshes ; i++) {
-          let mesh_id = response3[i].uuid;
-          let mesh_name = response3[i].name;
-          console.log(mesh_id);
-          s4lModClient.GetEntitiesEncodedScene([mesh_id], thrModelerTypes.SceneFileFormat.GLTF, function(err4, response4) {
+        for (let i = 0; i <nMeshes; i++) {
+          let meshId = response3[i].uuid;
+          s4lModelerClient.GetEntitiesEncodedScene([meshId], thrModelerTypes.SceneFileFormat.GLTF,
+            function(err4, response4) {
             let encodedScene = {
               type: 'importModelScene',
-              value: response4.data
+              value: response4.data,
             };
             let storeAllInServerFirst = false;
-            if (storeAllInServerFirst)
-            {
+            if (storeAllInServerFirst) {
               let listOfEncodedScenes = [];
               listOfEncodedScenes.push(encodedScene);
-              //socketClient.emit('importModelScene', meshEntity);
+              // socketClient.emit('importModelScene', meshEntity);
               console.log(i);
               if (i === nMeshes-1) {
                 sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes);
               }
-            }
-            else
-            {
+            } else {
               sendEncodedScenesToTheClient(socketClient, [encodedScene]);
             }
           });
@@ -293,29 +296,21 @@ function importModel(socketClient, model_name) {
     });
   });
 
-  function sendToMeshEntitiesToTheClient(socketClient, meshEntities) {
-    console.log('sendToMeshEntitiesToTheClient');
-    for (let i = 0; i < meshEntities.length; i++) {
-      socketClient.emit('importModel', meshEntities[i]);
-    }
-  };
-
   function sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes) {
-    console.log('sendEncodedScenesToTheClient');
     for (let i = 0; i < listOfEncodedScenes.length; i++) {
       socketClient.emit('importModelScene', listOfEncodedScenes[i]);
     }
   }
 };
 
-function booleanOperation(socketClient, entityMeshesScene, operationType) {
+function booleanOperationS4L(socketClient, entityMeshesScene, operationType) {
   let myEncodedScene = {
     fileType: thrModelerTypes.SceneFileFormat.GLTF,
-    data: entityMeshesScene
-  }
-  s4lModClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
-    s4lModClient.BooleanOperation(response, operationType, function(err2, response2) {
-      s4lModClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
+    data: entityMeshesScene,
+  };
+  s4lModelerClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
+    s4lModelerClient.BooleanOperation(response, operationType, function(err2, response2) {
+      s4lModelerClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
         let encodedScene = {
           type: 'newBooleanOperationRequested',
           value: response3.data
@@ -327,4 +322,4 @@ function booleanOperation(socketClient, entityMeshesScene, operationType) {
 };
 
 
-console.log("server started on " + PORT + '/app');
+console.log('server started on ' + PORT + '/app');

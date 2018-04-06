@@ -231,22 +231,6 @@ function getEntityMeshes(uuid, valueType) {
     });
   });
 }
-function getEncodedScene(uuids, valueType) {
-  return new Promise(function(resolve, reject) {
-    s4lModelerClient.GetEntitiesEncodedScene(uuids, thrModelerTypes.SceneFileFormat.GLTF,
-      function(err3, response3) {
-      if (err3) {
-        reject(err3);
-      } else {
-        let encodedScene = {
-          type: valueType,
-          value: response3.data,
-        };
-        resolve(encodedScene);
-      }
-    });
-  });
-}
 
 function createSplineS4L(pointlist, uuid) {
   let transform4x4 = [
