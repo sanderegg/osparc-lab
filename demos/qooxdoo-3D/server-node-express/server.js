@@ -11,6 +11,7 @@ let Promise = require('promise');
 const HOSTNAME = process.env.SIMCORE_WEB_HOSTNAME || '127.0.0.1';
 const PORT = process.env.SIMCORE_WEB_PORT || 8080;
 const APP_PATH = process.env.SIMCORE_WEB_OUTDIR || path.resolve(__dirname, 'source-output');
+const MODELS_PATH = '/models/';
 
 
 // serve static assets normally
@@ -85,7 +86,7 @@ io.on('connection', function(socketClient) {
     var pointList = pointListUUID[0];
     var uuid = pointListUUID[1];
     connectToS4LServer().then(function() {
-      createSplineS4L(pointlist, uuid);
+      createSplineS4L(socketClient, pointList, uuid);
     }).catch(failureCallback);
   });
 
@@ -93,7 +94,6 @@ io.on('connection', function(socketClient) {
     let radius = radiusCenterUUID[0];
     let center = radiusCenterUUID[1];
     let uuid = radiusCenterUUID[2];
-    console.log('calling s4L sphere creation');
     connectToS4LServer()
     .then(function() {
       console.log('calling createSpheres4L');
@@ -222,7 +222,7 @@ function getEntityMeshes(uuid, valueType) {
   });
 }
 
-function createSplineS4L(pointlist, uuid) {
+function createSplineS4L(socketClient, pointList, uuid) {
   let transform4x4 = [
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
@@ -251,8 +251,8 @@ function importScene(socketClient, activeUser) {
     if (file === 'myScene.gltf') {
       fs.readFile(filePath, function(err, data) {
         if (err) {
-throw err;
-}
+          throw err;
+        }
         let modelJson = {};
         modelJson.modelName = file;
         modelJson.value = data.toString();
@@ -337,13 +337,6 @@ function importModelS4L(socketClient, modelName) {
     });
   });
 
-  /* function sendToMeshEntitiesToTheClient(socketClient, meshEntities) {
-    console.log('sendToMeshEntitiesToTheClient');
-    for (let i = 0; i < meshEntities.length; i++) {
-      socketClient.emit('importModel', meshEntities[i]);
-    }
-  }; */
-
   function sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes) {
     for (let i = 0; i < listOfEncodedScenes.length; i++) {
       socketClient.emit('importModelScene', listOfEncodedScenes[i]);
@@ -356,7 +349,7 @@ function booleanOperationS4L(socketClient, entityMeshesScene, operationType) {
     fileType: thrModelerTypes.SceneFileFormat.GLTF,
     data: entityMeshesScene,
   };
-  console.log('server: booleanOps4l' + operationType);
+  console.log('server: booleanOps4l ' + operationType);
   s4lAppClient.NewDocument( function(err, response) {
     if (err) {
       console.log('New Document creation failed ' + err);

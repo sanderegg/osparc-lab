@@ -85,36 +85,29 @@ io.on('connection', function(socketClient) {
   socketClient.on('newSplineS4LRequested', function(pointListUUID) {
     var pointList = pointListUUID[0];
     var uuid = pointListUUID[1];
-    var transform4x4 = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
-    var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
-    var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
-    s4lModelerClient.CreateSpline( spline, uuid, function(err, response_uuid) {
-      s4lModelerClient.GetEntityWire( response_uuid, function(err2, response2) {
-        let listOfPoints = {
-          type: 'newSplineS4LRequested',
-          value: response2,
-          uuid: response_uuid
-        };
-        socketClient.emit('newSplineS4LRequested', listOfPoints);
-      });
-    });
+    connectToS4LServer().then(function() {
+      createSplineS4L(socketClient, pointList, uuid);
+    }).catch(failureCallback);
   });
 
   socketClient.on('newSphereS4LRequested', function(radiusCenterUUID) {
     let radius = radiusCenterUUID[0];
     let center = radiusCenterUUID[1];
     let uuid = radiusCenterUUID[2];
-    s4lModelerClient.CreateSolidSphere( center, radius, uuid, function(err, response_uuid) {
-      const get_normals = false;
-      s4lModelerClient.GetEntityMeshes( response_uuid, get_normals, function(err2, response2) {
-        let meshEntity = {
-          type: 'newSphereS4LRequested',
-          value: response2,
-          uuid: response_uuid
-        };
-        socketClient.emit('newSphereS4LRequested', meshEntity);
-      });
-    });
+    connectToS4LServer()
+    .then(function() {
+      console.log('calling createSpheres4L');
+      return createSphereS4L(radius, center, uuid);
+    })
+    .then(function(uuid) {
+      console.log('calling get entity meshes' + uuid);
+      return getEntityMeshes(uuid, 'newSphereS4LRequested');
+    })
+    .then(function(meshEntity) {
+      console.log('emitting back ' + meshEntity.value);
+      socketClient.emit('newSphereS4LRequested', meshEntity);
+    })
+    .catch(failureCallback);
   });
 
   socketClient.on('newBooleanOperationRequested', function(entityMeshesSceneOperationType) {
@@ -198,6 +191,54 @@ function createThriftConnection(host, port, thing, client, disconnectionCB) {
     } else {
       resolve(client);
     }
+  });
+}
+
+function createSphereS4L(radius, center, uuid) {  
+  return new Promise(function(resolve, reject) {
+    s4lModelerClient.CreateSolidSphere( center, radius, uuid, function(err, responseUUID) {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve(uuid);
+      }
+    });
+  });
+}
+
+function getEntityMeshes(uuid, valueType) {
+  return new Promise(function(resolve, reject) {
+    const getNormals = false;
+    s4lModelerClient.GetEntityMeshes( uuid, getNormals, function(err2, response2) {
+      if (err2) reject(err2);
+      let meshEntity = {
+        type: valueType,
+        value: response2,
+        uuid: uuid,
+      };
+      resolve(meshEntity);
+    });
+  });
+}
+
+function createSplineS4L(socketClient, pointList, uuid) {
+  let transform4x4 = [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0];
+  let color = {diffuse: {r: 1.0, g: 0.3, b: 0.65, a: 1.0}};
+  let spline = {vertices: pointList, transform4x4: transform4x4, material: color};
+  s4lModelerClient.CreateSpline( spline, uuid, function(err, responseUUID) {
+    s4lModelerClient.GetEntityWire( responseUUID, function(err2, response2) {
+      let listOfPoints = {
+        type: 'newSplineS4LRequested',
+        value: response2,
+        uuid: responseUUID,
+      };
+      socketClient.emit('newSplineS4LRequested', listOfPoints);
+    });
   });
 }
 
@@ -308,16 +349,36 @@ function booleanOperationS4L(socketClient, entityMeshesScene, operationType) {
     fileType: thrModelerTypes.SceneFileFormat.GLTF,
     data: entityMeshesScene,
   };
-  s4lModelerClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
-    s4lModelerClient.BooleanOperation(response, operationType, function(err2, response2) {
-      s4lModelerClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF, function(err3, response3) {
-        let encodedScene = {
-          type: 'newBooleanOperationRequested',
-          value: response3.data
-        };
-        socketClient.emit('newBooleanOperationRequested', encodedScene);
+  console.log('server: booleanOps4l ' + operationType);
+  s4lAppClient.NewDocument( function(err, response) {
+    if (err) {
+      console.log('New Document creation failed ' + err);
+    } else {
+      s4lModelerClient.CreateEntitiesFromScene(myEncodedScene, function(err, response) {
+        if (err) {
+          console.log('Entities creation failed: ' + err);
+        } else {
+          s4lModelerClient.BooleanOperation(response, operationType, function(err2, response2) {
+            if (err2) {
+              console.log('Boolean operation failed: ' + err2);
+            } else {
+              s4lModelerClient.GetEntitiesEncodedScene([response2], thrModelerTypes.SceneFileFormat.GLTF,
+                function(err3, response3) {
+                if (err3) {
+                  console.log('Getting entities failed: ' + err3);
+                } else {
+                  let encodedScene = {
+                    type: 'newBooleanOperationRequested',
+                    value: response3.data,
+                  };
+                  socketClient.emit('newBooleanOperationRequested', encodedScene);
+                }
+              });
+            }
+          });
+        }
       });
-    });
+    }
   });
 };
 
