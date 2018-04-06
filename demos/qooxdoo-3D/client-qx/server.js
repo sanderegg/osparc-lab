@@ -36,71 +36,53 @@ let thrApplication       = require('./thrift/ApplicationJSNode/gen-nodejs/Applic
 //let thrAppLogger         = require('./thrift/ApplicationJSNode/gen-nodejs/Logger');
 //let thrAppSharedService  = require('./thrift/ApplicationJSNode/gen-nodejs/SharedService');
 //let thrAppProcessFactory = require('./thrift/ApplicationJSNode/gen-nodejs/ProcessFactory');
-
-const S4L_IP = process.env.CS_S4L_HOSTNAME || '172.16.9.89';
-const S4L_PORT_APP = process.env.CS_S4L_PORT_APP || 9095;
-
-let transport = thrift.TBufferedTransport;
-let protocol = thrift.TBinaryProtocol;
-let connection_s4l_app = thrift.createConnection(S4L_IP, S4L_PORT_APP, {
-  transport: transport,
-  protocol : protocol
-});
-connection_s4l_app.on('error', function(err) {
-  console.log('Thrift connection to S4L failed:');
-  console.log(err);
-});
-
-let s4lAppClient = thrift.createClient(thrApplication, connection_s4l_app);
-//let multiplexer = new thrift.Multiplexer();
-//let s4lAppClient = multiplexer.createClient('All the same', thrApplication, connection);
-s4lAppClient.GetApiVersion( function(err, response) {
-  console.log('Application API version', response);
-});
-
-
 let thrModeler           = require('./thrift/ModelerJSNode/gen-nodejs/Modeler');
 let thrModelerTypes      = require('./thrift/ModelerJSNode/gen-nodejs/modeler_types');
 
+const S4L_IP = process.env.CS_S4L_HOSTNAME || '172.16.9.89';
+const S4L_PORT_APP = process.env.CS_S4L_PORT_APP || 9095;
 const S4L_PORT_MOD = process.env.CS_S4L_PORT_MOD || 9096;
 
-let connection_s4l_mod = thrift.createConnection(S4L_IP, S4L_PORT_MOD, {
-  transport: transport,
-  protocol : protocol
-});
-connection_s4l_mod.on('error', function(err) {
-  console.log('Thrift connection to Modeler failed:');
-  console.log(err);
-});
+let transport = thrift.TBufferedTransport;
+let protocol = thrift.TBinaryProtocol;
 
-let s4lModClient = thrift.createClient(thrModeler, connection_s4l_mod);
-s4lModClient.GetEntities( function(err, response) {
-  console.log('Entities');
+let s4lAppClient = null;
+let s4lModelerClient = null;
+connectToS4LServer().then(function() {
+  console.log('Connected to S4L server');
+  s4lAppClient.GetApiVersion( function(err, response) {
+    console.log('Application API version', response);
+  });
+  s4lModelerClient.GetApiVersion( function(err, response) {
+    console.log('Application API version', response);
+  });
+}).catch(function(err) {
+  console.log('No connection: ' + err);
 });
 
 
 let io = require('socket.io')(server);
-io.on('connection', function(socket_client) {
+io.on('connection', function(socketClient) {
   console.log('Client connected...');
 
-  socket_client.on('importScene', function(active_user) {
-    importScene(socket_client, active_user);
+  socketClient.on('importScene', function(active_user) {
+    importScene(socketClient, active_user);
   });
 
-  socket_client.on('exportScene', function(args) {
+  socketClient.on('exportScene', function(args) {
     let active_user = args[0];
     let scene_json = args[1];
-    exportScene(socket_client, active_user, scene_json);
+    exportScene(socketClient, active_user, scene_json);
   });
 
-  socket_client.on('importModel', function(model_name) {
-    importModel(socket_client, model_name);
+  socketClient.on('importModel', function(model_name) {
+    importModel(socketClient, model_name);
   });
 
 
-  socket_client.on('newSplineS4LRequested', function(pointList_uuid) {
-    var pointList = pointList_uuid[0];
-    var uuid = pointList_uuid[1];
+  socketClient.on('newSplineS4LRequested', function(pointListUUID) {
+    var pointList = pointListUUID[0];
+    var uuid = pointListUUID[1];
     var transform4x4 = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
     var color = { diffuse: { r: 1.0, g: 0.3, b: 0.65, a: 1.0 } };
     var spline = { vertices: pointList, transform4x4: transform4x4, material: color };
@@ -111,15 +93,15 @@ io.on('connection', function(socket_client) {
           value: response2,
           uuid: response_uuid
         };
-        socket_client.emit('newSplineS4LRequested', listOfPoints);
+        socketClient.emit('newSplineS4LRequested', listOfPoints);
       });
     });
   });
 
-  socket_client.on('newSphereS4LRequested', function(radius_center_uuid) {
-    let radius = radius_center_uuid[0];
-    let center = radius_center_uuid[1];
-    let uuid = radius_center_uuid[2];
+  socketClient.on('newSphereS4LRequested', function(radiusCenterUUID) {
+    let radius = radiusCenterUUID[0];
+    let center = radiusCenterUUID[1];
+    let uuid = radiusCenterUUID[2];
     s4lModClient.CreateSolidSphere( center, radius, uuid, function(err, response_uuid) {
       const get_normals = false;
       s4lModClient.GetEntityMeshes( response_uuid, get_normals, function(err2, response2) {
@@ -128,19 +110,93 @@ io.on('connection', function(socket_client) {
           value: response2,
           uuid: response_uuid
         };
-        socket_client.emit('newSphereS4LRequested', meshEntity);
+        socketClient.emit('newSphereS4LRequested', meshEntity);
       });
     });
   });
 
-  socket_client.on('newBooleanOperationRequested', function(entityMeshesScene_operationType) {
-    let entityMeshesScene = entityMeshesScene_operationType[0];
-    let operationType = entityMeshesScene_operationType[1];
-    booleanOperation(socket_client, entityMeshesScene, operationType);
+  socketClient.on('newBooleanOperationRequested', function(entityMeshesSceneOperationType) {
+    let entityMeshesScene = entityMeshesSceneOperationType[0];
+    let operationType = entityMeshesSceneOperationType[1];
+    booleanOperation(socketClient, entityMeshesScene, operationType);
   });
 });
 
-function importScene(socket_client, active_user) {
+function failureCallback(error) {
+  console.log('Thrift error: ' + error);
+}
+
+function connectToS4LServer() {
+  return new Promise(function(resolve, reject) {
+    createThriftConnection(S4L_IP, S4L_PORT_APP, thrApplication, s4lAppClient, disconnectFromApplicationServer)
+    .then(function(client) {
+      s4lAppClient = client;
+      createThriftConnection(S4L_IP, S4L_PORT_MOD, thrModeler, s4lModelerClient, disconnectFromModelerServer)
+        .then(function(client) {
+          s4lModelerClient = client;
+          resolve();
+        });
+    })
+    .catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+function disconnectFromModelerServer() {
+  s4lModelerClient = null;
+  console.log('Modeler client disconnected');
+}
+
+function disconnectFromApplicationServer() {
+  s4lAppClient = null;
+  console.log('Application client disconnected');
+}
+
+/**
+ * creates a Thrift connection with the thing object
+ *
+ * @param {any} host
+ * @param {any} port
+ * @param {any} thing
+ * @param {any} client
+ * @param {any} disconnectionCB
+ * @return {any} the client object promise
+ */
+function createThriftConnection(host, port, thing, client, disconnectionCB) {
+  return new Promise(function(resolve, reject) {
+    if (client == null) {
+      const connection = thrift.createConnection(host, port, {
+        transport: transport,
+        protocol: protocol,
+      });
+
+      connection.on('close', function() {
+        console.log('Connection to ' + host + ':' + port + ' closed');
+        disconnectionCB();
+      });
+      connection.on('timeout', function() {
+        console.log('Connection to ' + ' timed out...');
+      });
+      connection.on('reconnecting', function(delay, attempt) {
+        console.log('Reconnecting to ' + host + ':' + port + ' delay ' + delay + ', attempt ' + attempt);
+      });
+      connection.on('connect', function() {
+        console.log('connected to ' + host + ':' + port);
+        client = thrift.createClient(thing, connection);
+        resolve(client);
+      });
+      connection.on('error', function(err) {
+        console.log('connection error to ' + host + ':' + port);
+        reject(err);
+      });
+    } else {
+      resolve(client);
+    }
+  });
+}
+
+function importScene(socketClient, active_user) {
   const models_dir = APP_PATH + MODELS_PATH + active_user;
   console.log('import Scene from: ', models_dir);
   let fs = require("fs");
@@ -155,13 +211,13 @@ function importScene(socket_client, active_user) {
         modelJson.value = data.toString();
         modelJson.type = 'importScene';
         console.log("sending file: ", modelJson.modelName);
-        socket_client.emit('importScene', modelJson);
+        socketClient.emit('importScene', modelJson);
       });
     }
   });
 };
 
-function exportScene(socket_client, active_user, scene_json) {
+function exportScene(socketClient, active_user, scene_json) {
   const models_dir = APP_PATH + MODELS_PATH + active_user + '/myScene.gltf';
   console.log('export Scene to: ', models_dir);
   let content = JSON.stringify(scene_json);
@@ -176,14 +232,14 @@ function exportScene(socket_client, active_user, scene_json) {
       console.log(models_dir, " file was saved!");
       response.value = true;
     }
-    socket_client.emit('exportScene', response);
+    socketClient.emit('exportScene', response);
     if (err) {
       throw err;
     }
   });
 };
 
-function importModel(socket_client, model_name) {
+function importModel(socketClient, model_name) {
   s4lAppClient.NewDocument( function(err, response) {
     let modelPath;
     switch (model_name) {
@@ -221,15 +277,15 @@ function importModel(socket_client, model_name) {
             {
               let listOfEncodedScenes = [];
               listOfEncodedScenes.push(encodedScene);
-              //socket_client.emit('importModelScene', meshEntity);
+              //socketClient.emit('importModelScene', meshEntity);
               console.log(i);
               if (i === nMeshes-1) {
-                sendEncodedScenesToTheClient(socket_client, listOfEncodedScenes);
+                sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes);
               }
             }
             else
             {
-              sendEncodedScenesToTheClient(socket_client, [encodedScene]);
+              sendEncodedScenesToTheClient(socketClient, [encodedScene]);
             }
           });
         }
@@ -237,22 +293,22 @@ function importModel(socket_client, model_name) {
     });
   });
 
-  function sendToMeshEntitiesToTheClient(socket_client, meshEntities) {
+  function sendToMeshEntitiesToTheClient(socketClient, meshEntities) {
     console.log('sendToMeshEntitiesToTheClient');
     for (let i = 0; i < meshEntities.length; i++) {
-      socket_client.emit('importModel', meshEntities[i]);
+      socketClient.emit('importModel', meshEntities[i]);
     }
   };
 
-  function sendEncodedScenesToTheClient(socket_client, listOfEncodedScenes) {
+  function sendEncodedScenesToTheClient(socketClient, listOfEncodedScenes) {
     console.log('sendEncodedScenesToTheClient');
     for (let i = 0; i < listOfEncodedScenes.length; i++) {
-      socket_client.emit('importModelScene', listOfEncodedScenes[i]);
+      socketClient.emit('importModelScene', listOfEncodedScenes[i]);
     }
   }
 };
 
-function booleanOperation(socket_client, entityMeshesScene, operationType) {
+function booleanOperation(socketClient, entityMeshesScene, operationType) {
   let myEncodedScene = {
     fileType: thrModelerTypes.SceneFileFormat.GLTF,
     data: entityMeshesScene
@@ -264,7 +320,7 @@ function booleanOperation(socket_client, entityMeshesScene, operationType) {
           type: 'newBooleanOperationRequested',
           value: response3.data
         };
-        socket_client.emit('newBooleanOperationRequested', encodedScene);
+        socketClient.emit('newBooleanOperationRequested', encodedScene);
       });
     });
   });
