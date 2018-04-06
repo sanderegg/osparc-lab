@@ -117,7 +117,7 @@ qx.Class.define('qxapp.Application',
       this._initSignals();
     },
 
-    _getDefaultData : function() {
+    _getDefaultData: function() {
       let myDefaultData = {
         'LocaleCode': 'en',
         'Colors': {
@@ -170,6 +170,17 @@ qx.Class.define('qxapp.Application',
           this._threeView.RemoveAll();
         }, this);
 
+        this._menuBar.addListener('fileLoadEntitiesPressed', function(e) {
+          if (!this._socket.slotExists('importEntities')) {
+            this._socket.on('importEntities', function(val) {
+              if (val.type === 'importEntities') {
+                this._threeView.ImportEntityFromBuffer(val.value, val.modelName);
+              }
+            }, this);
+          }
+          this._socket.emit('importEntities', this._getActiveUserName());
+        }, this);
+
         this._menuBar.addListener('fileSaveEntitiesPressed', function(e) {
           this._threeView.SerializeEntities();
         }, this);
@@ -198,7 +209,7 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._menuBar.addListener('fileLoadModelPressed', function(e) {
-          var selectedModel = e.getData();
+          let selectedModel = e.getData();
           if (!this._socket.slotExists('importModelScene')) {
             this._socket.on('importModelScene', function(val) {
               if (val.type === 'importModelScene') {
@@ -217,12 +228,12 @@ qx.Class.define('qxapp.Application',
       // Services
       {
         this._availableServicesBar.addListener('selectionModeChanged', function(e) {
-          var selectionMode = e.getData();
+          selectionMode = e.getData();
           this._threeView.SetSelectionMode(selectionMode);
         }, this);
 
         this._availableServicesBar.addListener('newBlockRequested', function(e) {
-          var enableBoxTool = e.getData();
+          let enableBoxTool = e.getData();
           if (enableBoxTool) {
             var useExternalModeler = this._appModel.getUseExternalModeler();
             var boxCreator = new qxapp.modeler.boxCreator(this._threeView);
@@ -233,7 +244,7 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._availableServicesBar.addListener('newSphereRequested', function(e) {
-          var enableSphereTool = e.getData();
+          let enableSphereTool = e.getData();
           if (enableSphereTool) {
             var useExternalModeler = this._appModel.getUseExternalModeler();
             if (!useExternalModeler)
@@ -246,9 +257,9 @@ qx.Class.define('qxapp.Application',
               var sphereCreator = new qxapp.modeler.sphereCreatorS4L(this._threeView);
               this._threeView.StartTool(sphereCreator);
               sphereCreator.addListenerOnce('newSphereS4LRequested', function(e) {
-                var radius = e.getData()[0];
-                var center_point = e.getData()[1];
-                var uuid = e.getData()[2];
+                let radius = e.getData()[0];
+                let center_point = e.getData()[1];
+                let uuid = e.getData()[2];
                 if (!this._socket.slotExists('newSphereS4LRequested')) {
                   this._socket.on('newSphereS4LRequested', function(val) {
                     if (val.type === 'newSphereS4LRequested') {
@@ -265,7 +276,7 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._availableServicesBar.addListener('newCylinderRequested', function(e) {
-          var enableCylinderTool = e.getData();
+          let enableCylinderTool = e.getData();
           if (enableCylinderTool) {
             var useExternalModeler = this._appModel.getUseExternalModeler();
             var cylinderCreator = new qxapp.modeler.cylinderCreator(this._threeView);
@@ -276,7 +287,7 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._availableServicesBar.addListener('newDodecaRequested', function(e) {
-          var enableDodecahedronTool = e.getData();
+          let enableDodecahedronTool = e.getData();
           if (enableDodecahedronTool) {
             var useExternalModeler = this._appModel.getUseExternalModeler();
             var dodecahedronCreator = new qxapp.modeler.dodecahedronCreator(this._threeView);
@@ -288,7 +299,7 @@ qx.Class.define('qxapp.Application',
 
         this._availableServicesBar.addListener('newSplineRequested', function(e) {
           //this._threeView.SetSelectionMode(0);
-          var enableSplineTool = e.getData();
+          let enableSplineTool = e.getData();
           if (enableSplineTool) {
             var useExternalModeler = this._appModel.getUseExternalModeler();
             if (!useExternalModeler)
@@ -301,8 +312,8 @@ qx.Class.define('qxapp.Application',
               var splineCreator = new qxapp.modeler.splineCreatorS4L(this._threeView);
               this._threeView.StartTool(splineCreator);
               splineCreator.addListenerOnce('newSplineS4LRequested', function(e) {
-                var pointList = e.getData()[0];
-                var uuid = e.getData()[1];
+                let pointList = e.getData()[0];
+                let uuid = e.getData()[1];
                 if (!this._socket.slotExists('newSplineS4LRequested')) {
                   this._socket.on('newSplineS4LRequested', function(val) {
                     if (val.type === 'newSplineS4LRequested') {
@@ -349,12 +360,12 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._availableServicesBar.addListener('booleanOperationRequested', function(e) {
-          var operationType = e.getData();
+          let operationType = e.getData();
           if (this._threeView._entities.length>1) {
             var entityMeshesIDs = this._entityList.GetSelectedEntityIds();
             if (entityMeshesIDs.length>1) {
-              this._threeView._threeWrapper.addListener('sceneWithMeshesToBeExported', function(e) {
-                var sceneWithMeshes = e.getData();
+              this._threeView._threeWrapper.addListenerOnce('sceneWithMeshesToBeExported', function(e) {
+                let sceneWithMeshes = e.getData();
                 if (!this._socket.slotExists('newBooleanOperationRequested')) {
                   this._socket.on('newBooleanOperationRequested', function(val) {
                     if (val.type === 'newBooleanOperationRequested') {
@@ -373,13 +384,13 @@ qx.Class.define('qxapp.Application',
       // Entity list
       {
         this._entityList.addListener('removeEntityRequested', function(e) {
-          var entityId = e.getData();
+          let entityId = e.getData();
           if (this._threeView.RemoveEntityByID(entityId));
             this._entityList.RemoveEntity(entityId);
         }, this);
 
         this._entityList.addListener('selectionChanged', function(e) {
-          var entityIds = e.getData();
+          let entityIds = e.getData();
           this._threeView.UnhighlightAll();
           this._threeView.HighlightEntities(entityIds);
         }, this);
@@ -394,7 +405,7 @@ qx.Class.define('qxapp.Application',
       // 3D View
       {
         this._threeView.addListener('entitySelected', function(e) {
-          var entityId = e.getData();
+          let entityId = e.getData();
           this._entityList.OnEntitySelectedChanged([entityId]);
         }, this);
         
@@ -408,13 +419,13 @@ qx.Class.define('qxapp.Application',
         }, this);
 
         this._threeView.addListener('entityAdded', function(e) {
-          var entityName = e.getData()[0];
-          var entityId = e.getData()[1];
+          let entityName = e.getData()[0];
+          let entityId = e.getData()[1];
           this._entityList.AddEntity(entityName, entityId);
         }, this);
 
         this._threeView.addListener('entityRemoved', function(e) {
-          var entityId = e.getData();
+          let entityId = e.getData();
           this._entityList.RemoveEntity(entityId);
         }, this);
 
