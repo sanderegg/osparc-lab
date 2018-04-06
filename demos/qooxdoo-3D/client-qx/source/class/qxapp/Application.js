@@ -100,7 +100,7 @@ qx.Class.define('qxapp.Application',
       // components to document
       doc.add(this._threeView);
 
-      var toolBarcontainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(1)).set({
+      let toolBarcontainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(1)).set({
         backgroundColor: 'white',
         allowGrowY: false
       });
