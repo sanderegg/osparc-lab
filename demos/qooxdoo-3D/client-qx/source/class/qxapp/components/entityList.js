@@ -107,6 +107,17 @@ qx.Class.define("qxapp.components.entityList",
       checkbox.addListener("changeValue",
         function(e) {
           that.fireDataEvent("visibilityChanged", [id, e.getData()]);
+          var selectedIds = that.GetSelectedEntityIds();
+          for (var i = 0; i < that._tree.getRoot().getChildren().length; i++) {
+            if (selectedIds.indexOf(that._tree.getRoot().getChildren()[i].id) >= 0) {
+              // ToDo: Look for a better solution
+              for (var j = 0; j < that._tree.getRoot().getChildren()[i].__widgetChildren.length; j++) {
+                if (that._tree.getRoot().getChildren()[i].__widgetChildren[j].basename === "CheckBox") {
+                  that._tree.getRoot().getChildren()[i].__widgetChildren[j].setValue(e.getData());
+                } 
+              }
+            }
+          }
         }, that);
       
       newItem.addLabel(name);
