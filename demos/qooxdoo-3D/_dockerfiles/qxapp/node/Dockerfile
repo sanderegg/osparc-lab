@@ -27,6 +27,7 @@ ARG web_app_port=8080
 ENV SIMCORE_WEB_HOSTNAME "0.0.0.0"
 ENV SIMCORE_WEB_PORT $web_app_port
 ENV SIMCORE_WEB_OUTDIR /home/node/source-output
+LABEL simcore.service.settings='[{"name": "ports", "type": "int", "value": 9090}, {"name": "constraints", "type": "string", "value": ["node.platform.os == linux"]}, {"name": "env", "type": "string", "value": ["CS_S4L_HOSTNAME=xrpc-worker_%service_uuid%"]}]'
 
 # S4L as CompServ variables
 ARG s4l_ip="0.0.0.0"
